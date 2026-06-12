@@ -55,7 +55,7 @@ $courses = $pdo->query(
               <?php if ($c['miniature']): ?>
                 <img src="<?= SITE_URL ?>/assets/uploads/<?= h($c['miniature']) ?>" style="width:40px;height:40px;border-radius:6px;object-fit:cover">
               <?php else: ?>
-                <div style="width:40px;height:40px;border-radius:6px;background:#FAEEDA;display:flex;align-items:center;justify-content:center;color:#BA7517">
+                <div style="width:40px;height:40px;border-radius:6px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#6C47D4">
                   <i class="ti ti-school"></i>
                 </div>
               <?php endif; ?>

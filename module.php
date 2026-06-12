@@ -137,7 +137,7 @@ $pageTitle = $course['titre'];
 .btn-enroll {
   width: 100%; padding: 14px; font-size: 15px; font-weight: 700;
   border: none; border-radius: 10px; cursor: pointer;
-  background: var(--amber, #BA7517); color: #fff;
+  background: var(--amber, #6C47D4); color: #fff;
   display: flex; align-items: center; justify-content: center; gap: 8px;
   text-decoration: none; transition: .2s;
 }
@@ -155,7 +155,7 @@ $pageTitle = $course['titre'];
   height: 8px; background: #e5e7eb; border-radius: 99px; overflow: hidden;
 }
 .course-progress-fill {
-  height: 100%; background: linear-gradient(90deg, #534AB7, #BA7517);
+  height: 100%; background: linear-gradient(90deg, #534AB7, #6C47D4);
   border-radius: 99px; transition: width .4s;
 }
 
@@ -257,7 +257,7 @@ $pageTitle = $course['titre'];
           <?= ['debutant'=>'Débutant','intermediaire'=>'Intermédiaire','avance'=>'Avancé'][$course['niveau']] ?? 'Tous niveaux' ?>
         </span>
         <?php if ($course['certificat']): ?>
-          <span><i class="ti ti-certificate" style="color:#BA7517"></i> Certificat inclus</span>
+          <span><i class="ti ti-certificate" style="color:#6C47D4"></i> Certificat inclus</span>
         <?php endif; ?>
       </div>
     </div>
@@ -340,7 +340,7 @@ $pageTitle = $course['titre'];
           </li>
           <?php if ($course['certificat']): ?>
           <li style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
-            <i class="ti ti-certificate" style="color:#BA7517"></i> Certificat de complétion
+            <i class="ti ti-certificate" style="color:#6C47D4"></i> Certificat de complétion
           </li>
           <?php endif; ?>
           <li style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px">

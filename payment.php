@@ -16,7 +16,7 @@ $activeSub = $sub->fetch();
 $plans = [
     'decouverte'    => ['nom' => 'Découverte', 'prix' => 0,      'couleur' => '#3B6D11', 'desc' => 'Accès aux formations gratuites', 'features' => ['Formations gratuites','Accès limité','Support email']],
     'business_plan' => ['nom' => 'Business Plan','prix' => 15000, 'couleur' => '#534AB7', 'desc' => 'Accès complet aux formations', 'features' => ['Toutes les formations','Ressources PDF','Certificats','Support prioritaire']],
-    'lancement'     => ['nom' => 'Lancement',  'prix' => 25000, 'couleur' => '#BA7517', 'desc' => 'Accès VIP + accompagnement', 'features' => ['Tout Business Plan','Bibliothèque complète','Coaching mensuel','Accès anticipé']],
+    'lancement'     => ['nom' => 'Lancement',  'prix' => 25000, 'couleur' => '#6C47D4', 'desc' => 'Accès VIP + accompagnement', 'features' => ['Tout Business Plan','Bibliothèque complète','Coaching mensuel','Accès anticipé']],
 ];
 
 $msg = '';
@@ -126,14 +126,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!-- Formulaire paiement (masqué par défaut) -->
   <div id="pay-form-wrap" style="display:none">
     <div class="pay-form">
-      <h2><i class="ti ti-credit-card" style="color:#BA7517"></i> Finaliser le paiement</h2>
+      <h2><i class="ti ti-credit-card" style="color:#6C47D4"></i> Finaliser le paiement</h2>
       <form method="POST">
         <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
         <input type="hidden" name="tarif" id="pay-tarif" value="">
         <div style="background:#f9fafb;border-radius:8px;padding:14px;margin-bottom:16px">
           <div style="font-size:13px;color:var(--text-muted,#6b7280)">Offre sélectionnée</div>
           <div id="pay-plan-name" style="font-size:18px;font-weight:700"></div>
-          <div id="pay-plan-price" style="font-size:24px;font-weight:800;color:#BA7517"></div>
+          <div id="pay-plan-price" style="font-size:24px;font-weight:800;color:#6C47D4"></div>
         </div>
         <div class="field">
           <label>Moyen de paiement</label>
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label>Votre numéro de téléphone</label>
           <input type="tel" name="telephone" placeholder="Ex: 97000000" required>
         </div>
-        <div style="background:#fffbf0;border:1px solid #BA7517;border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px">
+        <div style="background:#f5f3ff;border:1px solid #6C47D4;border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px">
           <strong>Comment payer :</strong><br>
           1. Effectuez le virement au <strong>+229 01 XX XX XX XX</strong><br>
           2. Notez votre référence de transaction<br>
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label>Référence de transaction (optionnel)</label>
           <input type="text" name="reference" placeholder="Ex: TXN123456">
         </div>
-        <button type="submit" class="btn-plan" style="background:#BA7517;color:#fff;width:100%;padding:14px">
+        <button type="submit" class="btn-plan" style="background:#6C47D4;color:#fff;width:100%;padding:14px">
           <i class="ti ti-send"></i> Confirmer ma demande
         </button>
         <button type="button" onclick="document.getElementById('pay-form-wrap').style.display='none'"

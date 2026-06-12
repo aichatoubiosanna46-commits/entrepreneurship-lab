@@ -60,7 +60,7 @@ $top_courses = $pdo->query(
   <!-- Métriques -->
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-icon" style="background:#FAEEDA;color:#BA7517">
+      <div class="stat-icon" style="background:#EDE9FE;color:#6C47D4">
         <i class="ti ti-users" aria-hidden="true"></i>
       </div>
       <div>

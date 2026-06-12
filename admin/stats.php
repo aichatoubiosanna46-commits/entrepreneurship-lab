@@ -59,7 +59,7 @@ $inscritsParMois = $pdo->query(
 
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-icon" style="background:#FAEEDA;color:#BA7517"><i class="ti ti-users"></i></div>
+      <div class="stat-icon" style="background:#EDE9FE;color:#6C47D4"><i class="ti ti-users"></i></div>
       <div><p class="stat-label">Apprenants</p><p class="stat-val"><?= $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn() ?></p></div>
     </div>
     <div class="stat-card">
@@ -116,7 +116,7 @@ $inscritsParMois = $pdo->query(
     <div class="stats-grid" style="margin-bottom:0">
       <div class="stat-card"><div class="stat-icon" style="background:#EEEDFE;color:#534AB7"><i class="ti ti-help-circle"></i></div><div><p class="stat-label">Tentatives</p><p class="stat-val"><?= $quizStats['total'] ?></p></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:#EAF3DE;color:#3B6D11"><i class="ti ti-check"></i></div><div><p class="stat-label">Réussies</p><p class="stat-val"><?= $quizStats['reussi'] ?></p></div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:#FAEEDA;color:#BA7517"><i class="ti ti-chart-bar"></i></div><div><p class="stat-label">Score moyen</p><p class="stat-val"><?= $quizStats['score_moyen'] ?>%</p></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#EDE9FE;color:#6C47D4"><i class="ti ti-chart-bar"></i></div><div><p class="stat-label">Score moyen</p><p class="stat-val"><?= $quizStats['score_moyen'] ?>%</p></div></div>
     </div>
   </div>
 </div>
@@ -132,7 +132,7 @@ new Chart(document.getElementById('revenusChart'), {
     datasets: [{
       label: 'FCFA',
       data: revenusData.map(r => r.total),
-      backgroundColor: '#BA7517',
+      backgroundColor: '#6C47D4',
       borderRadius: 6,
     }]
   },

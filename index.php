@@ -8,23 +8,31 @@ $pdo = getPDO();
 // Formations inscrites (vue connectée uniquement)
 $mesModules = [];
 if (estConnecte()) {
-    $mesMods = $pdo->prepare(
-        'SELECT m.*, c.nom as categorie, c.icone as cat_icone, c.couleur as cat_couleur,
-                (SELECT COUNT(*) FROM sequences s
-                 JOIN modules mo ON mo.id = s.module_id
-                 WHERE mo.course_id = m.id AND s.actif = 1) as nb_lecons
-         FROM enrollments i
-         JOIN courses m ON m.id = i.course_id
-         JOIN categories c ON c.id = m.category_id
-         WHERE i.user_id = ? AND i.statut = "actif"
-         ORDER BY i.created_at DESC'
-    );
-    $mesMods->execute([$_SESSION['user_id']]);
-    $mesModules = $mesMods->fetchAll();
+    try {
+        $mesMods = $pdo->prepare(
+            'SELECT m.*, c.nom as categorie, c.icone as cat_icone, c.couleur as cat_couleur,
+                    (SELECT COUNT(*) FROM sequences s
+                     JOIN modules mo ON mo.id = s.module_id
+                     WHERE mo.course_id = m.id AND s.actif = 1) as nb_lecons
+             FROM enrollments i
+             JOIN courses m ON m.id = i.course_id
+             LEFT JOIN categories c ON c.id = m.category_id
+             WHERE i.user_id = ? AND i.statut = "actif"
+             ORDER BY i.created_at DESC'
+        );
+        $mesMods->execute([$_SESSION['user_id']]);
+        $mesModules = $mesMods->fetchAll();
+    } catch (PDOException $e) {
+        $mesModules = [];
+    }
 }
 
 // Slides homepage
-$slides = $pdo->query('SELECT * FROM slides WHERE actif = 1 ORDER BY ordre ASC LIMIT 6')->fetchAll();
+try {
+    $slides = $pdo->query('SELECT * FROM slides WHERE actif = 1 ORDER BY ordre ASC LIMIT 6')->fetchAll();
+} catch (PDOException $e) {
+    $slides = [];
+}
 
 $pageTitle = 'Accueil';
 ?>
@@ -670,14 +678,14 @@ $pageTitle = 'Accueil';
         <?php if ($m['miniature']): ?>
           <img src="<?= SITE_URL ?>/assets/uploads/<?= h($m['miniature']) ?>" alt="<?= h($m['titre']) ?>">
         <?php else: ?>
-          <div class="module-thumb-placeholder" style="background:<?= h($m['cat_couleur'] ?? '#BA7517') ?>22">
-            <i class="ti <?= h($m['cat_icone'] ?? 'ti-book') ?>" style="color:<?= h($m['cat_couleur'] ?? '#BA7517') ?>;font-size:28px"></i>
+          <div class="module-thumb-placeholder" style="background:<?= h($m['cat_couleur'] ?? '#6C47D4') ?>22">
+            <i class="ti <?= h($m['cat_icone'] ?? 'ti-book') ?>" style="color:<?= h($m['cat_couleur'] ?? '#6C47D4') ?>;font-size:28px"></i>
           </div>
         <?php endif; ?>
         <div class="module-progress-bar"><div style="width:<?= $pct ?>%"></div></div>
       </div>
       <div class="module-body">
-        <span class="module-cat" style="color:<?= h($m['cat_couleur'] ?? '#BA7517') ?>"><?= h($m['categorie']) ?></span>
+        <span class="module-cat" style="color:<?= h($m['cat_couleur'] ?? '#6C47D4') ?>"><?= h($m['categorie']) ?></span>
         <h3><?= h($m['titre']) ?></h3>
         <div class="module-meta">
           <span><i class="ti ti-list"></i> <?= $m['nb_lecons'] ?> séquence<?= $m['nb_lecons'] != 1 ? 's' : '' ?></span>

@@ -120,8 +120,8 @@ $stats = $stats->fetch();
             <div style="font-size:22px;font-weight:800;color:#16a34a"><?= $stats['reussis'] ?></div>
             <div style="font-size:11px;color:var(--text-muted)">Réussites</div>
           </div>
-          <div style="text-align:center;padding:12px;background:#FAEEDA;border-radius:8px">
-            <div style="font-size:22px;font-weight:800;color:#BA7517"><?= $stats['moy'] ?>%</div>
+          <div style="text-align:center;padding:12px;background:#EDE9FE;border-radius:8px">
+            <div style="font-size:22px;font-weight:800;color:#6C47D4"><?= $stats['moy'] ?>%</div>
             <div style="font-size:11px;color:var(--text-muted)">Score moyen</div>
           </div>
         </div>

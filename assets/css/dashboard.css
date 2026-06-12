@@ -3,9 +3,9 @@
    ============================================================ */
 
 :root {
-  --amber:        #BA7517;
-  --amber-light:  #FAEEDA;
-  --amber-border: #EF9F27;
+  --amber:        #6C47D4;
+  --amber-light:  #EDE9FE;
+  --amber-border: #8B5CF6;
   --green:        #3B6D11;
   --green-light:  #EAF3DE;
   --purple:       #534AB7;
@@ -39,7 +39,7 @@ body { background: var(--bg); }
 /* ---- Sidebar ---- */
 .admin-sidebar {
   width: var(--sidebar-w);
-  background: #1a1710;
+  background: #1E1040;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -85,9 +85,9 @@ body { background: var(--bg); }
 .sidebar-item i { font-size: 17px; flex-shrink: 0; }
 .sidebar-item:hover, .sidebar-item.active {
   background: rgba(255,255,255,0.07);
-  color: #FAEEDA;
+  color: #EDE9FE;
 }
-.sidebar-item.active { border-left: 3px solid #BA7517; }
+.sidebar-item.active { border-left: 3px solid #6C47D4; }
 
 .sidebar-footer {
   border-top: 0.5px solid rgba(255,255,255,0.08);
@@ -118,7 +118,7 @@ body { background: var(--bg); }
 
 .admin-badge-role {
   font-size: 11px; padding: 3px 10px;
-  background: var(--amber-light); color: #633806;
+  background: var(--amber-light); color: #4C1D95;
   border: 0.5px solid var(--amber-border);
   border-radius: 20px; font-weight: 500;
 }
@@ -192,7 +192,7 @@ body { background: var(--bg); }
 .user-cell { display: flex; align-items: center; gap: 10px; }
 .user-avatar {
   width: 32px; height: 32px; border-radius: 50%;
-  background: var(--amber-light); color: #633806;
+  background: var(--amber-light); color: #4C1D95;
   display: flex; align-items: center; justify-content: center;
   font-size: 12px; font-weight: 500; flex-shrink: 0;
 }
@@ -204,7 +204,7 @@ body { background: var(--bg); }
   border-radius: 20px; font-weight: 500;
 }
 .badge-success { background: var(--green-light); color: #27500A; border: 0.5px solid #97C459; }
-.badge-amber   { background: var(--amber-light); color: #633806; border: 0.5px solid #EF9F27; }
+.badge-amber   { background: var(--amber-light); color: #4C1D95; border: 0.5px solid #8B5CF6; }
 .badge-neutral { background: #f1f0ed; color: #5F5E5A; border: 0.5px solid #D3D1C7; }
 .badge-danger  { background: var(--danger-light); color: var(--danger); border: 0.5px solid #F0997B; }
 
@@ -215,7 +215,7 @@ body { background: var(--bg); }
   border: none; border-radius: var(--radius); cursor: pointer;
   font-size: 13px; font-weight: 500; text-decoration: none;
 }
-.btn-primary:hover { background: #9e6210; }
+.btn-primary:hover { background: #5B21B6; }
 
 .btn-outline {
   display: inline-flex; align-items: center; gap: 6px;
@@ -258,7 +258,7 @@ select, textarea {
 }
 input:focus, select:focus, textarea:focus {
   outline: none; border-color: var(--amber);
-  box-shadow: 0 0 0 3px rgba(186,117,23,.12);
+  box-shadow: 0 0 0 3px rgba(108,71,212,.12);
 }
 textarea { resize: vertical; min-height: 90px; }
 
@@ -304,7 +304,7 @@ textarea { resize: vertical; min-height: 90px; }
   font-size: 12px; text-align: center; transition: background .15s, color .15s;
 }
 .quick-action i { font-size: 22px; color: var(--amber); }
-.quick-action:hover { background: var(--amber-light); color: #633806; border-color: var(--amber-border); }
+.quick-action:hover { background: var(--amber-light); color: #4C1D95; border-color: var(--amber-border); }
 
 /* ---- Module rank rows ---- */
 .module-rank-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 0.5px solid var(--border); gap: 12px; }
@@ -325,7 +325,7 @@ a.btn-outline.active { background: var(--amber); color: var(--amber-light); bord
 .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 10px; }
 .badge-success { background: var(--green-light); color: var(--green); }
 .badge-neutral { background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
-.badge-amber   { background: var(--amber-light); color: #633806; }
+.badge-amber   { background: var(--amber-light); color: #4C1D95; }
 
 /* ---- Btn icon ---- */
 .btn-icon { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); font-size: 15px; transition: background .15s; text-decoration: none; }

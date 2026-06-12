@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <textarea id="contenu" name="contenu" rows="8"><?= h($seq['contenu'] ?? '') ?></textarea>
           </div>
           <div class="form-group">
-            <label for="video_url"><i class="ti ti-video" style="color:#BA7517"></i> URL Vidéo</label>
+            <label for="video_url"><i class="ti ti-video" style="color:#6C47D4"></i> URL Vidéo</label>
             <input type="url" id="video_url" name="video_url" value="<?= h($seq['video_url'] ?? '') ?>">
           </div>
           <div class="form-group">

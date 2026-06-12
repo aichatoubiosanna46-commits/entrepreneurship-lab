@@ -3,9 +3,9 @@
    ============================================================ */
 
 :root {
-  --amber:       #BA7517;
-  --amber-light: #FAEEDA;
-  --amber-dark:  #633806;
+  --amber:       #6C47D4;
+  --amber-light: #EDE9FE;
+  --amber-dark:  #4C1D95;
   --green:       #3B6D11;
   --green-light: #EAF3DE;
   --text:        #1a1a1a;
@@ -41,7 +41,7 @@ img { max-width: 100%; }
 
 /* ---- Buttons ---- */
 .btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: var(--amber); color: var(--amber-light); border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500; transition: background .15s; }
-.btn-primary:hover { background: #9e6210; }
+.btn-primary:hover { background: #5B21B6; }
 .btn-outline { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--white); color: var(--text); border: 0.5px solid var(--border); border-radius: var(--radius); cursor: pointer; font-size: 13px; transition: background .15s; }
 .btn-outline:hover { background: var(--bg); }
 .btn-full { width: 100%; justify-content: center; }
@@ -51,7 +51,7 @@ img { max-width: 100%; }
 .auth-container { display: flex; width: 100%; min-height: 100vh; }
 
 .auth-brand {
-  width: 42%; background: #1a1710; padding: 48px 40px;
+  width: 42%; background: #1E1040; padding: 48px 40px;
   display: flex; flex-direction: column; justify-content: center; gap: 24px;
 }
 .auth-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
@@ -59,7 +59,7 @@ img { max-width: 100%; }
 .auth-brand-sub { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7; }
 .auth-stats { display: flex; gap: 24px; }
 .auth-stats > div { text-align: center; }
-.auth-stats span { display: block; font-size: 22px; font-weight: 500; color: #EF9F27; }
+.auth-stats span { display: block; font-size: 22px; font-weight: 500; color: #8B5CF6; }
 .auth-stats small { font-size: 11px; color: rgba(255,255,255,0.45); }
 .auth-perks { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .auth-perks li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.7); }
@@ -80,7 +80,7 @@ input[type=text], input[type=email], input[type=password], input[type=tel], inpu
   padding: 9px 12px; border: 0.5px solid var(--border); border-radius: var(--radius);
   font-size: 13px; font-family: inherit; background: var(--white); color: var(--text); width: 100%;
 }
-input:focus, select:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(186,117,23,.12); }
+input:focus, select:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(108,71,212,.12); }
 
 .input-icon-wrap { position: relative; }
 .input-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 16px; pointer-events: none; }
@@ -93,7 +93,7 @@ input:focus, select:focus { outline: none; border-color: var(--amber); box-shado
 .alert-success { background: var(--green-light); color: var(--green); border: 0.5px solid #97C459; }
 
 /* ---- Footer ---- */
-.site-footer { background: #1a1710; padding: 40px 0 0; margin-top: 60px; }
+.site-footer { background: #1E1040; padding: 40px 0 0; margin-top: 60px; }
 .footer-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px 32px; display: flex; gap: 48px; flex-wrap: wrap; border-bottom: 0.5px solid rgba(255,255,255,0.08); }
 .footer-brand { display: flex; gap: 12px; max-width: 220px; }
 .footer-tagline { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 6px; line-height: 1.6; }

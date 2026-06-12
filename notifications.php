@@ -24,7 +24,7 @@ $notifs = $notifs->fetchAll();
 $pdo->prepare('UPDATE user_notifications SET lu = 1 WHERE user_id = ? AND lu = 0')->execute([$userId]);
 
 $typeIcons = ['info'=>'ti-info-circle','success'=>'ti-check-circle','warning'=>'ti-alert-triangle','error'=>'ti-alert-circle'];
-$typeColors = ['info'=>'#534AB7','success'=>'#16a34a','warning'=>'#BA7517','error'=>'#dc2626'];
+$typeColors = ['info'=>'#534AB7','success'=>'#16a34a','warning'=>'#6C47D4','error'=>'#dc2626'];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
