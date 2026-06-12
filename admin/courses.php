@@ -71,9 +71,10 @@ $courses = $pdo->query(
           <td>
             <?php
             $tarifMap = [
-              'decouverte'    => ['💡','Découverte','#EAF3DE','#27500A'],
+              'decouverte'    => ['🆓','Découverte',   '#EAF3DE','#27500A'],
+              'essentiel'     => ['⭐','Essentiel',    '#EDE9FE','#4C1D95'],
               'business_plan' => ['📊','Business Plan','#FEF3C7','#92400E'],
-              'lancement'     => ['🚀','Lancement','#D1FAE5','#065F46'],
+              'lancement'     => ['🚀','Lancement',    '#D1FAE5','#065F46'],
             ];
             [$tEm,$tNom,$tBg,$tCol] = $tarifMap[$c['tarif'] ?? 'decouverte'] ?? ['📚','—','#f4f4f4','#666'];
             ?>

@@ -198,9 +198,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-group">
             <label>Parcours</label>
             <select name="tarif">
-              <option value="decouverte"    <?= $course['tarif']==='decouverte'    ?'selected':'' ?>>💡 Découverte</option>
-              <option value="business_plan" <?= $course['tarif']==='business_plan' ?'selected':'' ?>>📊 Business Plan</option>
-              <option value="lancement"     <?= $course['tarif']==='lancement'     ?'selected':'' ?>>🚀 Lancement</option>
+              <option value="decouverte"    <?= $course['tarif']==='decouverte'    ?'selected':'' ?>>🆓 Découverte — Gratuit</option>
+              <option value="essentiel"     <?= $course['tarif']==='essentiel'     ?'selected':'' ?>>⭐ Essentiel — 5 000 FCFA</option>
+              <option value="business_plan" <?= $course['tarif']==='business_plan' ?'selected':'' ?>>📊 Business Plan — 15 000 FCFA</option>
+              <option value="lancement"     <?= $course['tarif']==='lancement'     ?'selected':'' ?>>🚀 Lancement — 25 000 FCFA</option>
             </select>
           </div>
           <div class="form-group">

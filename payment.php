@@ -14,9 +14,10 @@ $sub->execute([$userId]);
 $activeSub = $sub->fetch();
 
 $plans = [
-    'decouverte'    => ['nom' => 'Découverte', 'prix' => 0,      'couleur' => '#3B6D11', 'desc' => 'Accès aux formations gratuites', 'features' => ['Formations gratuites','Accès limité','Support email']],
-    'business_plan' => ['nom' => 'Business Plan','prix' => 15000, 'couleur' => '#534AB7', 'desc' => 'Accès complet aux formations', 'features' => ['Toutes les formations','Ressources PDF','Certificats','Support prioritaire']],
-    'lancement'     => ['nom' => 'Lancement',  'prix' => 25000, 'couleur' => '#6C47D4', 'desc' => 'Accès VIP + accompagnement', 'features' => ['Tout Business Plan','Bibliothèque complète','Coaching mensuel','Accès anticipé']],
+    'decouverte'    => ['nom' => 'Découverte',   'prix' => 0,     'couleur' => '#16a34a', 'desc' => '100% Gratuit — Accès aux formations de base', 'features' => ['Formations gratuites','Accès illimité','Support email']],
+    'essentiel'     => ['nom' => 'Essentiel',    'prix' => 5000,  'couleur' => '#6C47D4', 'desc' => 'Formations essentielles pour démarrer', 'features' => ['Formations Essentiel','Ressources PDF de base','Certificats','Support prioritaire']],
+    'business_plan' => ['nom' => 'Business Plan','prix' => 15000, 'couleur' => '#534AB7', 'desc' => 'Accès complet aux formations avancées', 'features' => ['Tout Essentiel','Toutes les formations','Bibliothèque ressources','Coaching groupe']],
+    'lancement'     => ['nom' => 'Lancement',    'prix' => 25000, 'couleur' => '#0f766e', 'desc' => 'Accès VIP + accompagnement personnalisé', 'features' => ['Tout Business Plan','Bibliothèque complète','Coaching mensuel 1-1','Accès anticipé']],
 ];
 
 $msg = '';

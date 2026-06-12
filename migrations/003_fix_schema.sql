@@ -157,4 +157,14 @@ CREATE TABLE IF NOT EXISTS progress (
     FOREIGN KEY (sequence_id)REFERENCES sequences(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 12. Ajouter 'essentiel' dans l'ENUM tarif des courses
+ALTER TABLE courses MODIFY COLUMN tarif ENUM('decouverte','essentiel','business_plan','lancement') NOT NULL DEFAULT 'decouverte';
+
+-- 13. Ajouter colonnes optionnelles au module si absentes (module_add.php étendu)
+ALTER TABLE modules
+  ADD COLUMN IF NOT EXISTS objectifs       TEXT     DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS nb_sequences_prev INT    DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS nb_activites_prev INT    DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS duree_min       SMALLINT DEFAULT NULL;
+
 SELECT 'Migration 003 terminée avec succès.' as status;

@@ -336,9 +336,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               Parcours (tarif) <span style="color:red">*</span>
             </label>
             <select id="tarif" name="tarif" onchange="onTarifChange(this.value)">
-              <option value="decouverte"    <?= (($_POST['tarif']??'decouverte')==='decouverte')    ?'selected':'' ?>>💡 Découverte — Gratuit</option>
-              <option value="business_plan" <?= (($_POST['tarif']??'')==='business_plan')?'selected':'' ?>>📊 Business Plan — 5 000 FCFA</option>
-              <option value="lancement"     <?= (($_POST['tarif']??'')==='lancement')    ?'selected':'' ?>>🚀 Lancement — 8 000 FCFA</option>
+              <option value="decouverte"    <?= (($_POST['tarif']??'decouverte')==='decouverte')    ?'selected':'' ?>>🆓 Découverte — Gratuit</option>
+              <option value="essentiel"     <?= (($_POST['tarif']??'')==='essentiel')    ?'selected':'' ?>>⭐ Essentiel — 5 000 FCFA</option>
+              <option value="business_plan" <?= (($_POST['tarif']??'')==='business_plan')?'selected':'' ?>>📊 Business Plan — 15 000 FCFA</option>
+              <option value="lancement"     <?= (($_POST['tarif']??'')==='lancement')    ?'selected':'' ?>>🚀 Lancement — 25 000 FCFA</option>
             </select>
             <small style="color:var(--text-muted);font-size:11px">
               Ce cours sera visible uniquement pour les utilisateurs ayant ce parcours.
@@ -407,9 +408,10 @@ function togglePrix(val) {
 
 // ── Info tarif
 const tarifData = {
-  decouverte:    { label:'💡 Découverte',    color:'#EAF3DE', border:'#97C459', text:'#27500A', hint:'Visible par tous sans paiement. Contenu d\'introduction.', type:'gratuit' },
-  business_plan: { label:'📊 Business Plan', color:'#FEF3C7', border:'#F5C518', text:'#92400E', hint:'Réservé aux utilisateurs ayant souscrit au plan 5 000 FCFA.', type:'payant' },
-  lancement:     { label:'🚀 Lancement',     color:'#D1FAE5', border:'#10b981', text:'#065F46', hint:'Réservé aux utilisateurs du plan complet 8 000 FCFA.', type:'payant' },
+  decouverte:    { label:'🆓 Découverte',    color:'#EAF3DE', border:'#97C459', text:'#27500A', hint:'Visible par tous sans paiement. Accès 100% gratuit.', type:'gratuit' },
+  essentiel:     { label:'⭐ Essentiel',     color:'#EDE9FE', border:'#8B5CF6', text:'#4C1D95', hint:'Réservé aux abonnés Essentiel — 5 000 FCFA/mois.', type:'payant' },
+  business_plan: { label:'📊 Business Plan', color:'#FEF3C7', border:'#F5C518', text:'#92400E', hint:'Réservé aux abonnés Business Plan — 15 000 FCFA/mois.', type:'payant' },
+  lancement:     { label:'🚀 Lancement',     color:'#D1FAE5', border:'#10b981', text:'#065F46', hint:'Réservé aux abonnés Lancement — 25 000 FCFA/mois.', type:'payant' },
 };
 
 function onTarifChange(val) {
