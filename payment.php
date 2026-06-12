@@ -32,16 +32,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = 'Offre invalide.';
     } elseif ($tarif === 'decouverte') {
         // Gratuit — activer immédiatement
-        $pdo->prepare('INSERT INTO subscriptions (user_id, tarif, statut, paye) VALUES (?, "decouverte", "actif", 1)')->execute([$userId]);
+        $pdo->prepare('INSERT INTO subscriptions (user_id, plan, statut, paye) VALUES (?, "decouverte", "actif", 1)')->execute([$userId]);
         redirect(SITE_URL . '/dashboard.php', 'Abonnement Découverte activé !', 'success');
     } else {
         $ref = 'PAY-' . strtoupper(bin2hex(random_bytes(6)));
         $pdo->prepare(
-            'INSERT INTO payments (user_id, course_id, reference, montant, methode, statut)
-             VALUES (?, 0, ?, ?, ?, "en_attente")'
-        )->execute([$userId, $ref, $plans[$tarif]['prix'], $methode ?: 'mtn_momo']);
+            'INSERT INTO payments (user_id, plan, reference, montant, operateur, statut)
+             VALUES (?, ?, ?, ?, ?, "en_attente")'
+        )->execute([$userId, $tarif, $ref, $plans[$tarif]['prix'], $methode ?: 'mtn']);
         $payId = $pdo->lastInsertId();
-        $pdo->prepare('INSERT INTO subscriptions (user_id, tarif, statut, paye) VALUES (?, ?, "actif", 0)')->execute([$userId, $tarif]);
+        $pdo->prepare('INSERT INTO subscriptions (user_id, plan, statut, paye) VALUES (?, ?, "actif", 0)')->execute([$userId, $tarif]);
         redirect(SITE_URL . '/payment_confirm.php?ref=' . urlencode($ref), '', '');
     }
 }
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <?php if ($activeSub): ?>
   <div style="background:#EAF3DE;border:1px solid #97C459;border-radius:10px;padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:10px;font-size:14px;color:#27500A">
     <i class="ti ti-check-circle" style="font-size:20px"></i>
-    Abonnement actif : <strong><?= $plans[$activeSub['tarif']]['nom'] ?? $activeSub['tarif'] ?></strong>
+    Abonnement actif : <strong><?= $plans[$activeSub['plan']]['nom'] ?? $activeSub['plan'] ?></strong>
     <?= $activeSub['paye'] ? '(payé)' : '(en attente de validation)' ?>
   </div>
   <?php endif; ?>
