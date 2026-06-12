@@ -16,7 +16,7 @@ $stmt = $pdo->prepare(
 );
 $stmt->execute([$slug]);
 $course = $stmt->fetch();
-if (!$course) { http_response_code(404); include __DIR__ . '/404.php'; exit; }
+if (!$course) { http_response_code(404); echo '<p style="font-family:sans-serif;text-align:center;padding:60px">Formation introuvable. <a href="'.SITE_URL.'/search.php">Retour aux formations</a></p>'; exit; }
 
 // Vérifier inscription
 $inscrit   = false;
@@ -137,7 +137,7 @@ $pageTitle = $course['titre'];
 .btn-enroll {
   width: 100%; padding: 14px; font-size: 15px; font-weight: 700;
   border: none; border-radius: 10px; cursor: pointer;
-  background: var(--amber, #BA7517); color: #fff;
+  background: var(--amber, #6C47D4); color: #fff;
   display: flex; align-items: center; justify-content: center; gap: 8px;
   text-decoration: none; transition: .2s;
 }
@@ -155,7 +155,7 @@ $pageTitle = $course['titre'];
   height: 8px; background: #e5e7eb; border-radius: 99px; overflow: hidden;
 }
 .course-progress-fill {
-  height: 100%; background: linear-gradient(90deg, #534AB7, #BA7517);
+  height: 100%; background: linear-gradient(90deg, #534AB7, #6C47D4);
   border-radius: 99px; transition: width .4s;
 }
 
@@ -163,51 +163,64 @@ $pageTitle = $course['titre'];
 .course-body { max-width: 1100px; margin: 0 auto; padding: 40px 24px; display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
 .course-main { min-width: 0; }
 
-/* ── Accordéon modules ── */
-.modules-list { display: flex; flex-direction: column; gap: 12px; }
-.module-item { border: 1px solid var(--border, #e5e7eb); border-radius: 12px; overflow: hidden; }
-.module-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 16px 20px; cursor: pointer;
-  background: var(--surface, #fff);
-  transition: background .15s;
-  user-select: none;
+/* ── Sections modules en cartes ── */
+.modules-sections { display: flex; flex-direction: column; gap: 36px; }
+
+.module-section-title {
+  font-size: 20px; font-weight: 700; color: #1a1a2e;
+  padding-bottom: 10px; border-bottom: 3px solid #1a1a2e;
+  margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
 }
-.module-header:hover { background: var(--surface-alt, #f9fafb); }
-.module-num {
-  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+.module-section-title .mod-count {
+  font-size: 12px; font-weight: 500; color: #6b7280;
+  background: #f3f4f6; border-radius: 20px; padding: 2px 10px;
+}
+
+/* Grille de cartes */
+.seq-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+.seq-card {
+  position: relative;
+  background: #f8f9fa; border: 1px solid #e9ecef;
+  border-radius: 12px; padding: 20px 16px 16px;
+  text-decoration: none; color: #111;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 12px;
+  transition: box-shadow .2s, transform .15s;
+  cursor: pointer;
+}
+.seq-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,.1); transform: translateY(-2px); }
+.seq-card.done   { background: #f0fdf4; border-color: #86efac; }
+.seq-card.locked { opacity: .65; }
+
+/* Badge statut coin haut droite */
+.seq-badge {
+  position: absolute; top: 10px; right: 10px;
+  width: 26px; height: 26px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; font-weight: 700;
-  background: var(--primary-light, #f0effc); color: var(--primary, #534AB7);
 }
-.module-header-info { flex: 1; min-width: 0; }
-.module-header-title { font-size: 14px; font-weight: 600; color: var(--text, #111); }
-.module-header-meta { font-size: 12px; color: var(--text-muted, #6b7280); margin-top: 2px; }
-.module-chevron { color: var(--text-muted); transition: transform .2s; font-size: 18px; }
-.module-item.open .module-chevron { transform: rotate(180deg); }
+.seq-badge.done   { background: #16a34a; color: #fff; }
+.seq-badge.todo   { background: #e5e7eb; color: #9ca3af; }
+.seq-badge.locked { background: #e5e7eb; color: #9ca3af; }
 
-.module-sequences { display: none; border-top: 1px solid var(--border, #e5e7eb); }
-.module-item.open .module-sequences { display: block; }
-
-.seq-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 20px 12px 32px;
-  border-bottom: 1px solid var(--border, #e5e7eb);
-  text-decoration: none; color: var(--text, #111);
-  transition: background .15s;
-}
-.seq-item:last-child { border-bottom: none; }
-.seq-item:hover { background: var(--surface-alt, #f9fafb); }
-.seq-check {
-  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+/* Icone centrale */
+.seq-icon-circle {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: #e8f4f8; border: 2px dashed #c7e2ec;
   display: flex; align-items: center; justify-content: center;
-  border: 2px solid var(--border, #e5e7eb);
-  font-size: 11px;
+  font-size: 30px; flex-shrink: 0;
 }
-.seq-check.done { background: #16a34a; border-color: #16a34a; color: #fff; }
-.seq-check.locked { background: var(--surface-alt, #f9fafb); color: var(--text-muted); }
-.seq-title { font-size: 13px; flex: 1; }
-.seq-duration { font-size: 11px; color: var(--text-muted); }
+.seq-icon-circle.done-circle { background: #dcfce7; border-color: #86efac; }
+
+.seq-card-title {
+  font-size: 12px; font-weight: 500; color: #374151;
+  line-height: 1.4; word-break: break-word;
+}
+.seq-card-meta { font-size: 11px; color: #9ca3af; }
 
 /* ── Section objectifs ── */
 .course-section-title {
@@ -257,7 +270,7 @@ $pageTitle = $course['titre'];
           <?= ['debutant'=>'Débutant','intermediaire'=>'Intermédiaire','avance'=>'Avancé'][$course['niveau']] ?? 'Tous niveaux' ?>
         </span>
         <?php if ($course['certificat']): ?>
-          <span><i class="ti ti-certificate" style="color:#BA7517"></i> Certificat inclus</span>
+          <span><i class="ti ti-certificate" style="color:#6C47D4"></i> Certificat inclus</span>
         <?php endif; ?>
       </div>
     </div>
@@ -340,7 +353,7 @@ $pageTitle = $course['titre'];
           </li>
           <?php if ($course['certificat']): ?>
           <li style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
-            <i class="ti ti-certificate" style="color:#BA7517"></i> Certificat de complétion
+            <i class="ti ti-certificate" style="color:#6C47D4"></i> Certificat de complétion
           </li>
           <?php endif; ?>
           <li style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
@@ -366,10 +379,10 @@ $pageTitle = $course['titre'];
     </div>
     <?php endif; ?>
 
-    <!-- Contenu du cours — Accordéon -->
+    <!-- Contenu du cours — Cartes par module -->
     <div style="margin-bottom:32px">
       <h2 class="course-section-title">
-        <i class="ti ti-layout-list" style="color:var(--primary)"></i>
+        <i class="ti ti-layout-grid" style="color:var(--primary)"></i>
         Contenu du cours
         <span style="font-size:13px;font-weight:400;color:var(--text-muted)">
           — <?= count($modules) ?> module<?= count($modules)!=1?'s':'' ?>,
@@ -380,55 +393,66 @@ $pageTitle = $course['titre'];
       <?php if (empty($modules)): ?>
         <p style="color:var(--text-muted);font-size:14px">Le contenu sera disponible prochainement.</p>
       <?php else: ?>
-      <div class="modules-list">
+      <div class="modules-sections">
         <?php foreach ($modulesAvecSeq as $idx => $ma): ?>
         <?php $mod = $ma['module']; $seqs = $ma['sequences']; $completees = $ma['completees']; ?>
-        <div class="module-item <?= $idx === 0 ? 'open' : '' ?>" id="mod-<?= $mod['id'] ?>">
-          <div class="module-header" onclick="toggleModule(<?= $mod['id'] ?>)">
-            <div class="module-num"><?= $idx + 1 ?></div>
-            <div class="module-header-info">
-              <div class="module-header-title"><?= h($mod['titre']) ?></div>
-              <div class="module-header-meta">
-                <?= count($seqs) ?> séquence<?= count($seqs)!=1?'s':'' ?>
-                <?php if ($mod['duree_min']): ?>
-                  · <?= $mod['duree_min'] ?> min
-                <?php endif; ?>
-                <?php if ($userId && count($seqs) > 0): ?>
-                  · <span style="color:#16a34a"><?= count($completees) ?>/<?= count($seqs) ?> complétée<?= count($completees)!=1?'s':'' ?></span>
-                <?php endif; ?>
-              </div>
-            </div>
-            <i class="ti ti-chevron-down module-chevron"></i>
-          </div>
-          <div class="module-sequences">
-            <?php if (empty($seqs)): ?>
-              <div style="padding:16px 20px;font-size:13px;color:var(--text-muted)">
-                Aucune séquence pour ce module.
-              </div>
-            <?php else: ?>
-              <?php foreach ($seqs as $s): ?>
-              <?php $done = in_array($s['id'], $completees); ?>
-              <?php $href = $inscrit
-                ? SITE_URL . '/sequence.php?id=' . $s['id']
-                : SITE_URL . '/register.php'; ?>
-              <a href="<?= $href ?>" class="seq-item">
-                <div class="seq-check <?= $done ? 'done' : ($inscrit ? '' : 'locked') ?>">
-                  <?php if ($done): ?>
-                    <i class="ti ti-check"></i>
-                  <?php elseif (!$inscrit): ?>
-                    <i class="ti ti-lock" style="font-size:10px"></i>
-                  <?php else: ?>
-                    <i class="ti ti-player-play" style="font-size:10px;color:var(--primary)"></i>
-                  <?php endif; ?>
-                </div>
-                <span class="seq-title"><?= h($s['titre']) ?></span>
-                <?php if ($s['duree_min'] ?? 0): ?>
-                  <span class="seq-duration"><i class="ti ti-clock"></i> <?= $s['duree_min'] ?> min</span>
-                <?php endif; ?>
-              </a>
-              <?php endforeach; ?>
+        <div>
+          <!-- Titre du module -->
+          <div class="module-section-title">
+            Module <?= $idx + 1 ?> — <?= h($mod['titre']) ?>
+            <?php if ($userId && count($seqs) > 0): ?>
+              <span class="mod-count"><?= count($completees) ?>/<?= count($seqs) ?> complétée<?= count($completees)!=1?'s':'' ?></span>
             <?php endif; ?>
           </div>
+
+          <?php if ($mod['description']): ?>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px"><?= h($mod['description']) ?></p>
+          <?php endif; ?>
+
+          <!-- Grille de séquences -->
+          <?php if (empty($seqs)): ?>
+            <p style="color:var(--text-muted);font-size:13px;font-style:italic">Aucune séquence disponible pour ce module.</p>
+          <?php else: ?>
+          <div class="seq-cards-grid">
+            <?php foreach ($seqs as $si => $s): ?>
+            <?php
+              $done   = in_array($s['id'], $completees);
+              $href   = $inscrit ? SITE_URL . '/sequence.php?id=' . $s['id'] : SITE_URL . '/register.php';
+              // Déterminer icône selon type de contenu
+              if (!empty($s['video_url'])) {
+                $icon = 'ti-video'; $iconColor = '#0891b2';
+              } elseif (!empty($s['fichier_pdf'])) {
+                $icon = 'ti-file-text'; $iconColor = '#0891b2';
+              } elseif (!empty($s['audio_url'])) {
+                $icon = 'ti-music'; $iconColor = '#7c3aed';
+              } elseif (!empty($s['contenu'])) {
+                $icon = 'ti-file-description'; $iconColor = '#0891b2';
+              } else {
+                $icon = 'ti-book'; $iconColor = '#0891b2';
+              }
+              $cardClass = $done ? 'done' : (!$inscrit ? 'locked' : '');
+            ?>
+            <a href="<?= $href ?>" class="seq-card <?= $cardClass ?>">
+              <!-- Badge statut -->
+              <div class="seq-badge <?= $done ? 'done' : 'todo' ?>">
+                <i class="ti <?= $done ? 'ti-check' : 'ti-circle-check' ?>" style="font-size:14px"></i>
+              </div>
+
+              <!-- Icone -->
+              <div class="seq-icon-circle <?= $done ? 'done-circle' : '' ?>">
+                <i class="ti <?= $icon ?>" style="color:<?= $iconColor ?>;font-size:28px"></i>
+              </div>
+
+              <!-- Titre -->
+              <div class="seq-card-title"><?= h($s['titre']) ?></div>
+
+              <?php if ($s['duree_min'] ?? 0): ?>
+                <div class="seq-card-meta"><i class="ti ti-clock" style="font-size:11px"></i> <?= $s['duree_min'] ?> min</div>
+              <?php endif; ?>
+            </a>
+            <?php endforeach; ?>
+          </div>
+          <?php endif; ?>
         </div>
         <?php endforeach; ?>
       </div>
@@ -446,11 +470,6 @@ $pageTitle = $course['titre'];
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
 <script>
-function toggleModule(id) {
-  const item = document.getElementById('mod-' + id);
-  item.classList.toggle('open');
-}
-</script>
 <script src="<?= SITE_URL ?>/assets/js/main.js"></script>
 </body>
 </html>

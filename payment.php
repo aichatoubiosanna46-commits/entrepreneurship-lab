@@ -14,9 +14,10 @@ $sub->execute([$userId]);
 $activeSub = $sub->fetch();
 
 $plans = [
-    'decouverte'    => ['nom' => 'Découverte', 'prix' => 0,      'couleur' => '#3B6D11', 'desc' => 'Accès aux formations gratuites', 'features' => ['Formations gratuites','Accès limité','Support email']],
-    'business_plan' => ['nom' => 'Business Plan','prix' => 15000, 'couleur' => '#534AB7', 'desc' => 'Accès complet aux formations', 'features' => ['Toutes les formations','Ressources PDF','Certificats','Support prioritaire']],
-    'lancement'     => ['nom' => 'Lancement',  'prix' => 25000, 'couleur' => '#BA7517', 'desc' => 'Accès VIP + accompagnement', 'features' => ['Tout Business Plan','Bibliothèque complète','Coaching mensuel','Accès anticipé']],
+    'decouverte'    => ['nom' => 'Découverte',   'prix' => 0,     'couleur' => '#16a34a', 'desc' => '100% Gratuit — Accès aux formations de base', 'features' => ['Formations gratuites','Accès illimité','Support email']],
+    'essentiel'     => ['nom' => 'Essentiel',    'prix' => 5000,  'couleur' => '#6C47D4', 'desc' => 'Formations essentielles pour démarrer', 'features' => ['Formations Essentiel','Ressources PDF de base','Certificats','Support prioritaire']],
+    'business_plan' => ['nom' => 'Business Plan','prix' => 15000, 'couleur' => '#534AB7', 'desc' => 'Accès complet aux formations avancées', 'features' => ['Tout Essentiel','Toutes les formations','Bibliothèque ressources','Coaching groupe']],
+    'lancement'     => ['nom' => 'Lancement',    'prix' => 25000, 'couleur' => '#0f766e', 'desc' => 'Accès VIP + accompagnement personnalisé', 'features' => ['Tout Business Plan','Bibliothèque complète','Coaching mensuel 1-1','Accès anticipé']],
 ];
 
 $msg = '';
@@ -31,16 +32,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $msg = 'Offre invalide.';
     } elseif ($tarif === 'decouverte') {
         // Gratuit — activer immédiatement
-        $pdo->prepare('INSERT INTO subscriptions (user_id, tarif, statut, paye) VALUES (?, "decouverte", "actif", 1)')->execute([$userId]);
+        $pdo->prepare('INSERT INTO subscriptions (user_id, plan, statut, paye) VALUES (?, "decouverte", "actif", 1)')->execute([$userId]);
         redirect(SITE_URL . '/dashboard.php', 'Abonnement Découverte activé !', 'success');
     } else {
         $ref = 'PAY-' . strtoupper(bin2hex(random_bytes(6)));
         $pdo->prepare(
-            'INSERT INTO payments (user_id, course_id, reference, montant, methode, statut)
-             VALUES (?, 0, ?, ?, ?, "en_attente")'
-        )->execute([$userId, $ref, $plans[$tarif]['prix'], $methode ?: 'mtn_momo']);
+            'INSERT INTO payments (user_id, plan, reference, montant, operateur, statut)
+             VALUES (?, ?, ?, ?, ?, "en_attente")'
+        )->execute([$userId, $tarif, $ref, $plans[$tarif]['prix'], $methode ?: 'mtn']);
         $payId = $pdo->lastInsertId();
-        $pdo->prepare('INSERT INTO subscriptions (user_id, tarif, statut, paye) VALUES (?, ?, "actif", 0)')->execute([$userId, $tarif]);
+        $pdo->prepare('INSERT INTO subscriptions (user_id, plan, statut, paye) VALUES (?, ?, "actif", 0)')->execute([$userId, $tarif]);
         redirect(SITE_URL . '/payment_confirm.php?ref=' . urlencode($ref), '', '');
     }
 }
@@ -90,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <?php if ($activeSub): ?>
   <div style="background:#EAF3DE;border:1px solid #97C459;border-radius:10px;padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:10px;font-size:14px;color:#27500A">
     <i class="ti ti-check-circle" style="font-size:20px"></i>
-    Abonnement actif : <strong><?= $plans[$activeSub['tarif']]['nom'] ?? $activeSub['tarif'] ?></strong>
+    Abonnement actif : <strong><?= $plans[$activeSub['plan']]['nom'] ?? $activeSub['plan'] ?></strong>
     <?= $activeSub['paye'] ? '(payé)' : '(en attente de validation)' ?>
   </div>
   <?php endif; ?>
@@ -126,14 +127,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!-- Formulaire paiement (masqué par défaut) -->
   <div id="pay-form-wrap" style="display:none">
     <div class="pay-form">
-      <h2><i class="ti ti-credit-card" style="color:#BA7517"></i> Finaliser le paiement</h2>
+      <h2><i class="ti ti-credit-card" style="color:#6C47D4"></i> Finaliser le paiement</h2>
       <form method="POST">
         <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
         <input type="hidden" name="tarif" id="pay-tarif" value="">
         <div style="background:#f9fafb;border-radius:8px;padding:14px;margin-bottom:16px">
           <div style="font-size:13px;color:var(--text-muted,#6b7280)">Offre sélectionnée</div>
           <div id="pay-plan-name" style="font-size:18px;font-weight:700"></div>
-          <div id="pay-plan-price" style="font-size:24px;font-weight:800;color:#BA7517"></div>
+          <div id="pay-plan-price" style="font-size:24px;font-weight:800;color:#6C47D4"></div>
         </div>
         <div class="field">
           <label>Moyen de paiement</label>
@@ -146,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label>Votre numéro de téléphone</label>
           <input type="tel" name="telephone" placeholder="Ex: 97000000" required>
         </div>
-        <div style="background:#fffbf0;border:1px solid #BA7517;border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px">
+        <div style="background:#f5f3ff;border:1px solid #6C47D4;border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px">
           <strong>Comment payer :</strong><br>
           1. Effectuez le virement au <strong>+229 01 XX XX XX XX</strong><br>
           2. Notez votre référence de transaction<br>
@@ -156,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label>Référence de transaction (optionnel)</label>
           <input type="text" name="reference" placeholder="Ex: TXN123456">
         </div>
-        <button type="submit" class="btn-plan" style="background:#BA7517;color:#fff;width:100%;padding:14px">
+        <button type="submit" class="btn-plan" style="background:#6C47D4;color:#fff;width:100%;padding:14px">
           <i class="ti ti-send"></i> Confirmer ma demande
         </button>
         <button type="button" onclick="document.getElementById('pay-form-wrap').style.display='none'"

@@ -12,8 +12,8 @@ function navItem(string $href, string $icon, string $label, string $current): st
   <div class="sidebar-logo">
     <div class="logo-mark" style="width:36px;height:36px;font-size:15px;flex-shrink:0">E</div>
     <div>
-      <div style="font-weight:500;font-size:14px;color:#FAEEDA"><?= SITE_NAME ?></div>
-      <div style="font-size:11px;color:#EF9F27">Administration</div>
+      <div style="font-weight:500;font-size:14px;color:#EDE9FE"><?= SITE_NAME ?></div>
+      <div style="font-size:11px;color:#8B5CF6">Administration</div>
     </div>
   </div>
 
@@ -64,8 +64,6 @@ function navItem(string $href, string $icon, string $label, string $current): st
 
     <p class="sidebar-section-label">Statistiques & Site</p>
     <?= navItem('stats.php',          'ti-chart-bar',        'Statistiques',       $currentPage) ?>
-    <?= navItem('slides.php',         'ti-photo',            'Slides accueil',     $currentPage) ?>
-    <?= navItem('slide_add.php',      'ti-photo-plus',       'Ajouter slide',      $currentPage) ?>
   </nav>
 
   <div class="sidebar-footer">

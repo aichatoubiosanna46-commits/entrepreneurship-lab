@@ -44,7 +44,7 @@ $modules = $modules->fetchAll();
         &nbsp;/&nbsp; <?= h($course['titre']) ?>
         &nbsp;·&nbsp; <?= count($modules) ?> module(s)
         <?php
-        $tarifLabels = ['decouverte'=>'💡 Découverte','business_plan'=>'📊 Business Plan','lancement'=>'🚀 Lancement'];
+        $tarifLabels = ['decouverte'=>'🆓 Découverte','essentiel'=>'⭐ Essentiel','business_plan'=>'📊 Business Plan','lancement'=>'🚀 Lancement'];
         $tLabel = $tarifLabels[$course['tarif'] ?? 'decouverte'] ?? '—';
         ?>
         &nbsp;·&nbsp; <strong style="color:var(--amber)"><?= $tLabel ?></strong>

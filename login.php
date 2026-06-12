@@ -57,7 +57,7 @@ $pageTitle = 'Connexion';
   <div class="auth-brand">
     <a href="<?= SITE_URL ?>" class="auth-logo">
       <div class="logo-mark" style="width:48px;height:48px;font-size:20px">E</div>
-      <span class="logo-name" style="font-size:20px;color:#FAEEDA"><?= SITE_NAME ?></span>
+      <span class="logo-name" style="font-size:20px;color:#EDE9FE"><?= SITE_NAME ?></span>
     </a>
     <h1 class="auth-brand-title">Apprends à<br>entreprendre.</h1>
     <p class="auth-brand-sub">Rejoins des centaines d'entrepreneurs béninois qui développent leurs compétences chaque semaine.</p>

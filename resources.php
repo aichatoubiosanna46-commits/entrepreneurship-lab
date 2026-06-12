@@ -18,7 +18,7 @@ $resources = $stmt->fetchAll();
 $types = [
     'business_plan' => ['label'=>'Business Plan','icon'=>'ti-file-analytics','color'=>'#534AB7'],
     'social_media'  => ['label'=>'Réseaux sociaux','icon'=>'ti-brand-instagram','color'=>'#E1306C'],
-    'sales_script'  => ['label'=>'Scripts de vente','icon'=>'ti-speakerphone','color'=>'#BA7517'],
+    'sales_script'  => ['label'=>'Scripts de vente','icon'=>'ti-speakerphone','color'=>'#6C47D4'],
     'autre'         => ['label'=>'Autres ressources','icon'=>'ti-files','color'=>'#3B6D11'],
 ];
 ?>
@@ -55,7 +55,7 @@ $types = [
 <?php include __DIR__ . '/includes/header.php'; ?>
 <div class="lib-wrap">
   <div class="lib-header">
-    <h1><i class="ti ti-library" style="color:#BA7517"></i> Bibliothèque de ressources</h1>
+    <h1><i class="ti ti-library" style="color:#6C47D4"></i> Bibliothèque de ressources</h1>
     <p>Business plans, templates réseaux sociaux, scripts de vente — tout pour booster votre entrepreneuriat</p>
   </div>
 

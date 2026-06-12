@@ -64,7 +64,7 @@ $stats = [
       <div><p class="stat-label">Revenus validés</p><p class="stat-val"><?= number_format((float)$stats['total'],0,',',' ') ?> FCFA</p></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#fffbf0;color:#BA7517"><i class="ti ti-clock"></i></div>
+      <div class="stat-icon" style="background:#f5f3ff;color:#6C47D4"><i class="ti ti-clock"></i></div>
       <div><p class="stat-label">En attente</p><p class="stat-val"><?= $stats['attente'] ?></p></div>
     </div>
     <div class="stat-card">
@@ -78,7 +78,7 @@ $stats = [
       <thead><tr><th>Utilisateur</th><th>Référence</th><th>Montant</th><th>Méthode</th><th>Statut</th><th>Date</th><th>Action</th></tr></thead>
       <tbody>
         <?php foreach ($payments as $p):
-          $statColors = ['valide'=>['#EAF3DE','#27500A'],'en_attente'=>['#fffbf0','#92400e'],'echoue'=>['#FAECE7','#993C1D']];
+          $statColors = ['valide'=>['#EAF3DE','#27500A'],'en_attente'=>['#f5f3ff','#92400e'],'echoue'=>['#FAECE7','#993C1D']];
           [$bg,$fg] = $statColors[$p['statut']] ?? ['#f9fafb','#6b7280'];
         ?>
         <tr>

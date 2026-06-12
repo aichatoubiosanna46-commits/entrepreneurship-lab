@@ -83,7 +83,7 @@ $sequences = $sequences->fetchAll();
                 <span title="Texte" style="font-size:18px;color:#534AB7"><i class="ti ti-text-size"></i></span>
               <?php endif; ?>
               <?php if ($s['video_url']): ?>
-                <span title="Vidéo" style="font-size:18px;color:#BA7517"><i class="ti ti-video"></i></span>
+                <span title="Vidéo" style="font-size:18px;color:#6C47D4"><i class="ti ti-video"></i></span>
               <?php endif; ?>
               <?php if ($s['audio_url']): ?>
                 <span title="Audio" style="font-size:18px;color:#3B6D11"><i class="ti ti-music"></i></span>

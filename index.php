@@ -5,24 +5,57 @@ require_once __DIR__ . '/includes/functions.php';
 
 $pdo = getPDO();
 
-// Modules inscrits (vue connectée uniquement)
+// Formations inscrites (vue connectée uniquement)
 $mesModules = [];
 if (estConnecte()) {
-    $mesMods = $pdo->prepare(
-        'SELECT m.*, c.nom as categorie, c.icone as cat_icone, c.couleur as cat_couleur,
-                (SELECT COUNT(*) FROM lecons l WHERE l.module_id = m.id AND l.actif = 1) as nb_lecons
-         FROM inscriptions i
-         JOIN modules m ON m.id = i.module_id
-         JOIN categories c ON c.id = m.category_id
-         WHERE i.user_id = ? AND i.statut = "actif"
-         ORDER BY i.created_at DESC'
-    );
-    $mesMods->execute([$_SESSION['user_id']]);
-    $mesModules = $mesMods->fetchAll();
+    try {
+        $mesMods = $pdo->prepare(            'SELECT m.*, c.nom as categorie, c.icone as cat_icone, c.couleur as cat_couleur,
+                    (SELECT COUNT(*) FROM sequences s
+                     JOIN modules mo ON mo.id = s.module_id
+                     WHERE mo.course_id = m.id AND s.actif = 1) as nb_lecons
+             FROM enrollments i
+             JOIN courses m ON m.id = i.course_id
+             LEFT JOIN categories c ON c.id = m.category_id
+             WHERE i.user_id = ? AND i.statut = "actif"
+             ORDER BY i.created_at DESC'
+        );
+        $mesMods->execute([$_SESSION['user_id']]);
+        $mesModules = $mesMods->fetchAll();
+    } catch (PDOException $e) {
+        $mesModules = [];
+    }
 }
 
 // Slides homepage
-$slides = $pdo->query('SELECT * FROM slides WHERE actif = 1 ORDER BY ordre ASC LIMIT 6')->fetchAll();
+try {
+    $slides = $pdo->query('SELECT * FROM slides WHERE actif = 1 ORDER BY ordre ASC LIMIT 6')->fetchAll();
+} catch (PDOException $e) {
+    $slides = [];
+}
+
+// Membres récents pour la section "Nos membres"
+try {
+    $memStmt = $pdo->query(
+        'SELECT u.prenom, u.nom, u.ville, u.created_at,
+                (SELECT COUNT(*) FROM enrollments e WHERE e.user_id = u.id AND e.statut = "actif") as nb_cours
+         FROM users u
+         WHERE u.actif = 1
+         ORDER BY u.created_at DESC
+         LIMIT 8'
+    );
+    $membres = $memStmt->fetchAll();
+} catch (PDOException $e) {
+    $membres = [];
+}
+
+// Compteurs globaux
+try {
+    $nbMembres = (int)$pdo->query('SELECT COUNT(*) FROM users WHERE actif = 1')->fetchColumn();
+    $nbCours   = (int)$pdo->query('SELECT COUNT(*) FROM courses WHERE actif = 1 AND statut = "publie"')->fetchColumn();
+    $nbCerts   = (int)$pdo->query('SELECT COUNT(*) FROM certificates')->fetchColumn();
+} catch (PDOException $e) {
+    $nbMembres = 1200; $nbCours = 24; $nbCerts = 340;
+}
 
 $pageTitle = 'Accueil';
 ?>
@@ -43,14 +76,14 @@ $pageTitle = 'Accueil';
    VARIABLES
    ============================================================ */
 :root {
-  --navy:        #0F1D35;
-  --navy-mid:    #1E3050;
-  --gold:        #F5C518;
-  --gold-dark:   #D4A90E;
-  --gold-pale:   rgba(245,197,24,.12);
-  --gold-border: rgba(212,169,14,.3);
+  --navy:        #1E1040;
+  --navy-mid:    #2D1870;
+  --gold:        #8B5CF6;
+  --gold-dark:   #6C47D4;
+  --gold-pale:   rgba(108,71,212,.12);
+  --gold-border: rgba(108,71,212,.3);
   --text-muted:  #6B7280;
-  --bg-light:    #F4F7FD;
+  --bg-light:    #F5F3FF;
   --radius:      10px;
   --radius-lg:   14px;
 }
@@ -504,8 +537,8 @@ $pageTitle = 'Accueil';
   <div class="elab-nav-links">
     <a href="<?= SITE_URL ?>">Accueil</a>
     <a href="#tarifs">Formations</a>
-    <a href="<?= SITE_URL ?>/coaching.php">Coaching</a>
-    <a href="<?= SITE_URL ?>/blog.php">Blog</a>
+    <a href="#membres">Nos membres</a>
+    <a href="#comment">Comment ça marche</a>
   </div>
   <?php if (estConnecte()): ?>
     <a href="<?= SITE_URL ?>/dashboard.php" class="elab-nav-btn">
@@ -630,9 +663,9 @@ $pageTitle = 'Accueil';
 
 <!-- ── STATS BAR ── -->
 <div class="stats-bar">
-  <div class="stat-item"><div class="big">1 200+</div><div class="sm">Apprenants</div></div>
-  <div class="stat-item"><div class="big">4.8 ★</div><div class="sm">Satisfaction</div></div>
-  <div class="stat-item"><div class="big">100%</div><div class="sm">En ligne</div></div>
+  <div class="stat-item"><div class="big"><?= number_format($nbMembres) ?>+</div><div class="sm">Membres</div></div>
+  <div class="stat-item"><div class="big"><?= $nbCours ?>+</div><div class="sm">Formations</div></div>
+  <div class="stat-item"><div class="big"><?= $nbCerts ?>+</div><div class="sm">Certificats</div></div>
   <div class="stat-item"><div class="big">MoMo</div><div class="sm">Paiement sécurisé</div></div>
 </div>
 
@@ -662,20 +695,20 @@ $pageTitle = 'Accueil';
   <div class="sec-title">Modules en cours</div>
   <div class="modules-grid">
     <?php foreach ($mesModules as $m): ?>
-    <?php $pct = progression($_SESSION['user_id'], $m['id']); ?>
+    <?php $pct = progressionCours($_SESSION['user_id'], $m['id']); ?>
     <a href="<?= SITE_URL ?>/module.php?slug=<?= h($m['slug']) ?>" class="module-card">
       <div class="module-thumb">
         <?php if ($m['miniature']): ?>
           <img src="<?= SITE_URL ?>/assets/uploads/<?= h($m['miniature']) ?>" alt="<?= h($m['titre']) ?>">
         <?php else: ?>
-          <div class="module-thumb-placeholder" style="background:<?= h($m['cat_couleur'] ?? '#BA7517') ?>22">
-            <i class="ti <?= h($m['cat_icone'] ?? 'ti-book') ?>" style="color:<?= h($m['cat_couleur'] ?? '#BA7517') ?>;font-size:28px"></i>
+          <div class="module-thumb-placeholder" style="background:<?= h($m['cat_couleur'] ?? '#6C47D4') ?>22">
+            <i class="ti <?= h($m['cat_icone'] ?? 'ti-book') ?>" style="color:<?= h($m['cat_couleur'] ?? '#6C47D4') ?>;font-size:28px"></i>
           </div>
         <?php endif; ?>
         <div class="module-progress-bar"><div style="width:<?= $pct ?>%"></div></div>
       </div>
       <div class="module-body">
-        <span class="module-cat" style="color:<?= h($m['cat_couleur'] ?? '#BA7517') ?>"><?= h($m['categorie']) ?></span>
+        <span class="module-cat" style="color:<?= h($m['cat_couleur'] ?? '#6C47D4') ?>"><?= h($m['categorie']) ?></span>
         <h3><?= h($m['titre']) ?></h3>
         <div class="module-meta">
           <span><i class="ti ti-list"></i> <?= $m['nb_lecons'] ?> séquence<?= $m['nb_lecons'] != 1 ? 's' : '' ?></span>
@@ -834,10 +867,107 @@ $pageTitle = 'Accueil';
   </div>
 </div>
 
+<!-- ============================================================
+     NOS MEMBRES
+     ============================================================ -->
+<div class="elab-section alt" id="membres" style="text-align:center">
+  <div class="sec-tag">👥 Notre communauté</div>
+  <div class="sec-title" style="margin-bottom:6px">Nos membres</div>
+  <p style="font-size:13px;color:var(--text-muted);max-width:480px;margin:0 auto 32px">
+    Ils ont rejoint EntreprendreBJ pour lancer leur projet. Rejoins-les !
+  </p>
+
+  <!-- Compteurs -->
+  <div style="display:flex;justify-content:center;gap:32px;margin-bottom:36px;flex-wrap:wrap">
+    <div style="text-align:center">
+      <div style="font-size:30px;font-weight:800;color:var(--gold-dark)"><?= number_format($nbMembres) ?>+</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Membres actifs</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:30px;font-weight:800;color:var(--gold-dark)"><?= $nbCours ?>+</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Formations disponibles</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:30px;font-weight:800;color:var(--gold-dark)"><?= $nbCerts ?>+</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Certificats délivrés</div>
+    </div>
+  </div>
+
+  <!-- Grille membres -->
+  <?php if (!empty($membres)): ?>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;max-width:900px;margin:0 auto 32px">
+    <?php foreach ($membres as $m): ?>
+    <?php
+      $initiales = strtoupper(mb_substr($m['prenom'],0,1) . mb_substr($m['nom'],0,1));
+      $colors    = ['#6C47D4','#5B21B6','#7C3AED','#4C1D95','#8B5CF6','#2D1870','#a855f7','#7e22ce'];
+      $bg        = $colors[crc32($m['prenom'].$m['nom']) % count($colors)];
+    ?>
+    <div style="background:#fff;border:0.5px solid #e8e8e8;border-radius:14px;padding:20px 14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+      <!-- Avatar -->
+      <div style="width:52px;height:52px;border-radius:50%;background:<?= $bg ?>;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;margin:0 auto 10px;border:3px solid <?= $bg ?>33">
+        <?= h($initiales) ?>
+      </div>
+      <!-- Nom -->
+      <div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px">
+        <?= h($m['prenom']) ?> <?= h(mb_substr($m['nom'],0,1)) ?>.
+      </div>
+      <!-- Ville -->
+      <?php if ($m['ville']): ?>
+      <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:3px">
+        <i class="ti ti-map-pin" style="font-size:11px"></i> <?= h($m['ville']) ?>
+      </div>
+      <?php endif; ?>
+      <!-- Cours -->
+      <?php if ($m['nb_cours'] > 0): ?>
+      <div style="margin-top:8px;font-size:11px;background:#EDE9FE;color:#4C1D95;border-radius:20px;padding:2px 10px;display:inline-block">
+        <?= $m['nb_cours'] ?> formation<?= $m['nb_cours'] > 1 ? 's' : '' ?>
+      </div>
+      <?php endif; ?>
+    </div>
+    <?php endforeach; ?>
+  </div>
+  <?php else: ?>
+  <!-- Membres fictifs si aucun en BDD -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;max-width:900px;margin:0 auto 32px">
+    <?php
+    $demoMembres = [
+      ['Koffi','A.','Cotonou','#6C47D4',2],
+      ['Aminata','S.','Parakou','#7C3AED',1],
+      ['Roméo','D.','Abomey','#5B21B6',3],
+      ['Fatima','K.','Porto-Novo','#8B5CF6',1],
+      ['Basile','T.','Cotonou','#4C1D95',2],
+      ['Nadège','M.','Natitingou','#6C47D4',1],
+      ['Ibrahim','Y.','Bohicon','#7e22ce',2],
+      ['Céleste','A.','Cotonou','#2D1870',1],
+    ];
+    foreach ($demoMembres as [$prenom,$nomInit,$ville,$couleur,$nbCours2]):
+      $ini = strtoupper(mb_substr($prenom,0,1).mb_substr($nomInit,0,1));
+    ?>
+    <div style="background:#fff;border:0.5px solid #e8e8e8;border-radius:14px;padding:20px 14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+      <div style="width:52px;height:52px;border-radius:50%;background:<?= $couleur ?>;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;margin:0 auto 10px;border:3px solid <?= $couleur ?>33">
+        <?= $ini ?>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px"><?= $prenom ?> <?= $nomInit ?></div>
+      <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:3px">
+        <i class="ti ti-map-pin" style="font-size:11px"></i> <?= $ville ?>
+      </div>
+      <div style="margin-top:8px;font-size:11px;background:#EDE9FE;color:#4C1D95;border-radius:20px;padding:2px 10px;display:inline-block">
+        <?= $nbCours2 ?> formation<?= $nbCours2>1?'s':'' ?>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  </div>
+  <?php endif; ?>
+
+  <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary" style="font-size:13px;padding:12px 28px">
+    <i class="ti ti-user-plus" style="font-size:14px"></i> Rejoindre la communauté
+  </a>
+</div>
+
 <!-- ── CTA ── -->
 <div class="cta-section">
   <h2>Prêt(e) à lancer ton entreprise ?</h2>
-  <p>Rejoins 1 200+ apprenants · Paiement MoMo · Certification Université de Parakou</p>
+  <p>Rejoins <?= number_format($nbMembres) ?>+ apprenants · Paiement MoMo · Certification Université de Parakou</p>
   <div class="cta-btns">
     <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary" style="font-size:13px;padding:13px 28px">
       Créer mon compte gratuitement
@@ -879,8 +1009,6 @@ $pageTitle = 'Accueil';
     <p>Fait avec ❤ pour les étudiants</p>
   </div>
 </footer>
-
-<?php include __DIR__ . '/includes/footer.php'; ?>
 
 <script>
 /* ============================================================

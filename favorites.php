@@ -110,7 +110,7 @@ $favs = $favs->fetchAll();
               <?php if ($c['type']==='gratuit'): ?>
                 <span style="color:#16a34a;font-weight:600">Gratuit</span>
               <?php else: ?>
-                <span style="color:#BA7517;font-weight:600"><?= fcfa((float)$c['prix']) ?></span>
+                <span style="color:#6C47D4;font-weight:600"><?= fcfa((float)$c['prix']) ?></span>
               <?php endif; ?>
             </div>
           </div>

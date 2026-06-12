@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
           <div class="form-group">
-            <label for="video_url"><i class="ti ti-video" style="color:#BA7517"></i> URL Vidéo (YouTube / Vimeo)</label>
+            <label for="video_url"><i class="ti ti-video" style="color:#6C47D4"></i> URL Vidéo (YouTube / Vimeo)</label>
             <input type="url" id="video_url" name="video_url"
                    value="<?= h($_POST['video_url'] ?? '') ?>"
                    placeholder="https://www.youtube.com/watch?v=...">

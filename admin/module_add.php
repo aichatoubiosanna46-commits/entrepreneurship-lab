@@ -349,7 +349,7 @@ function updatePreview() {
     html += `<div class="sp-seq">Séquence ${i}</div>`;
   }
   if (nb > 6) html += `<div class="sp-seq" style="color:var(--primary)">+ ${nb - 6} autres…</div>`;
-  if (act > 0) html += `<div class="sp-seq" style="color:var(--amber,#BA7517)"><i class="ti ti-pencil-check"></i> ${act} activité${act>1?'s':''}</div>`;
+  if (act > 0) html += `<div class="sp-seq" style="color:var(--amber,#6C47D4)"><i class="ti ti-pencil-check"></i> ${act} activité${act>1?'s':''}</div>`;
   document.getElementById('preview-seqs').innerHTML = html;
 }
 

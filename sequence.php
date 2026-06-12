@@ -131,7 +131,7 @@ $pct = progressionCours($userId, $seq['course_id']);
 }
 .seq-sidebar-course { font-size: 13px; font-weight: 600; color: var(--text,#111); margin-bottom: 6px; }
 .seq-prog-bar { height: 6px; background: #e5e7eb; border-radius: 99px; overflow: hidden; margin-bottom: 4px; }
-.seq-prog-fill { height: 100%; background: linear-gradient(90deg,#534AB7,#BA7517); border-radius: 99px; }
+.seq-prog-fill { height: 100%; background: linear-gradient(90deg,#534AB7,#6C47D4); border-radius: 99px; }
 .seq-prog-label { font-size: 11px; color: var(--text-muted,#6b7280); }
 .seq-nav-list { padding: 8px 0; }
 .seq-nav-item {
@@ -172,7 +172,7 @@ $pct = progressionCours($userId, $seq['course_id']);
 .seq-text-body h3 { font-size: 17px; font-weight: 600; margin: 20px 0 8px; }
 .seq-text-body ul, .seq-text-body ol { padding-left: 24px; margin: 12px 0; }
 .seq-text-body li { margin-bottom: 6px; }
-.seq-text-body blockquote { border-left: 4px solid var(--amber,#BA7517); padding: 10px 16px; background: #fffbf0; margin: 16px 0; border-radius: 0 8px 8px 0; }
+.seq-text-body blockquote { border-left: 4px solid var(--amber,#6C47D4); padding: 10px 16px; background: #f5f3ff; margin: 16px 0; border-radius: 0 8px 8px 0; }
 
 /* PDF */
 .pdf-embed { width: 100%; height: 500px; border: 1px solid var(--border,#e5e7eb); border-radius: 10px; margin-bottom: 24px; }
@@ -231,7 +231,7 @@ $pct = progressionCours($userId, $seq['course_id']);
 
 /* Quiz banner */
 .quiz-banner {
-  background: linear-gradient(135deg,#534AB7,#BA7517); color: #fff;
+  background: linear-gradient(135deg,#534AB7,#6C47D4); color: #fff;
   border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;
   display: flex; align-items: center; gap: 16px;
 }
@@ -327,7 +327,7 @@ $pct = progressionCours($userId, $seq['course_id']);
       <?php endif; ?>
 
       <?php if ($seq['fichier_pdf']): ?>
-      <h3 style="font-size:16px;margin-bottom:12px"><i class="ti ti-file-text" style="color:#BA7517"></i> Document PDF</h3>
+      <h3 style="font-size:16px;margin-bottom:12px"><i class="ti ti-file-text" style="color:#6C47D4"></i> Document PDF</h3>
       <embed class="pdf-embed" src="<?= SITE_URL ?>/assets/uploads/<?= h($seq['fichier_pdf']) ?>" type="application/pdf">
       <a href="<?= SITE_URL ?>/assets/uploads/<?= h($seq['fichier_pdf']) ?>" download class="btn-nav" style="margin-bottom:24px">
         <i class="ti ti-download"></i> Télécharger le PDF

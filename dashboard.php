@@ -119,7 +119,6 @@ $pageTitle = 'Mon espace';
     foreach ($mesModules as $mm) {
         if (progressionCours($_SESSION['user_id'], $mm['id']) === 100) $completedCount++;
     }
-    $nbCerts = (int)$pdo->prepare('SELECT COUNT(*) FROM certificates WHERE user_id = ?')->execute([$_SESSION['user_id']]) ? $pdo->prepare('SELECT COUNT(*) FROM certificates WHERE user_id = ?') : 0;
     $certStmt = $pdo->prepare('SELECT COUNT(*) FROM certificates WHERE user_id = ?');
     $certStmt->execute([$_SESSION['user_id']]);
     $nbCerts = (int)$certStmt->fetchColumn();
@@ -147,7 +146,7 @@ $pageTitle = 'Mon espace';
         </div>
       </div>
       <div class="dash-stat-card">
-        <div class="dash-stat-icon" style="background:#FAEEDA;color:#BA7517">
+        <div class="dash-stat-icon" style="background:#EDE9FE;color:#6C47D4">
           <i class="ti ti-certificate"></i>
         </div>
         <div>
@@ -173,18 +172,18 @@ $pageTitle = 'Mon espace';
       $certs = $certsStmt->fetchAll();
     ?>
     <section class="dash-section">
-      <h2 class="dash-section-title"><i class="ti ti-certificate" style="color:#BA7517"></i> Mes certificats</h2>
+      <h2 class="dash-section-title"><i class="ti ti-certificate" style="color:#6C47D4"></i> Mes certificats</h2>
       <div style="display:flex;flex-wrap:wrap;gap:12px">
         <?php foreach ($certs as $cert): ?>
         <a href="<?= SITE_URL ?>/certificate.php?code=<?= h($cert['code_unique']) ?>"
-           style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fffbf0;border:1px solid #BA7517;border-radius:10px;text-decoration:none;color:inherit;transition:.15s"
-           onmouseover="this.style.background='#FAEEDA'" onmouseout="this.style.background='#fffbf0'">
-          <i class="ti ti-certificate" style="font-size:24px;color:#BA7517"></i>
+           style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#f5f3ff;border:1px solid #6C47D4;border-radius:10px;text-decoration:none;color:inherit;transition:.15s"
+           onmouseover="this.style.background='#EDE9FE'" onmouseout="this.style.background='#f5f3ff'">
+          <i class="ti ti-certificate" style="font-size:24px;color:#6C47D4"></i>
           <div>
             <div style="font-weight:600;font-size:14px"><?= h($cert['course_titre']) ?></div>
             <div style="font-size:11px;color:var(--text-muted)">Obtenu le <?= date('d/m/Y', strtotime($cert['delivre_le'])) ?></div>
           </div>
-          <i class="ti ti-download" style="margin-left:8px;color:#BA7517"></i>
+          <i class="ti ti-download" style="margin-left:8px;color:#6C47D4"></i>
         </a>
         <?php endforeach; ?>
       </div>
