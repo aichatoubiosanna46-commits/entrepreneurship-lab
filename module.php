@@ -61,7 +61,7 @@ foreach ($modules as $mod) {
     $completees = [];
     if ($userId) {
         foreach ($sequences as $s) {
-           $p = $pdo->prepare('SELECT id FROM progression WHERE user_id = ? AND lecon_id = ?');
+           $p = $pdo->prepare('SELECT id FROM progress WHERE user_id = ? AND sequence_id = ? AND terminee = 1');
             $p->execute([$userId, $s['id']]);
             if ($p->fetch()) $completees[] = $s['id'];
         }

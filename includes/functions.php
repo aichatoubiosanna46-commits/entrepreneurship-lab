@@ -169,10 +169,10 @@ function progressionCours(int $userId, int $courseId): int {
     if ($total === 0) return 0;
 
     $stmt = $pdo->prepare(
-        'SELECT COUNT(*) FROM progression p
-         JOIN sequences s ON s.id = p.lecon_id
+        'SELECT COUNT(*) FROM progress p
+         JOIN sequences s ON s.id = p.sequence_id
          JOIN modules m   ON m.id = s.module_id
-         WHERE p.user_id = ? AND m.course_id = ?'
+         WHERE p.user_id = ? AND m.course_id = ? AND p.terminee = 1'
     );
     $stmt->execute([$userId, $courseId]);
     $faites = (int) $stmt->fetchColumn();
@@ -192,9 +192,9 @@ function progressionModule(int $userId, int $moduleId): int {
     if ($total === 0) return 0;
 
     $stmt = $pdo->prepare(
-        'SELECT COUNT(*) FROM progression p
-         JOIN sequences s ON s.id = p.lecon_id
-         WHERE p.user_id = ? AND s.module_id = ?'
+        'SELECT COUNT(*) FROM progress p
+         JOIN sequences s ON s.id = p.sequence_id
+         WHERE p.user_id = ? AND s.module_id = ? AND p.terminee = 1'
     );
     $stmt->execute([$userId, $moduleId]);
     $faites = (int) $stmt->fetchColumn();
@@ -209,6 +209,43 @@ function estInscrit(int $userId, int $courseId): bool {
     $stmt = $pdo->prepare('SELECT id FROM enrollments WHERE user_id = ? AND course_id = ? AND statut = "actif"');
     $stmt->execute([$userId, $courseId]);
     return (bool) $stmt->fetch();
+}
+
+// ------------------------------------------------------------
+// Génère un certificat pour un utilisateur après 100% de progression
+// ------------------------------------------------------------
+function genererCertificat(int $userId, int $courseId): bool {
+    $pdo = getPDO();
+    // Vérifier qu'il n'existe pas déjà
+    $check = $pdo->prepare('SELECT id FROM certificates WHERE user_id = ? AND course_id = ?');
+    $check->execute([$userId, $courseId]);
+    if ($check->fetch()) return true;
+
+    $code = strtoupper(bin2hex(random_bytes(12)));
+    $pdo->prepare(
+        'INSERT INTO certificates (user_id, course_id, code_unique) VALUES (?, ?, ?)'
+    )->execute([$userId, $courseId, $code]);
+
+    // Notifier l'utilisateur
+    $course = $pdo->prepare('SELECT titre FROM courses WHERE id = ?');
+    $course->execute([$courseId]);
+    $c = $course->fetch();
+    if ($c) {
+        notifierUtilisateur($userId, 'Certificat obtenu ! 🎓', 'Félicitations ! Vous avez complété « '.$c['titre'].' ». Votre certificat est disponible.', 'success', SITE_URL . '/certificate.php?course=' . $courseId);
+    }
+    return true;
+}
+
+// ------------------------------------------------------------
+// Envoie une notification à un utilisateur
+// ------------------------------------------------------------
+function notifierUtilisateur(int $userId, string $titre, string $message = '', string $type = 'info', string $lien = ''): void {
+    try {
+        $pdo = getPDO();
+        $pdo->prepare(
+            'INSERT INTO user_notifications (user_id, titre, message, type, lien) VALUES (?, ?, ?, ?, ?)'
+        )->execute([$userId, $titre, $message, $type, $lien]);
+    } catch (Exception $e) { /* silent */ }
 }
 
 // ------------------------------------------------------------

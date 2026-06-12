@@ -77,8 +77,20 @@ $pageTitle = 'Mon espace';
       <a href="<?= SITE_URL ?>/dashboard.php" class="user-nav-item active">
         <i class="ti ti-layout-dashboard"></i> Tableau de bord
       </a>
-      <a href="<?= SITE_URL ?>/index.php#cours" class="user-nav-item">
-        <i class="ti ti-book"></i> Tous les modules
+      <a href="<?= SITE_URL ?>/search.php" class="user-nav-item">
+        <i class="ti ti-book"></i> Toutes les formations
+      </a>
+      <a href="<?= SITE_URL ?>/favorites.php" class="user-nav-item">
+        <i class="ti ti-heart"></i> Mes favoris
+      </a>
+      <a href="<?= SITE_URL ?>/resources.php" class="user-nav-item">
+        <i class="ti ti-library"></i> Bibliothèque
+      </a>
+      <a href="<?= SITE_URL ?>/payment.php" class="user-nav-item">
+        <i class="ti ti-credit-card"></i> Abonnement
+      </a>
+      <a href="<?= SITE_URL ?>/notifications.php" class="user-nav-item">
+        <i class="ti ti-bell"></i> Notifications
       </a>
       <a href="<?= SITE_URL ?>/profil.php" class="user-nav-item">
         <i class="ti ti-user"></i> Mon profil
@@ -102,6 +114,19 @@ $pageTitle = 'Mon espace';
       </div>
     </div>
 
+    <?php
+    $completedCount = 0;
+    foreach ($mesModules as $mm) {
+        if (progressionCours($_SESSION['user_id'], $mm['id']) === 100) $completedCount++;
+    }
+    $nbCerts = (int)$pdo->prepare('SELECT COUNT(*) FROM certificates WHERE user_id = ?')->execute([$_SESSION['user_id']]) ? $pdo->prepare('SELECT COUNT(*) FROM certificates WHERE user_id = ?') : 0;
+    $certStmt = $pdo->prepare('SELECT COUNT(*) FROM certificates WHERE user_id = ?');
+    $certStmt->execute([$_SESSION['user_id']]);
+    $nbCerts = (int)$certStmt->fetchColumn();
+    $quizStmt = $pdo->prepare('SELECT COUNT(*) FROM quiz_results WHERE user_id = ? AND reussi = 1');
+    $quizStmt->execute([$_SESSION['user_id']]);
+    $nbQuizReussis = (int)$quizStmt->fetchColumn();
+    ?>
     <div class="dash-stats-row">
       <div class="dash-stat-card">
         <div class="dash-stat-icon" style="background:var(--amber-light);color:var(--amber)">
@@ -109,7 +134,7 @@ $pageTitle = 'Mon espace';
         </div>
         <div>
           <div class="dash-stat-val"><?= count($mesModules) ?></div>
-          <div class="dash-stat-label">Module<?= count($mesModules) != 1 ? 's' : '' ?> en cours</div>
+          <div class="dash-stat-label">Formation<?= count($mesModules) != 1 ? 's' : '' ?> en cours</div>
         </div>
       </div>
       <div class="dash-stat-card">
@@ -117,26 +142,54 @@ $pageTitle = 'Mon espace';
           <i class="ti ti-check-circle"></i>
         </div>
         <div>
-          <?php
-          $completedCount = 0;
-          foreach ($mesModules as $mm) {
-            if (progressionCours($_SESSION['user_id'], $mm['id']) === 100) $completedCount++;
-          }
-          ?>
           <div class="dash-stat-val"><?= $completedCount ?></div>
-          <div class="dash-stat-label">Terminé<?= $completedCount != 1 ? 's' : '' ?></div>
+          <div class="dash-stat-label">Terminée<?= $completedCount != 1 ? 's' : '' ?></div>
+        </div>
+      </div>
+      <div class="dash-stat-card">
+        <div class="dash-stat-icon" style="background:#FAEEDA;color:#BA7517">
+          <i class="ti ti-certificate"></i>
+        </div>
+        <div>
+          <div class="dash-stat-val"><?= $nbCerts ?></div>
+          <div class="dash-stat-label">Certificat<?= $nbCerts != 1 ? 's' : '' ?></div>
         </div>
       </div>
       <div class="dash-stat-card">
         <div class="dash-stat-icon" style="background:#EEEDFE;color:#534AB7">
-          <i class="ti ti-layout-grid"></i>
+          <i class="ti ti-help-circle"></i>
         </div>
         <div>
-          <div class="dash-stat-val"><?= count($autresModules) ?></div>
-          <div class="dash-stat-label">Disponible<?= count($autresModules) != 1 ? 's' : '' ?></div>
+          <div class="dash-stat-val"><?= $nbQuizReussis ?></div>
+          <div class="dash-stat-label">Quiz réussi<?= $nbQuizReussis != 1 ? 's' : '' ?></div>
         </div>
       </div>
     </div>
+
+    <!-- Certificats obtenus -->
+    <?php if ($nbCerts > 0):
+      $certsStmt = $pdo->prepare('SELECT cert.*, c.titre as course_titre FROM certificates cert JOIN courses c ON c.id = cert.course_id WHERE cert.user_id = ? ORDER BY cert.delivre_le DESC');
+      $certsStmt->execute([$_SESSION['user_id']]);
+      $certs = $certsStmt->fetchAll();
+    ?>
+    <section class="dash-section">
+      <h2 class="dash-section-title"><i class="ti ti-certificate" style="color:#BA7517"></i> Mes certificats</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:12px">
+        <?php foreach ($certs as $cert): ?>
+        <a href="<?= SITE_URL ?>/certificate.php?code=<?= h($cert['code_unique']) ?>"
+           style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fffbf0;border:1px solid #BA7517;border-radius:10px;text-decoration:none;color:inherit;transition:.15s"
+           onmouseover="this.style.background='#FAEEDA'" onmouseout="this.style.background='#fffbf0'">
+          <i class="ti ti-certificate" style="font-size:24px;color:#BA7517"></i>
+          <div>
+            <div style="font-weight:600;font-size:14px"><?= h($cert['course_titre']) ?></div>
+            <div style="font-size:11px;color:var(--text-muted)">Obtenu le <?= date('d/m/Y', strtotime($cert['delivre_le'])) ?></div>
+          </div>
+          <i class="ti ti-download" style="margin-left:8px;color:#BA7517"></i>
+        </a>
+        <?php endforeach; ?>
+      </div>
+    </section>
+    <?php endif; ?>
 
     <!-- Mes modules inscrits -->
     <?php if (!empty($mesModules)): ?>

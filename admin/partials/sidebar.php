@@ -48,10 +48,22 @@ function navItem(string $href, string $icon, string $label, string $current): st
     </a>
     <?php endif; ?>
 
+    <p class="sidebar-section-label">Quiz & Évaluations</p>
+    <?= navItem('quizzes.php',        'ti-help-circle',      'Quiz',               $currentPage) ?>
+    <?= navItem('quiz_add.php',       'ti-circle-plus',      'Ajouter un quiz',    $currentPage) ?>
+
+    <p class="sidebar-section-label">Paiements</p>
+    <?= navItem('payments.php',       'ti-credit-card',      'Paiements',          $currentPage) ?>
+
+    <p class="sidebar-section-label">Bibliothèque</p>
+    <?= navItem('library.php',        'ti-library',          'Ressources',         $currentPage) ?>
+    <?= navItem('library_add.php',    'ti-file-plus',        'Ajouter ressource',  $currentPage) ?>
+
     <p class="sidebar-section-label">Communauté</p>
     <?= navItem('users.php',          'ti-users',            'Utilisateurs',       $currentPage) ?>
 
-    <p class="sidebar-section-label">Site</p>
+    <p class="sidebar-section-label">Statistiques & Site</p>
+    <?= navItem('stats.php',          'ti-chart-bar',        'Statistiques',       $currentPage) ?>
     <?= navItem('slides.php',         'ti-photo',            'Slides accueil',     $currentPage) ?>
     <?= navItem('slide_add.php',      'ti-photo-plus',       'Ajouter slide',      $currentPage) ?>
   </nav>
