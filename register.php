@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $pdo->prepare('SELECT * FROM users WHERE id = ?');
         $user->execute([$userId]);
         connecterUtilisateur($user->fetch());
-        redirect(SITE_URL . '/pricing.php', 'Bienvenue, ' . $vals['prenom'] . ' ! Ton compte est créé. Choisis maintenant ton parcours.', 'success');
+        redirect(SITE_URL . '/payment.php', 'Bienvenue, ' . $vals['prenom'] . ' ! Ton compte est créé. Choisis maintenant ton parcours.', 'success');
     }
 }
 ?>

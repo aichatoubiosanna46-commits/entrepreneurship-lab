@@ -5,14 +5,16 @@ require_once __DIR__ . '/includes/functions.php';
 
 $pdo = getPDO();
 
-// Modules inscrits (vue connectée uniquement)
+// Formations inscrites (vue connectée uniquement)
 $mesModules = [];
 if (estConnecte()) {
     $mesMods = $pdo->prepare(
         'SELECT m.*, c.nom as categorie, c.icone as cat_icone, c.couleur as cat_couleur,
-                (SELECT COUNT(*) FROM lecons l WHERE l.module_id = m.id AND l.actif = 1) as nb_lecons
-         FROM inscriptions i
-         JOIN modules m ON m.id = i.module_id
+                (SELECT COUNT(*) FROM sequences s
+                 JOIN modules mo ON mo.id = s.module_id
+                 WHERE mo.course_id = m.id AND s.actif = 1) as nb_lecons
+         FROM enrollments i
+         JOIN courses m ON m.id = i.course_id
          JOIN categories c ON c.id = m.category_id
          WHERE i.user_id = ? AND i.statut = "actif"
          ORDER BY i.created_at DESC'
@@ -662,7 +664,7 @@ $pageTitle = 'Accueil';
   <div class="sec-title">Modules en cours</div>
   <div class="modules-grid">
     <?php foreach ($mesModules as $m): ?>
-    <?php $pct = progression($_SESSION['user_id'], $m['id']); ?>
+    <?php $pct = progressionCours($_SESSION['user_id'], $m['id']); ?>
     <a href="<?= SITE_URL ?>/module.php?slug=<?= h($m['slug']) ?>" class="module-card">
       <div class="module-thumb">
         <?php if ($m['miniature']): ?>
@@ -879,8 +881,6 @@ $pageTitle = 'Accueil';
     <p>Fait avec ❤ pour les étudiants</p>
   </div>
 </footer>
-
-<?php include __DIR__ . '/includes/footer.php'; ?>
 
 <script>
 /* ============================================================

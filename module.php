@@ -16,7 +16,7 @@ $stmt = $pdo->prepare(
 );
 $stmt->execute([$slug]);
 $course = $stmt->fetch();
-if (!$course) { http_response_code(404); include __DIR__ . '/404.php'; exit; }
+if (!$course) { http_response_code(404); echo '<p style="font-family:sans-serif;text-align:center;padding:60px">Formation introuvable. <a href="'.SITE_URL.'/search.php">Retour aux formations</a></p>'; exit; }
 
 // Vérifier inscription
 $inscrit   = false;

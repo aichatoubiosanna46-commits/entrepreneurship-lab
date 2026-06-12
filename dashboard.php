@@ -119,7 +119,6 @@ $pageTitle = 'Mon espace';
     foreach ($mesModules as $mm) {
         if (progressionCours($_SESSION['user_id'], $mm['id']) === 100) $completedCount++;
     }
-    $nbCerts = (int)$pdo->prepare('SELECT COUNT(*) FROM certificates WHERE user_id = ?')->execute([$_SESSION['user_id']]) ? $pdo->prepare('SELECT COUNT(*) FROM certificates WHERE user_id = ?') : 0;
     $certStmt = $pdo->prepare('SELECT COUNT(*) FROM certificates WHERE user_id = ?');
     $certStmt->execute([$_SESSION['user_id']]);
     $nbCerts = (int)$certStmt->fetchColumn();

@@ -48,21 +48,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $slugBase = slugUnique($pdo, 'courses', 'slug', slug($titre));
         $stmt = $pdo->prepare(
             'INSERT INTO courses
-             (category_id, titre, sous_titre, slug, description, miniature, video_intro,
-              niveau, langue, type, tarif, prix, duree_heures, certificat, quiz_final, note_min_certificat,
-              actif, statut, date_publication, ordre, created_by)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,?)'
+             (category_id, titre, slug, description, miniature, video_intro,
+              niveau, type, tarif, prix, duree_heures, certificat,
+              actif, statut, ordre, created_by)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,?)'
         );
         $stmt->execute([
-            $category_id, $titre, $sous_titre ?: null, $slugBase, $description,
+            $category_id, $titre, $slugBase, $description ?: null,
             $miniature, $video_intro ?: null,
-            $niveau, $langue,
-            $type, $tarif,
+            $niveau, $type, $tarif,
             $type === 'gratuit' ? 0 : $prix,
             $duree_heures ?: null,
-            $certificat, $quiz_final, $note_min,
-            $actif, $statut,
-            $date_publication ?: null,
+            $certificat, $actif, $statut,
             $_SESSION['admin_id']
         ]);
         $newId = $pdo->lastInsertId();
