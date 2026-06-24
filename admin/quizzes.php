@@ -5,8 +5,6 @@ require_once __DIR__ . '/../includes/functions.php';
 reqAdmin();
 $pdo = getPDO();
 
-
-<?php
 // Reset tentatives
 if (isset($_GET['reset_attempts'])) {
     $qzId = (int)$_GET['reset_attempts'];

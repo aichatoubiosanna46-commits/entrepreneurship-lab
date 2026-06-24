@@ -45,7 +45,7 @@ if ($userId && !empty($course['tag_requis_id'] ?? null)) {
         http_response_code(403);
         echo '<div style="font-family:sans-serif;text-align:center;padding:80px">
             <h2>Accès restreint</h2>
-            <p>Vous n'avez pas les droits nécessaires pour accéder à cette formation.</p>
+            <p>Vous n\'avez pas les droits nécessaires pour accéder à cette formation.</p>
             <a href="' . SITE_URL . '/catalogue.php">Retour au catalogue</a>
         </div>';
         exit;

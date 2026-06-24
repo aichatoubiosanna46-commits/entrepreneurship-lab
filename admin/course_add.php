@@ -2,7 +2,7 @@
 // admin/course_add.php — Création d'un cours (version complète)
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo        = getPDO();
 $categories = $pdo->query('SELECT * FROM categories ORDER BY nom')->fetchAll();
@@ -50,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'INSERT INTO courses
              (category_id, titre, slug, description, miniature, video_intro,
               niveau, type, tarif, prix, duree_heures, certificat,
-              actif, statut, ordre, created_by)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,?)'
+              actif, statut, ordre, created_by, formateur_id)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,?,?)'
         );
         $stmt->execute([
             $category_id, $titre, $slugBase, $description ?: null,
@@ -60,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $type === 'gratuit' ? 0 : $prix,
             $duree_heures ?: null,
             $certificat, $actif, $statut,
-            $_SESSION['admin_id']
+            $_SESSION['admin_id'] ?? null,
+            estAdmin() ? null : $_SESSION['user_id']
         ]);
         $newId = $pdo->lastInsertId();
         redirect(

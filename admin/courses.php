@@ -2,17 +2,19 @@
 // admin/courses.php — Liste des cours
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo = getPDO();
-$courses = $pdo->query(
-    'SELECT c.*, cat.nom as categorie,
+$sql = 'SELECT c.*, cat.nom as categorie,
             (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = c.id) as nb_inscrits,
             (SELECT COUNT(*) FROM modules m WHERE m.course_id = c.id) as nb_modules
      FROM courses c
-     JOIN categories cat ON cat.id = c.category_id
-     ORDER BY c.created_at DESC'
-)->fetchAll();
+     JOIN categories cat ON cat.id = c.category_id';
+if (!estAdmin()) {
+    $sql .= ' WHERE c.formateur_id = ' . (int)$_SESSION['user_id'];
+}
+$sql .= ' ORDER BY c.created_at DESC';
+$courses = $pdo->query($sql)->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -32,9 +34,11 @@ $courses = $pdo->query(
       <h1 class="admin-page-title">Cours</h1>
       <p class="admin-page-sub"><?= count($courses) ?> cours au total</p>
     </div>
+    <?php if (estAdmin()): ?>
     <a href="<?= SITE_URL ?>/admin/course_import.php" class="btn-outline btn-sm">
       <i class="ti ti-file-import"></i> Importer
     </a>
+    <?php endif; ?>
     <a href="<?= SITE_URL ?>/admin/course_add.php" class="btn-primary btn-sm">
       <i class="ti ti-plus"></i> Nouveau cours
     </a>
@@ -119,6 +123,7 @@ $courses = $pdo->query(
               <a href="<?= SITE_URL ?>/admin/course_edit.php?id=<?= $c['id'] ?>" class="btn-icon" title="Modifier">
                 <i class="ti ti-edit"></i>
               </a>
+              <?php if (estAdmin()): ?>
               <a href="<?= SITE_URL ?>/admin/course_export.php?course_id=<?= $c['id'] ?>"
                  class="btn-icon" title="Exporter en JSON">
                 <i class="ti ti-file-export"></i>
@@ -128,6 +133,7 @@ $courses = $pdo->query(
                  onclick="return confirm('Dupliquer ce cours ?')">
                 <i class="ti ti-copy"></i>
               </a>
+              <?php endif; ?>
               <a href="<?= SITE_URL ?>/admin/course_delete.php?id=<?= $c['id'] ?>&csrf=<?= csrfToken() ?>"
                  class="btn-icon btn-icon-danger"
                  onclick="return confirm('Supprimer ce cours et tout son contenu ?')" title="Supprimer">

@@ -2,11 +2,12 @@
 // admin/course_edit.php — Modifier un cours existant
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo = getPDO();
 $id  = (int)($_GET['id'] ?? 0);
 if (!$id) { redirect(SITE_URL . '/admin/courses.php', 'Cours introuvable.', 'error'); }
+if (!courseAppartientInstructeur($id)) { redirect(SITE_URL . '/admin/courses.php', 'Accès refusé : ce cours ne vous appartient pas.', 'error'); }
 
 $course = $pdo->prepare('SELECT * FROM courses WHERE id = ?');
 $course->execute([$id]);

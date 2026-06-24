@@ -43,6 +43,10 @@ define('MAX_LOGIN_ATTEMPTS', 5);
 define('LOGIN_LOCKOUT_MINUTES', 15);
 define('SESSION_SINGLE', true); // une seule session par compte
 
+// Cron — secret pour appeler /cron/check_inactive.php depuis un service externe
+// (ex. cron-job.org) : .../cron/check_inactive.php?token=CRON_SECRET
+define('CRON_SECRET', 'changez-ce-secret-cron-en-production');
+
 function getPDO(): PDO {
     static $pdo = null;
     if ($pdo === null) {

@@ -2,11 +2,12 @@
 // admin/sequence_edit.php — Modification d'une séquence
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo      = getPDO();
 $id       = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
 $moduleId = (int)($_GET['module_id'] ?? $_POST['module_id'] ?? 0);
+if (!sequenceAppartientInstructeur($id)) { redirect(SITE_URL . '/admin/courses.php', 'Accès refusé : cette séquence ne vous appartient pas.', 'error'); }
 
 $stmt = $pdo->prepare(
     'SELECT s.*, m.titre as module_titre, m.course_id,

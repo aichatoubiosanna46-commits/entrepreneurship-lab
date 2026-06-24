@@ -692,3 +692,102 @@ function notifierWhatsAppCoaching(string $telephone, string $prenom, string $dat
     envoyerWhatsApp($telephone, $msg);
 }
 
+// ============================================================
+//  RÔLE INSTRUCTEUR — vérification de propriété d'un cours
+// ============================================================
+
+/**
+ * Un instructeur ne peut gérer que les cours dont il est le formateur.
+ * Les admins ont toujours accès à tout.
+ */
+function courseAppartientInstructeur(int $courseId): bool {
+    if (estAdmin()) return true;
+    if (!$courseId) return false;
+    $pdo  = getPDO();
+    $stmt = $pdo->prepare('SELECT 1 FROM courses WHERE id = ? AND formateur_id = ?');
+    $stmt->execute([$courseId, $_SESSION['user_id'] ?? 0]);
+    return (bool)$stmt->fetchColumn();
+}
+
+/**
+ * Vérifie la propriété d'un cours à partir d'un module_id.
+ */
+function moduleAppartientInstructeur(int $moduleId): bool {
+    if (estAdmin()) return true;
+    $pdo  = getPDO();
+    $stmt = $pdo->prepare('SELECT course_id FROM modules WHERE id = ?');
+    $stmt->execute([$moduleId]);
+    $courseId = (int)($stmt->fetchColumn() ?: 0);
+    return courseAppartientInstructeur($courseId);
+}
+
+/**
+ * Vérifie la propriété d'un cours à partir d'un sequence_id.
+ */
+function sequenceAppartientInstructeur(int $sequenceId): bool {
+    if (estAdmin()) return true;
+    $pdo  = getPDO();
+    $stmt = $pdo->prepare('SELECT m.course_id FROM sequences s JOIN modules m ON m.id = s.module_id WHERE s.id = ?');
+    $stmt->execute([$sequenceId]);
+    $courseId = (int)($stmt->fetchColumn() ?: 0);
+    return courseAppartientInstructeur($courseId);
+}
+
+/**
+ * Vérifie la propriété d'un cours à partir d'un quiz_id.
+ */
+function quizAppartientInstructeur(int $quizId): bool {
+    if (estAdmin()) return true;
+    $pdo  = getPDO();
+    $stmt = $pdo->prepare('SELECT m.course_id FROM quizzes q JOIN sequences s ON s.id = q.sequence_id JOIN modules m ON m.id = s.module_id WHERE q.id = ?');
+    $stmt->execute([$quizId]);
+    $courseId = (int)($stmt->fetchColumn() ?: 0);
+    return courseAppartientInstructeur($courseId);
+}
+
+// ============================================================
+//  AUTOMATIONS — RELANCE D'INACTIVITÉ (inactive_7days / inactive_30days)
+//  Pas de vrai cron sur InfinityFree : ce check est appelé soit par
+//  /cron/check_inactive.php (via un service externe type cron-job.org),
+//  soit opportunistement à chaque requête (pseudo-cron, voir includes/auth.php).
+// ============================================================
+function runInactivityCheck(): void {
+    $pdo = getPDO();
+
+    $stmt = $pdo->prepare(
+        "SELECT id FROM users
+         WHERE actif = 1
+           AND last_seen <= DATE_SUB(NOW(), INTERVAL 7 DAY)
+           AND (inactive7_notified_at IS NULL OR inactive7_notified_at < last_seen)"
+    );
+    $stmt->execute();
+    foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $userId) {
+        triggerAutomation('inactive_7days', (int)$userId);
+        $pdo->prepare('UPDATE users SET inactive7_notified_at = NOW() WHERE id = ?')->execute([$userId]);
+    }
+
+    $stmt = $pdo->prepare(
+        "SELECT id FROM users
+         WHERE actif = 1
+           AND last_seen <= DATE_SUB(NOW(), INTERVAL 30 DAY)
+           AND (inactive30_notified_at IS NULL OR inactive30_notified_at < last_seen)"
+    );
+    $stmt->execute();
+    foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $userId) {
+        triggerAutomation('inactive_30days', (int)$userId);
+        $pdo->prepare('UPDATE users SET inactive30_notified_at = NOW() WHERE id = ?')->execute([$userId]);
+    }
+}
+
+/**
+ * Pseudo-cron : déclenché avec une faible probabilité à chaque requête front,
+ * throttlé pour ne pas tourner plus d'une fois par heure.
+ */
+function maybeRunInactivityCheck(): void {
+    if (mt_rand(1, 200) !== 1) return;
+    $marker = sys_get_temp_dir() . '/elab_inactivity_check.lock';
+    if (is_file($marker) && (time() - filemtime($marker)) < 3600) return;
+    @touch($marker);
+    try { runInactivityCheck(); } catch (Exception $e) { error_log('runInactivityCheck: ' . $e->getMessage()); }
+}
+

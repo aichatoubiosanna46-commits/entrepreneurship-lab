@@ -328,6 +328,11 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #D97706 !important; }
         <h1 class="dash-title">Mon tableau de bord</h1>
         <p class="dash-sub">Bonjour <?= h($user['prenom']) ?>, bienvenue dans ton espace d'apprentissage.</p>
       </div>
+      <?php if (estInstructeur()): ?>
+      <a href="<?= SITE_URL ?>/admin/courses.php" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#534AB7;color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">
+        <i class="ti ti-school"></i> Espace instructeur
+      </a>
+      <?php endif; ?>
     </div>
 
     <?php

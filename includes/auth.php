@@ -151,6 +151,10 @@ function estConnecte(): bool {
                 $pdo->prepare('UPDATE users SET last_seen=NOW() WHERE id=?')->execute([$_SESSION['user_id']]);
                 $_SESSION['last_seen_update'] = time();
             }
+            // Pseudo-cron : relance des utilisateurs inactifs (pas de vrai cron sur InfinityFree)
+            if (function_exists('maybeRunInactivityCheck')) {
+                maybeRunInactivityCheck();
+            }
         } catch (Exception $e) {}
     }
     if (!isset($_SESSION['user_id'])) return false;
@@ -230,6 +234,31 @@ function estCoach(): bool {
  */
 function reqCoach(): void {
     if (!estCoach() && !estAdmin()) {
+        header('Location: ' . SITE_URL . '/dashboard.php?error=acces_refuse');
+        exit;
+    }
+}
+
+/**
+ * Vérifie si l'utilisateur est instructeur (ou admin)
+ */
+function estInstructeur(): bool {
+    if (estAdmin()) return true;
+    if (!estConnecte()) return false;
+    try {
+        $pdo  = getPDO();
+        $stmt = $pdo->prepare('SELECT role FROM users WHERE id=? AND actif=1');
+        $stmt->execute([$_SESSION['user_id']]);
+        $row = $stmt->fetch();
+        return ($row['role'] ?? '') === 'instructeur';
+    } catch (Exception $e) { return false; }
+}
+
+/**
+ * Redirige si ni instructeur ni admin
+ */
+function reqInstructeurOuAdmin(): void {
+    if (!estAdmin() && !estInstructeur()) {
         header('Location: ' . SITE_URL . '/dashboard.php?error=acces_refuse');
         exit;
     }

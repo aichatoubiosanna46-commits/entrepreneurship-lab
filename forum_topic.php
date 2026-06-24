@@ -5,8 +5,6 @@
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 
-
-<?php
 // AJAX réaction
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'react') {
     header('Content-Type: application/json');

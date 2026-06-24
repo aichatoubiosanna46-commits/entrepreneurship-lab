@@ -2,10 +2,11 @@
 // admin/sequence_add.php — Créer une séquence avec éditeur riche
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo      = getPDO();
 $moduleId = (int)($_GET['module_id'] ?? $_POST['module_id'] ?? 0);
+if ($moduleId && !moduleAppartientInstructeur($moduleId)) { redirect(SITE_URL . '/admin/courses.php', 'Accès refusé : ce module ne vous appartient pas.', 'error'); }
 $module   = $moduleId ? $pdo->query("SELECT m.*, c.titre as cours FROM modules m JOIN courses c ON c.id=m.course_id WHERE m.id=$moduleId LIMIT 1")->fetch() : null;
 
 $erreur = '';

@@ -2,11 +2,12 @@
 // admin/quiz_edit.php — Modifier un quiz et ses questions/réponses
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 $pdo = getPDO();
 
 $quizId = (int)($_GET['id'] ?? 0);
 if (!$quizId) { redirect(SITE_URL . '/admin/quizzes.php', 'Quiz introuvable.', 'error'); }
+if (!quizAppartientInstructeur($quizId)) { redirect(SITE_URL . '/admin/courses.php', 'Accès refusé : ce quiz ne vous appartient pas.', 'error'); }
 
 $quiz = $pdo->prepare('SELECT * FROM quizzes WHERE id = ?');
 $quiz->execute([$quizId]);
@@ -25,9 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_quiz') {
     verifierCSRF();
     $titre    = trim($_POST['titre'] ?? '');
-    $scoreMin = max(0, min(100, (int)($_POST['score_min'] ?? 70)));
+    $scoreMin   = max(0, min(100, (int)($_POST['score_min'] ?? 70)));
+    $bankCat    = trim($_POST['bank_categorie'] ?? '') ?: null;
+    $bankNb     = max(0, (int)($_POST['bank_nb_questions'] ?? 0));
     if ($titre) {
-        $pdo->prepare('UPDATE quizzes SET titre=?, score_min=? WHERE id=?')->execute([$titre, $scoreMin, $quizId]);
+        $pdo->prepare('UPDATE quizzes SET titre=?, score_min=?, bank_categorie=?, bank_nb_questions=? WHERE id=?')
+            ->execute([$titre, $scoreMin, $bankCat, $bankNb, $quizId]);
     }
     redirect(SITE_URL . '/admin/quiz_edit.php?id=' . $quizId, 'Quiz mis à jour.', 'success');
 }
@@ -67,6 +71,8 @@ unset($q);
 $stats = $pdo->prepare('SELECT COUNT(*) as total, SUM(reussi) as reussis, ROUND(AVG(score),1) as moy FROM quiz_results WHERE quiz_id = ?');
 $stats->execute([$quizId]);
 $stats = $stats->fetch();
+
+$bankCategories = $pdo->query("SELECT DISTINCT categorie FROM question_bank WHERE categorie IS NOT NULL AND categorie <> '' ORDER BY categorie")->fetchAll(PDO::FETCH_COLUMN);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -105,6 +111,21 @@ $stats = $stats->fetch();
           <input type="hidden" name="action" value="save_quiz">
           <div class="form-field" style="margin-bottom:12px"><label>Titre</label><input type="text" name="titre" value="<?= h($quiz['titre']) ?>" required></div>
           <div class="form-field" style="margin-bottom:12px"><label>Score minimum (%)</label><input type="number" name="score_min" min="0" max="100" value="<?= $quiz['score_min'] ?>"></div>
+          <hr style="border:none;border-top:1px solid #f3f4f6;margin:16px 0">
+          <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px">Tirage aléatoire depuis la banque de questions (en plus des questions fixes ci-dessous)</p>
+          <div class="form-field" style="margin-bottom:12px">
+            <label>Catégorie de la banque</label>
+            <select name="bank_categorie">
+              <option value="">— Toutes catégories —</option>
+              <?php foreach ($bankCategories as $cat): ?>
+                <option value="<?= h($cat) ?>" <?= $quiz['bank_categorie'] === $cat ? 'selected' : '' ?>><?= h($cat) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="form-field" style="margin-bottom:12px">
+            <label>Nombre de questions tirées (0 = désactivé)</label>
+            <input type="number" name="bank_nb_questions" min="0" value="<?= (int)$quiz['bank_nb_questions'] ?>">
+          </div>
           <button type="submit" class="btn-primary btn-sm"><i class="ti ti-check"></i> Sauvegarder</button>
         </form>
       </div>

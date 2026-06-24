@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo  = getPDO();
 $id   = (int)($_GET['id'] ?? 0);
@@ -9,6 +9,9 @@ $token = $_GET['csrf'] ?? '';
 
 if (!$id || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
     redirect(SITE_URL . '/admin/courses.php', 'Action non autorisée.', 'error');
+}
+if (!courseAppartientInstructeur($id)) {
+    redirect(SITE_URL . '/admin/courses.php', 'Accès refusé : ce cours ne vous appartient pas.', 'error');
 }
 
 $stmt = $pdo->prepare('SELECT titre FROM courses WHERE id = ?');

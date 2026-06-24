@@ -35,13 +35,12 @@ if ($userId && $prevSeq) {
         // Séquence précédente non complétée → redirection forcée
         redirect(
             SITE_URL . '/sequence.php?id=' . $prevSeq['id'],
-            'Tu dois compléter la leçon précédente avant d'accéder à celle-ci.',
+            'Tu dois compléter la leçon précédente avant d\'accéder à celle-ci.',
             'info'
         );
     }
 }
 
-<?php
 // Vérification mot de passe séquence
 if (!empty($seq['mot_de_passe'])) {
     $sessionKey = 'seq_unlocked_' . $seq['id'];

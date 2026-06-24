@@ -2,10 +2,11 @@
 // admin/quiz_add.php — Créer un quiz lié à une séquence
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo    = getPDO();
-$seqId  = (int)($_GET['sequence_id'] ?? 0);
+$seqId  = (int)($_GET['sequence_id'] ?? $_POST['sequence_id'] ?? 0);
+if ($seqId && !sequenceAppartientInstructeur($seqId)) { redirect(SITE_URL . '/admin/courses.php', 'Accès refusé : cette séquence ne vous appartient pas.', 'error'); }
 $erreur = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -28,6 +28,36 @@ foreach ($questions as &$q) {
 }
 unset($q);
 
+// Tirage aléatoire depuis la banque de questions — figé en session pour la durée de la tentative
+if ((int)($quiz['bank_nb_questions'] ?? 0) > 0) {
+    $sessKey = 'quiz_bank_' . $quizId;
+    if (!empty($_SESSION[$sessKey])) {
+        $ids   = $_SESSION[$sessKey];
+        $place = implode(',', array_fill(0, count($ids), '?'));
+        $bStmt = $pdo->prepare("SELECT * FROM question_bank WHERE id IN ($place)");
+        $bStmt->execute($ids);
+        $byId  = [];
+        foreach ($bStmt->fetchAll() as $r) { $byId[$r['id']] = $r; }
+        $bankRows = array_values(array_filter(array_map(fn($id) => $byId[$id] ?? null, $ids)));
+    } else {
+        if (!empty($quiz['bank_categorie'])) {
+            $bStmt = $pdo->prepare('SELECT * FROM question_bank WHERE categorie = ? ORDER BY RAND() LIMIT ' . (int)$quiz['bank_nb_questions']);
+            $bStmt->execute([$quiz['bank_categorie']]);
+        } else {
+            $bStmt = $pdo->query('SELECT * FROM question_bank ORDER BY RAND() LIMIT ' . (int)$quiz['bank_nb_questions']);
+        }
+        $bankRows = $bStmt->fetchAll();
+        $_SESSION[$sessKey] = array_column($bankRows, 'id');
+    }
+    foreach ($bankRows as $br) {
+        $aStmt = $pdo->prepare('SELECT * FROM question_bank_answers WHERE question_id = ?');
+        $aStmt->execute([$br['id']]);
+        $br['answers'] = $aStmt->fetchAll();
+        $br['id'] = 'qb' . $br['id'];
+        $questions[] = $br;
+    }
+}
+
 // Soumission finale (mode non-interactif fallback)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'submit_final') {
     verifierCSRF();
@@ -66,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'submi
         addXP($userId, 'quiz_reussi', $quiz['points_xp'] ?? 20, 'Quiz réussi : ' . $quiz['titre']);
         checkAndAwardBadges($userId);
     }
+    unset($_SESSION['quiz_bank_' . $quizId]);
     redirect(SITE_URL . '/quiz_result.php?quiz_id=' . $quizId . '&score=' . $pct . '&reussi=' . ($reussi ? 1 : 0));
 }
 ?>

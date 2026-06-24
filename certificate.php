@@ -139,7 +139,7 @@ if (!$cert) {
 
 <?php if ($certificate ?? null): ?>
 <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=<?= urlencode(SITE_URL . '/verify_certificate.php?code=' . $certificate['code_unique']) ?>&title=<?= urlencode('Certificat ' . $course['titre']) ?>&summary=<?= urlencode('J'ai obtenu mon certificat ' . $course['titre'] . ' sur Ariziki EntrepreneurshipLab, certifié par l'Université de Parakou.') ?>"
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=<?= urlencode(SITE_URL . '/verify_certificate.php?code=' . $certificate['code_unique']) ?>&title=<?= urlencode('Certificat ' . $course['titre']) ?>&summary=<?= urlencode('J\'ai obtenu mon certificat ' . $course['titre'] . ' sur Ariziki EntrepreneurshipLab, certifié par l\'Université de Parakou.') ?>"
      target="_blank"
      style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#0A66C2;color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none">
     <i class="ti ti-brand-linkedin"></i> Partager sur LinkedIn
