@@ -27,13 +27,14 @@ if (isset($_GET['delete'])) {
 
 $quizzes = $pdo->query(
     'SELECT qz.*,
-            m.titre as module_titre,
+            s.titre as module_titre,
             c.titre as course_titre,
             (SELECT COUNT(*) FROM questions q WHERE q.quiz_id = qz.id) as nb_questions,
             (SELECT COUNT(*) FROM quiz_results qr WHERE qr.quiz_id = qz.id) as nb_resultats
      FROM quizzes qz
-     LEFT JOIN modules m ON m.id = qz.module_id
-     LEFT JOIN courses c ON c.id = m.course_id
+     LEFT JOIN sequences s ON s.id = qz.sequence_id
+     LEFT JOIN modules mo ON mo.id = s.module_id
+     LEFT JOIN courses c ON c.id = mo.course_id
      ORDER BY qz.created_at DESC'
 )->fetchAll();
 

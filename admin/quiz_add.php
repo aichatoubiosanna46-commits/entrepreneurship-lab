@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tentMax    = (int)($_POST['tentatives_max'] ?? 0);
         $aleatoire  = isset($_POST['ordre_aleatoire']) ? 1 : 0;
         $pdo->prepare(
-            'INSERT INTO quizzes (sequence_id, module_id, titre, description, score_min, actif, duree_minutes, tentatives_max, ordre_aleatoire) VALUES (?,NULL,?,?,?,?,?,?,?)'
+            'INSERT INTO quizzes (sequence_id, titre, description, score_min, actif, duree_minutes, tentatives_max, ordre_aleatoire) VALUES (?,?,?,?,?,?,?,?)'
         )->execute([$seqIdPost ?: null, $titre, $description, $seuil, $actif, $dureeMin ?: null, $tentMax ?: null, $aleatoire]);
         $quizId = (int)$pdo->lastInsertId();
 

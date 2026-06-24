@@ -11,7 +11,7 @@ $quizId = (int)($_GET['id'] ?? 0);
 if (!$quizId) redirect(SITE_URL . '/dashboard.php');
 
 // Quiz
-$quiz = $pdo->prepare('SELECT q.*, c.id as course_id, c.slug as course_slug FROM quizzes q LEFT JOIN modules m ON m.id = q.module_id LEFT JOIN courses c ON c.id = m.course_id WHERE q.id = ? AND q.actif = 1 LIMIT 1');
+$quiz = $pdo->prepare('SELECT q.*, c.id as course_id, c.slug as course_slug FROM quizzes q LEFT JOIN sequences s ON s.id = q.sequence_id LEFT JOIN modules m ON m.id = s.module_id LEFT JOIN courses c ON c.id = m.course_id WHERE q.id = ? AND q.actif = 1 LIMIT 1');
 $quiz->execute([$quizId]);
 $quiz = $quiz->fetch();
 if (!$quiz) redirect(SITE_URL . '/dashboard.php');
