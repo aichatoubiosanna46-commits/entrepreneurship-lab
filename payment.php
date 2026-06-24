@@ -28,8 +28,8 @@ $plans = [
         'nom'      => 'Essentiel',
         'prix'     => 5000,
         'emoji'    => '⭐',
-        'couleur'  => '#D97706',
-        'bg'       => '#FFFBEB',
+        'couleur'  => '#C04A22',
+        'bg'       => '#F5F0E8',
         'desc'     => 'Formations essentielles pour démarrer ton business',
         'features' => ['Formations Essentiel','Ressources PDF de base','Certificats de complétion','Support prioritaire'],
     ],
@@ -37,8 +37,8 @@ $plans = [
         'nom'      => 'Business Plan',
         'prix'     => 15000,
         'emoji'    => '📊',
-        'couleur'  => '#F59E0B',
-        'bg'       => '#FEF3C7',
+        'couleur'  => '#D85A30',
+        'bg'       => '#FBE3DA',
         'desc'     => 'Accès complet aux formations avancées + coaching',
         'features' => ['Tout Essentiel inclus','Toutes les formations','Bibliothèque ressources complète','Coaching groupe mensuel'],
         'popular'  => true,
@@ -47,8 +47,8 @@ $plans = [
         'nom'      => 'Lancement',
         'prix'     => 25000,
         'emoji'    => '🚀',
-        'couleur'  => '#EF4444',
-        'bg'       => '#FEF2F2',
+        'couleur'  => '#085041',
+        'bg'       => '#F0F9F5',
         'desc'     => 'Accompagnement VIP pour lancer ton activité',
         'features' => ['Tout Business Plan inclus','Bibliothèque complète','Coaching 1-1 mensuel','Accès anticipé nouveautés'],
     ],
@@ -202,24 +202,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
 <style>
-.pay-page { background:#FFFBEB; min-height:100vh; padding:0 0 80px; }
-.pay-hero { background:linear-gradient(135deg,#1C1917 0%,#292524 100%); padding:52px 24px 40px; text-align:center; }
+.pay-page { background:#F5F0E8; min-height:100vh; padding:0 0 80px; }
+.pay-hero { background:linear-gradient(135deg,#1A1A18 0%,#292524 100%); padding:52px 24px 40px; text-align:center; }
 .pay-hero h1 { font-size:32px; font-weight:800; color:#fff; margin-bottom:8px; }
-.pay-hero h1 em { font-style:normal; color:#F59E0B; }
+.pay-hero h1 em { font-style:normal; color:#D85A30; }
 .pay-hero p { font-size:14px; color:rgba(255,255,255,.6); margin-bottom:20px; }
 .pay-badges { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
-.pay-badge-item { display:inline-flex; align-items:center; gap:6px; background:rgba(245,158,11,.15); border:1px solid rgba(245,158,11,.3); border-radius:20px; padding:5px 14px; font-size:11px; color:#F59E0B; font-weight:600; }
+.pay-badge-item { display:inline-flex; align-items:center; gap:6px; background:rgba(245,158,11,.15); border:1px solid rgba(245,158,11,.3); border-radius:20px; padding:5px 14px; font-size:11px; color:#D85A30; font-weight:600; }
 .pay-wrap { max-width:1080px; margin:0 auto; padding:0 20px; }
 .plans-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin:-28px auto 32px; position:relative; z-index:10; }
 .plan-card { background:#fff; border:1.5px solid #e5e7eb; border-radius:18px; overflow:hidden; transition:transform .2s,box-shadow .2s; display:flex; flex-direction:column; box-shadow:0 4px 16px rgba(0,0,0,.06); }
 .plan-card:hover { transform:translateY(-5px); box-shadow:0 12px 32px rgba(0,0,0,.12); }
-.plan-card.popular { border-color:#F59E0B; box-shadow:0 8px 32px rgba(245,158,11,.2); }
+.plan-card.popular { border-color:#D85A30; box-shadow:0 8px 32px rgba(245,158,11,.2); }
 .plan-header { padding:24px 20px 18px; text-align:center; position:relative; }
-.plan-popular-badge { position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:linear-gradient(90deg,#F59E0B,#EF4444); color:#fff; font-size:10px; font-weight:800; padding:4px 16px; border-radius:0 0 10px 10px; white-space:nowrap; }
+.plan-popular-badge { position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:linear-gradient(90deg,#D85A30,#085041); color:#fff; font-size:10px; font-weight:800; padding:4px 16px; border-radius:0 0 10px 10px; white-space:nowrap; }
 .plan-emoji { font-size:36px; display:block; margin-bottom:10px; }
 .plan-name { font-size:16px; font-weight:800; margin-bottom:6px; }
 .plan-price { margin:10px 0 6px; }
-.plan-price .amount { font-size:34px; font-weight:800; color:#1C1917; line-height:1; }
+.plan-price .amount { font-size:34px; font-weight:800; color:#1A1A18; line-height:1; }
 .plan-price .amount.free { color:#16a34a; font-size:26px; }
 .plan-price .currency { font-size:13px; color:#6b7280; font-weight:500; }
 .plan-desc { font-size:11px; color:#6b7280; line-height:1.6; }
@@ -240,18 +240,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
 .overlay-pay.show { display:flex; }
 .overlay-card { background:#fff; border-radius:20px; padding:40px 32px; max-width:440px; width:90%; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.2); }
 .overlay-emoji { font-size:52px; display:block; margin-bottom:12px; }
-.overlay-card h3 { font-size:22px; font-weight:800; margin:0 0 6px; color:#1C1917; }
+.overlay-card h3 { font-size:22px; font-weight:800; margin:0 0 6px; color:#1A1A18; }
 .overlay-card p { font-size:13px; color:#6b7280; margin:0 0 16px; line-height:1.6; }
-.overlay-amount { font-size:38px; font-weight:800; background:linear-gradient(135deg,#F59E0B,#EF4444); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px; }
+.overlay-amount { font-size:38px; font-weight:800; background:linear-gradient(135deg,#D85A30,#085041); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px; }
 .overlay-amount-original { font-size:14px; color:#9ca3af; text-decoration:line-through; margin-bottom:16px; display:none; }
 .promo-wrap { display:flex; gap:8px; margin-bottom:16px; }
 .promo-input { flex:1; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:13px; font-family:inherit; text-transform:uppercase; }
-.promo-input:focus { outline:none; border-color:#F59E0B; }
-.promo-btn { padding:10px 14px; background:#1C1917; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.promo-input:focus { outline:none; border-color:#D85A30; }
+.promo-btn { padding:10px 14px; background:#1A1A18; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
 .promo-msg { font-size:12px; margin-bottom:12px; padding:8px 12px; border-radius:8px; display:none; }
 .promo-msg.ok { background:#ECFDF5; color:#15803d; display:block; }
-.promo-msg.ko { background:#fef2f2; color:#dc2626; display:block; }
-.btn-fp { display:block; width:100%; padding:14px; background:linear-gradient(135deg,#F59E0B,#EF4444); color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; margin-bottom:10px; transition:opacity .15s; }
+.promo-msg.ko { background:#F0F9F5; color:#dc2626; display:block; }
+.btn-fp { display:block; width:100%; padding:14px; background:linear-gradient(135deg,#D85A30,#085041); color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; margin-bottom:10px; transition:opacity .15s; }
 .btn-fp:hover { opacity:.9; }
 .btn-cancel-pay { display:block; width:100%; padding:11px; background:transparent; color:#6b7280; border:1.5px solid #e5e7eb; border-radius:12px; font-size:13px; cursor:pointer; }
 .spin { display:inline-block; width:18px; height:18px; border:3px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:8px; }

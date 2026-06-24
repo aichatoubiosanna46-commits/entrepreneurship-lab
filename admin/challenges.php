@@ -57,8 +57,8 @@ $currentPage = 'challenges.php';
       <div style="display:flex;flex-direction:column;gap:12px">
         <?php foreach ($challenges as $ch): ?>
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;gap:14px;align-items:flex-start">
-          <div style="width:42px;height:42px;border-radius:10px;background:<?= $ch['actif'] ? 'var(--amber-light,#FEF3C7)' : '#f3f4f6' ?>;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <i class="ti ti-trophy" style="font-size:20px;color:<?= $ch['actif'] ? '#D97706' : '#9ca3af' ?>"></i>
+          <div style="width:42px;height:42px;border-radius:10px;background:<?= $ch['actif'] ? 'var(--amber-light,#FBE3DA)' : '#f3f4f6' ?>;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="ti ti-trophy" style="font-size:20px;color:<?= $ch['actif'] ? '#C04A22' : '#9ca3af' ?>"></i>
           </div>
           <div style="flex:1">
             <div style="font-weight:700;font-size:14px;margin-bottom:4px"><?= h($ch['titre']) ?></div>

@@ -96,54 +96,54 @@ try {
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/user-dashboard.css">
 <style>
-:root{--amber:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#D97706;--text-muted:#6b7280}
-.user-dash-page{background:#FFFBEB}
+:root{--amber:#D85A30;--amber-light:#FBE3DA;--amber-dark:#C04A22;--text-muted:#6b7280}
+.user-dash-page{background:#F5F0E8}
 .user-dash-layout{display:flex;max-width:1200px;margin:0 auto;padding:28px 20px;gap:24px;align-items:flex-start}
 .user-sidebar{width:220px;flex-shrink:0;background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;position:sticky;top:80px}
-.user-sidebar-profile{padding:24px 16px 16px;text-align:center;background:linear-gradient(135deg,#1C1917,#292524);border-bottom:1px solid rgba(255,255,255,.08)}
-.user-avatar-ring{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;border:3px solid #F59E0B;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.user-sidebar-profile{padding:24px 16px 16px;text-align:center;background:linear-gradient(135deg,#1A1A18,#292524);border-bottom:1px solid rgba(255,255,255,.08)}
+.user-avatar-ring{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;border:3px solid #D85A30;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .user-avatar-ring img{width:100%;height:100%;object-fit:cover}
-.user-avatar-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#F59E0B,#EF4444);color:#fff;font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center}
-.user-sidebar-name{font-size:14px;font-weight:700;color:#FEF3C7}
+.user-avatar-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#D85A30,#085041);color:#fff;font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.user-sidebar-name{font-size:14px;font-weight:700;color:#FBE3DA}
 .user-sidebar-email{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px}
 .user-sidebar-nav{padding:8px 0}
 .user-nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#6b7280;text-decoration:none;transition:background .15s,color .15s;border-left:3px solid transparent}
 .user-nav-item i{font-size:17px;flex-shrink:0}
-.user-nav-item:hover{background:#FFFBEB;color:#D97706}
-.user-nav-item.active{background:#FEF3C7;color:#D97706;font-weight:600;border-left-color:#F59E0B}
+.user-nav-item:hover{background:#F5F0E8;color:#C04A22}
+.user-nav-item.active{background:#FBE3DA;color:#C04A22;font-weight:600;border-left-color:#D85A30}
 .user-sidebar-footer{border-top:1px solid #f3f4f6;padding:6px 0}
 .user-dash-main{flex:1;min-width:0}
 .dash-topbar{margin-bottom:20px}
-.dash-title{font-size:22px;font-weight:800;color:#1C1917;margin-bottom:4px}
+.dash-title{font-size:22px;font-weight:800;color:#1A1A18;margin-bottom:4px}
 
 .profile-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:28px;margin-bottom:20px}
-.profile-card-title{font-size:16px;font-weight:700;color:#1C1917;margin-bottom:20px;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid #f3f4f6}
-.profile-card-title i{color:#F59E0B;font-size:20px}
+.profile-card-title{font-size:16px;font-weight:700;color:#1A1A18;margin-bottom:20px;display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px solid #f3f4f6}
+.profile-card-title i{color:#D85A30;font-size:20px}
 
 .xp-bar-wrap{background:#e5e7eb;border-radius:99px;height:10px;overflow:hidden;margin-top:6px}
-.xp-bar{height:100%;background:linear-gradient(90deg,#F59E0B,#EF4444);border-radius:99px;transition:width .4s}
+.xp-bar{height:100%;background:linear-gradient(90deg,#D85A30,#085041);border-radius:99px;transition:width .4s}
 
 .stats-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .stat-mini{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;text-align:center;position:relative;overflow:hidden}
-.stat-mini::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#F59E0B,#EF4444)}
-.stat-mini-val{font-size:24px;font-weight:800;color:#1C1917}
+.stat-mini::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#D85A30,#085041)}
+.stat-mini-val{font-size:24px;font-weight:800;color:#1A1A18}
 .stat-mini-lbl{font-size:11px;color:#6b7280;margin-top:2px}
 
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.form-group label{font-size:13px;font-weight:600;color:#1C1917}
-.form-group input,.form-group textarea,.form-group select{padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:9px;font-size:13px;font-family:inherit;color:#1C1917;background:#fff;width:100%;transition:border-color .2s}
-.form-group input:focus,.form-group textarea:focus{outline:none;border-color:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.12)}
+.form-group label{font-size:13px;font-weight:600;color:#1A1A18}
+.form-group input,.form-group textarea,.form-group select{padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:9px;font-size:13px;font-family:inherit;color:#1A1A18;background:#fff;width:100%;transition:border-color .2s}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:#D85A30;box-shadow:0 0 0 3px rgba(245,158,11,.12)}
 .form-group textarea{resize:vertical;min-height:80px}
-.btn-save{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#1C1917;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-save{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:linear-gradient(135deg,#D85A30,#C04A22);color:#1A1A18;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
 .alert{display:flex;align-items:flex-start;gap:10px;padding:13px 16px;border-radius:10px;font-size:13px;margin-bottom:16px}
 .alert-success{background:#ECFDF5;color:#15803d;border:1px solid #86efac}
-.alert-error{background:#fef2f2;color:#dc2626;border:1px solid #fca5a5}
+.alert-error{background:#F0F9F5;color:#dc2626;border:1px solid #fca5a5}
 
 .avatar-upload-wrap{display:flex;align-items:center;gap:16px;margin-bottom:20px}
-.avatar-preview{width:72px;height:72px;border-radius:50%;border:3px solid #F59E0B;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#FEF3C7;flex-shrink:0}
+.avatar-preview{width:72px;height:72px;border-radius:50%;border:3px solid #D85A30;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#FBE3DA;flex-shrink:0}
 .avatar-preview img{width:100%;height:100%;object-fit:cover}
-.avatar-preview-placeholder{font-size:26px;font-weight:800;color:#D97706}
+.avatar-preview-placeholder{font-size:26px;font-weight:800;color:#C04A22}
 
 @media(max-width:768px){.user-dash-layout{flex-direction:column}.user-sidebar{width:100%;position:static}.form-row{grid-template-columns:1fr}.stats-mini{grid-template-columns:1fr 1fr}}
 </style>
@@ -189,7 +189,7 @@ try {
       <div class="stat-mini"><div class="stat-mini-val"><?= $nbCerts ?></div><div class="stat-mini-lbl">Certificats</div></div>
       <div class="stat-mini"><div class="stat-mini-val"><?= $nbBadges ?></div><div class="stat-mini-lbl">Badges</div></div>
       <div class="stat-mini">
-        <div class="stat-mini-val" style="color:#F59E0B"><?= number_format($xpTotal) ?></div>
+        <div class="stat-mini-val" style="color:#D85A30"><?= number_format($xpTotal) ?></div>
         <div class="stat-mini-lbl">XP gagnés</div>
         <div class="xp-bar-wrap"><div class="xp-bar" style="width:<?= min(100, ($xpTotal % 500) / 5) ?>%"></div></div>
       </div>
@@ -215,7 +215,7 @@ try {
             <?php endif; ?>
           </div>
           <div>
-            <label for="avatarInput" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#FEF3C7;border:1px solid #fde68a;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:#D97706">
+            <label for="avatarInput" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#FBE3DA;border:1px solid #fde68a;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:#C04A22">
               <i class="ti ti-camera"></i> Changer la photo
             </label>
             <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display:none" onchange="previewAvatar(this)">
@@ -233,7 +233,7 @@ try {
         </div>
 
         <div style="border-top:1px solid #f3f4f6;padding-top:16px;margin-top:4px;margin-bottom:16px">
-          <div style="font-size:13px;font-weight:600;color:#1C1917;margin-bottom:14px">🎓 Informations académiques</div>
+          <div style="font-size:13px;font-weight:600;color:#1A1A18;margin-bottom:14px">🎓 Informations académiques</div>
           <div class="form-row">
             <div class="form-group"><label>Université</label><input type="text" name="universite" value="<?= h($user['universite'] ?? '') ?>" placeholder="Université de Parakou"></div>
             <div class="form-group"><label>Filière</label><input type="text" name="filiere" value="<?= h($user['filiere'] ?? '') ?>" placeholder="Licence Pro Entrepreneuriat"></div>
@@ -263,7 +263,7 @@ try {
           <div class="form-group"><label>Nouveau mot de passe</label><input type="password" name="nouveau_mdp" required minlength="8"></div>
           <div class="form-group"><label>Confirmer</label><input type="password" name="confirm_mdp" required minlength="8"></div>
         </div>
-        <button type="submit" class="btn-save" style="background:linear-gradient(135deg,#1C1917,#292524);color:#fff">
+        <button type="submit" class="btn-save" style="background:linear-gradient(135deg,#1A1A18,#292524);color:#fff">
           <i class="ti ti-lock-check"></i> Changer le mot de passe
         </button>
       </form>
@@ -276,7 +276,7 @@ try {
         Conformément au RGPD, vous pouvez demander la suppression de toutes vos données personnelles.
         Cette action est irréversible.
       </p>
-      <a href="<?= SITE_URL ?>/rgpd.php" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;color:#dc2626;font-size:13px;font-weight:600;text-decoration:none">
+      <a href="<?= SITE_URL ?>/rgpd.php" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#F0F9F5;border:1px solid #fca5a5;border-radius:8px;color:#dc2626;font-size:13px;font-weight:600;text-decoration:none">
         <i class="ti ti-trash"></i> Demander la suppression de mes données
       </a>
     </div>
@@ -300,7 +300,7 @@ function previewAvatar(input) {
 
 <!-- RGPD - Export données -->
 <div style="margin-top:24px;padding:16px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px">
-  <div style="font-size:13px;font-weight:700;color:#1C1917;margin-bottom:8px">
+  <div style="font-size:13px;font-weight:700;color:#1A1A18;margin-bottom:8px">
     <i class="ti ti-shield" style="color:#6b7280"></i> Mes données personnelles
   </div>
   <p style="font-size:12px;color:#6b7280;margin-bottom:12px">Conformément au RGPD, vous pouvez télécharger toutes vos données personnelles.</p>

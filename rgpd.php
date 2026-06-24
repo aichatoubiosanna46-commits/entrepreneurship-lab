@@ -38,10 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletion_request'])) 
 
   <!-- En-tête -->
   <div style="margin-bottom:40px">
-    <div style="display:inline-flex;align-items:center;gap:6px;background:#FEF3C7;border:1px solid #fde68a;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:#D97706;margin-bottom:14px">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:#FBE3DA;border:1px solid #fde68a;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:#C04A22;margin-bottom:14px">
       <i class="ti ti-shield-check" aria-hidden="true"></i> Protection des données
     </div>
-    <h1 style="font-size:28px;font-weight:800;color:#1C1917;margin-bottom:8px">
+    <h1 style="font-size:28px;font-weight:800;color:#1A1A18;margin-bottom:8px">
       Politique de confidentialité
     </h1>
     <p style="font-size:14px;color:#6b7280">Dernière mise à jour : <?= date('d/m/Y') ?> · Entrepreneurship-lab Parakou, Bénin</p>
@@ -88,9 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletion_request'])) 
   foreach ($sections as [$titre, $icon, $contenu]):
   ?>
   <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:24px;margin-bottom:16px">
-    <h2 style="font-size:16px;font-weight:700;color:#1C1917;margin-bottom:12px;display:flex;align-items:center;gap:10px">
-      <span style="width:32px;height:32px;background:#FEF3C7;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
-        <i class="ti <?= $icon ?>" style="font-size:16px;color:#D97706" aria-hidden="true"></i>
+    <h2 style="font-size:16px;font-weight:700;color:#1A1A18;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+      <span style="width:32px;height:32px;background:#FBE3DA;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="ti <?= $icon ?>" style="font-size:16px;color:#C04A22" aria-hidden="true"></i>
       </span>
       <?= $titre ?>
     </h2>
@@ -99,9 +99,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletion_request'])) 
   <?php endforeach; ?>
 
   <!-- Formulaire droit à l'oubli -->
-  <div style="background:#1C1917;border-radius:16px;padding:32px;margin-bottom:16px">
-    <h2 style="font-size:18px;font-weight:700;color:#FEF3C7;margin-bottom:8px;display:flex;align-items:center;gap:10px">
-      <i class="ti ti-trash" style="font-size:20px;color:#EF4444" aria-hidden="true"></i>
+  <div style="background:#1A1A18;border-radius:16px;padding:32px;margin-bottom:16px">
+    <h2 style="font-size:18px;font-weight:700;color:#FBE3DA;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+      <i class="ti ti-trash" style="font-size:20px;color:#085041" aria-hidden="true"></i>
       Droit à l'effacement
     </h2>
     <p style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:24px;line-height:1.7">
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletion_request'])) 
       </div>
     <?php else: ?>
       <?php if ($erreur): ?>
-        <div style="background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:13px;display:flex;gap:8px">
+        <div style="background:#F0F9F5;border:1px solid #fca5a5;color:#dc2626;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:13px;display:flex;gap:8px">
           <i class="ti ti-alert-circle" style="font-size:16px;flex-shrink:0" aria-hidden="true"></i>
           <?= h($erreur) ?>
         </div>
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletion_request'])) 
         </div>
 
         <button type="submit"
-                style="display:inline-flex;align-items:center;gap:8px;background:#EF4444;color:#fff;border:none;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:fit-content">
+                style="display:inline-flex;align-items:center;gap:8px;background:#085041;color:#fff;border:none;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:fit-content">
           <i class="ti ti-trash" aria-hidden="true"></i> Demander la suppression de mes données
         </button>
       </form>
@@ -155,15 +155,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletion_request'])) 
 
   <!-- Contact -->
   <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:24px">
-    <h2 style="font-size:16px;font-weight:700;color:#1C1917;margin-bottom:10px;display:flex;align-items:center;gap:10px">
-      <span style="width:32px;height:32px;background:#FEF3C7;border-radius:8px;display:inline-flex;align-items:center;justify-content:center">
-        <i class="ti ti-mail" style="font-size:16px;color:#D97706" aria-hidden="true"></i>
+    <h2 style="font-size:16px;font-weight:700;color:#1A1A18;margin-bottom:10px;display:flex;align-items:center;gap:10px">
+      <span style="width:32px;height:32px;background:#FBE3DA;border-radius:8px;display:inline-flex;align-items:center;justify-content:center">
+        <i class="ti ti-mail" style="font-size:16px;color:#C04A22" aria-hidden="true"></i>
       </span>
       7. Contact
     </h2>
     <p style="font-size:14px;color:#374151">
       Pour toute question relative à la protection de vos données, contactez-nous à :
-      <a href="mailto:privacy@ariziki.org" style="color:#F59E0B;font-weight:600">privacy@ariziki.org</a>
+      <a href="mailto:privacy@ariziki.org" style="color:#D85A30;font-weight:600">privacy@ariziki.org</a>
     </p>
   </div>
 

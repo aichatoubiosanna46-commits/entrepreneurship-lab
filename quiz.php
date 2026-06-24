@@ -110,20 +110,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'submi
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
-body { background: #FFFBEB; font-family: 'Plus Jakarta Sans', sans-serif; }
+body { background: #F5F0E8; font-family: 'Plus Jakarta Sans', sans-serif; }
 .quiz-wrap { max-width: 720px; margin: 0 auto; padding: 32px 20px 60px; }
-.quiz-header { background: linear-gradient(135deg,#1C1917,#292524); border-radius: 16px; padding: 28px; margin-bottom: 28px; color: #fff; }
+.quiz-header { background: linear-gradient(135deg,#1A1A18,#292524); border-radius: 16px; padding: 28px; margin-bottom: 28px; color: #fff; }
 .quiz-header h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
 .quiz-header p { font-size: 13px; color: rgba(255,255,255,.6); }
 .quiz-progress-wrap { margin-top: 16px; }
 .quiz-progress-bar { height: 6px; background: rgba(255,255,255,.2); border-radius: 3px; overflow: hidden; }
-.quiz-progress-fill { height: 100%; background: #F59E0B; border-radius: 3px; transition: width .4s; }
+.quiz-progress-fill { height: 100%; background: #D85A30; border-radius: 3px; transition: width .4s; }
 .quiz-progress-text { font-size: 12px; color: rgba(255,255,255,.6); margin-top: 6px; }
 
 .q-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; margin-bottom: 20px; display: none; }
 .q-card.active { display: block; }
 .q-num { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; letter-spacing: .06em; }
-.q-text { font-size: 18px; font-weight: 700; color: #1C1917; margin-bottom: 20px; line-height: 1.45; }
+.q-text { font-size: 18px; font-weight: 700; color: #1A1A18; margin-bottom: 20px; line-height: 1.45; }
 .q-image { width: 100%; border-radius: 10px; margin-bottom: 16px; max-height: 220px; object-fit: cover; }
 
 /* Réponses */
@@ -133,20 +133,20 @@ body { background: #FFFBEB; font-family: 'Plus Jakarta Sans', sans-serif; }
   padding: 14px 16px; border: 2px solid #e5e7eb;
   border-radius: 12px; cursor: pointer; transition: .15s;
   background: #fff; text-align: left; font-size: 14px;
-  font-family: inherit; width: 100%; color: #1C1917;
+  font-family: inherit; width: 100%; color: #1A1A18;
 }
-.answer-btn:hover:not(:disabled) { border-color: #F59E0B; background: #FFFBEB; }
+.answer-btn:hover:not(:disabled) { border-color: #D85A30; background: #F5F0E8; }
 .answer-btn .answer-letter {
   width: 32px; height: 32px; border-radius: 50%;
   background: #f3f4f6; display: flex; align-items: center;
   justify-content: center; font-size: 12px; font-weight: 700;
   flex-shrink: 0; transition: .15s;
 }
-.answer-btn.selected { border-color: #F59E0B; background: #FFFBEB; }
-.answer-btn.selected .answer-letter { background: #F59E0B; color: #1C1917; }
+.answer-btn.selected { border-color: #D85A30; background: #F5F0E8; }
+.answer-btn.selected .answer-letter { background: #D85A30; color: #1A1A18; }
 .answer-btn.correct { border-color: #16a34a !important; background: #ECFDF5 !important; }
 .answer-btn.correct .answer-letter { background: #16a34a !important; color: #fff !important; }
-.answer-btn.wrong { border-color: #dc2626 !important; background: #fef2f2 !important; }
+.answer-btn.wrong { border-color: #dc2626 !important; background: #F0F9F5 !important; }
 .answer-btn.wrong .answer-letter { background: #dc2626 !important; color: #fff !important; }
 .answer-btn:disabled { cursor: default; }
 
@@ -154,18 +154,18 @@ body { background: #FFFBEB; font-family: 'Plus Jakarta Sans', sans-serif; }
 .q-feedback { display: none; margin-top: 16px; padding: 14px 16px; border-radius: 10px; font-size: 13px; line-height: 1.6; }
 .q-feedback.show { display: flex; align-items: flex-start; gap: 10px; }
 .q-feedback.correct-fb { background: #ECFDF5; border: 1px solid #86efac; color: #15803d; }
-.q-feedback.wrong-fb { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; }
+.q-feedback.wrong-fb { background: #F0F9F5; border: 1px solid #fca5a5; color: #dc2626; }
 .q-feedback i { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
 
 /* Navigation */
 .q-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; gap: 10px; }
 .btn-validate {
-  padding: 12px 24px; background: linear-gradient(135deg,#F59E0B,#D97706);
-  color: #1C1917; border: none; border-radius: 10px;
+  padding: 12px 24px; background: linear-gradient(135deg,#D85A30,#C04A22);
+  color: #1A1A18; border: none; border-radius: 10px;
   font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
 }
 .btn-next {
-  padding: 12px 24px; background: #1C1917; color: #fff;
+  padding: 12px 24px; background: #1A1A18; color: #fff;
   border: none; border-radius: 10px; font-size: 14px;
   font-weight: 700; cursor: pointer; display: none; font-family: inherit;
 }
@@ -198,22 +198,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'start
 if (!$quizStarted && !empty($questions)): ?>
 <div class="quiz-wrap" style="max-width:600px;margin:60px auto;padding:0 24px">
   <div style="background:#fff;border-radius:20px;padding:40px;border:1px solid #e5e7eb;box-shadow:0 4px 24px rgba(0,0,0,.06);text-align:center">
-    <div style="width:80px;height:80px;background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px">
+    <div style="width:80px;height:80px;background:linear-gradient(135deg,#D85A30,#C04A22);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px">
       ❓
     </div>
-    <h1 style="font-size:22px;font-weight:800;color:#1C1917;margin-bottom:10px"><?= h($quiz['titre']) ?></h1>
+    <h1 style="font-size:22px;font-weight:800;color:#1A1A18;margin-bottom:10px"><?= h($quiz['titre']) ?></h1>
     <?php if ($quiz['description']): ?>
     <p style="font-size:14px;color:#6b7280;margin-bottom:24px;line-height:1.7"><?= h($quiz['description']) ?></p>
     <?php endif; ?>
 
     <div style="display:flex;justify-content:center;gap:20px;margin-bottom:28px;flex-wrap:wrap">
       <div style="text-align:center">
-        <div style="font-size:24px;font-weight:800;color:#1C1917"><?= count($questions) ?></div>
+        <div style="font-size:24px;font-weight:800;color:#1A1A18"><?= count($questions) ?></div>
         <div style="font-size:12px;color:#9ca3af">questions</div>
       </div>
       <?php if ($quiz['duree_minutes'] ?? 0): ?>
       <div style="text-align:center">
-        <div style="font-size:24px;font-weight:800;color:#F59E0B"><?= $quiz['duree_minutes'] ?></div>
+        <div style="font-size:24px;font-weight:800;color:#D85A30"><?= $quiz['duree_minutes'] ?></div>
         <div style="font-size:12px;color:#9ca3af">minutes</div>
       </div>
       <?php endif; ?>
@@ -229,7 +229,7 @@ if (!$quizStarted && !empty($questions)): ?>
       <?php endif; ?>
     </div>
 
-    <div style="background:#FEF3C7;border-radius:10px;padding:14px;margin-bottom:24px;font-size:13px;color:#92400E;text-align:left">
+    <div style="background:#FBE3DA;border-radius:10px;padding:14px;margin-bottom:24px;font-size:13px;color:#92400E;text-align:left">
       <i class="ti ti-info-circle" style="margin-right:6px"></i>
       <?php if ($quiz['duree_minutes'] ?? 0): ?>
       Le chronomètre démarre dès que vous cliquez sur "Commencer". Répondez à toutes les questions avant la fin du temps imparti.
@@ -240,7 +240,7 @@ if (!$quizStarted && !empty($questions)): ?>
 
     <form method="POST">
       <input type="hidden" name="action" value="start_quiz">
-      <button type="submit" style="width:100%;padding:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#1C1917;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit">
+      <button type="submit" style="width:100%;padding:14px;background:linear-gradient(135deg,#D85A30,#C04A22);color:#1A1A18;border:none;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit">
         <i class="ti ti-player-play"></i> Commencer le quiz
       </button>
     </form>
@@ -255,7 +255,7 @@ if (!$quizStarted && !empty($questions)): ?>
   <div class="quiz-header">
   <?php if ($quiz['duree_minutes'] ?? 0): ?>
   <div id="quiz-timer-wrap" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border-radius:8px;padding:8px 14px;margin-bottom:16px;width:fit-content">
-    <i class="ti ti-clock" style="color:#F59E0B;font-size:18px"></i>
+    <i class="ti ti-clock" style="color:#D85A30;font-size:18px"></i>
     <span style="font-size:14px;font-weight:700;color:#fff" id="timer-display">--:--</span>
     <span style="font-size:12px;color:rgba(255,255,255,.6)">restant</span>
   </div>
@@ -346,7 +346,7 @@ if (!$quizStarted && !empty($questions)): ?>
           <div style="font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:8px">CORRESPONDANCES</div>
           <?php foreach ($shuffled as $ans): ?>
           <div draggable="true"
-               style="padding:10px 12px;background:#FEF3C7;border:1px solid #fde68a;border-radius:8px;margin-bottom:6px;font-size:13px;cursor:grab">
+               style="padding:10px 12px;background:#FBE3DA;border:1px solid #fde68a;border-radius:8px;margin-bottom:6px;font-size:13px;cursor:grab">
             <?= h($ans['feedback'] ?: $ans['texte']) ?>
           </div>
           <?php endforeach; ?>
@@ -393,7 +393,7 @@ if (!$quizStarted && !empty($questions)): ?>
 
     <?php if (!empty($q['explication'])): ?>
     <div id="explication-<?= $q['id'] ?>" style="display:none;margin-top:12px;padding:12px 14px;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:8px;font-size:13px;color:#0369a1;line-height:1.6">
-      <i class="ti ti-bulb" style="margin-right:6px;color:#F59E0B"></i>
+      <i class="ti ti-bulb" style="margin-right:6px;color:#D85A30"></i>
       <?= h($q['explication']) ?>
     </div>
     <?php endif; ?>
@@ -473,9 +473,9 @@ function selectAnswer(btn, questionId, type) {
   if (type === 'choix_multiple') {
     btn.classList.toggle('selected');
     btn.querySelector('.answer-letter').style.background =
-      btn.classList.contains('selected') ? '#F59E0B' : '';
+      btn.classList.contains('selected') ? '#D85A30' : '';
     btn.querySelector('.answer-letter').style.color =
-      btn.classList.contains('selected') ? '#1C1917' : '';
+      btn.classList.contains('selected') ? '#1A1A18' : '';
   } else {
     btns.forEach(b => {
       b.classList.remove('selected');
@@ -483,8 +483,8 @@ function selectAnswer(btn, questionId, type) {
       b.querySelector('.answer-letter').style.color = '';
     });
     btn.classList.add('selected');
-    btn.querySelector('.answer-letter').style.background = '#F59E0B';
-    btn.querySelector('.answer-letter').style.color = '#1C1917';
+    btn.querySelector('.answer-letter').style.background = '#D85A30';
+    btn.querySelector('.answer-letter').style.color = '#1A1A18';
   }
 }
 
@@ -585,7 +585,7 @@ function finishQuiz() {
   document.getElementById('progressText').textContent = 'Quiz terminé !';
 
   const circle = document.getElementById('scoreCircle');
-  circle.style.background = reussi ? '#ECFDF5' : '#fef2f2';
+  circle.style.background = reussi ? '#ECFDF5' : '#F0F9F5';
   circle.style.color = reussi ? '#16a34a' : '#dc2626';
   circle.style.border = reussi ? '4px solid #16a34a' : '4px solid #dc2626';
   circle.textContent = pct + '%';

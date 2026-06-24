@@ -255,10 +255,10 @@ try {
          style="height:48px;width:auto"
          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div style="display:none;align-items:center;gap:8px">
-      <div style="width:32px;height:32px;background:#F59E0B;border-radius:8px;display:flex;align-items:center;justify-content:center">
-        <i class="ti ti-star" style="color:#1C1917;font-size:16px"></i>
+      <div style="width:32px;height:32px;background:#D85A30;border-radius:8px;display:flex;align-items:center;justify-content:center">
+        <i class="ti ti-star" style="color:#1A1A18;font-size:16px"></i>
       </div>
-      <span style="color:#F59E0B;font-size:14px;font-weight:700"><?= SITE_NAME ?></span>
+      <span style="color:#D85A30;font-size:14px;font-weight:700"><?= SITE_NAME ?></span>
     </div>
   </a>
   <div class="elab-nav-links">
@@ -555,17 +555,17 @@ try {
 
     <!-- Membre 1 -->
     <div style="background:#fff;border:1px solid #fde68a;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,.08);transition:transform .25s,box-shadow .25s" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,.14)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 6px 28px rgba(0,0,0,.08)'">
-      <div style="height:240px;background:linear-gradient(160deg,#F59E0B 0%,#EF4444 100%);display:flex;align-items:center;justify-content:center;position:relative">
+      <div style="height:240px;background:linear-gradient(160deg,#D85A30 0%,#085041 100%);display:flex;align-items:center;justify-content:center;position:relative">
         <img src="<?= SITE_URL ?>/assets/images/equipes/1.png" alt="Professeur Bertrand SOGBOSSI"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
              style="width:100%;height:100%;object-fit:cover;object-position:top;display:block">
         <div style="display:none;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border:4px solid rgba(255,255,255,.5);align-items:center;justify-content:center;font-size:42px;font-weight:700;color:#fff;position:absolute">BS</div>
         <div style="position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);border-radius:8px;padding:5px 12px">
-          <div style="font-size:11px;font-weight:700;color:#F59E0B">Président du Conseil d'administration</div>
+          <div style="font-size:11px;font-weight:700;color:#D85A30">Président du Conseil d'administration</div>
         </div>
       </div>
       <div style="padding:22px 20px 20px">
-        <div style="font-size:17px;font-weight:700;color:#1C1917;margin-bottom:8px">Professeur Bertrand SOGBOSSI</div>
+        <div style="font-size:17px;font-weight:700;color:#1A1A18;margin-bottom:8px">Professeur Bertrand SOGBOSSI</div>
         <p style="font-size:13px;color:#6b7280;line-height:1.7;margin-bottom:18px">
           En tant que recteur de l'université de Parakou, il occupe également la fonction de président du conseil d'administration du centre d'incubation Ariziki. Il met à profit sa rigueur scientifique et son expérience pour contribuer à l'amélioration des outils déployés au sein du centre.
         </p>
@@ -579,7 +579,7 @@ try {
 
     <!-- Membre 2 -->
     <div style="background:#fff;border:1px solid #fde68a;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,.08);transition:transform .25s,box-shadow .25s" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,.14)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 6px 28px rgba(0,0,0,.08)'">
-      <div style="height:240px;background:linear-gradient(160deg,#EF4444 0%,#F59E0B 100%);display:flex;align-items:center;justify-content:center;position:relative">
+      <div style="height:240px;background:linear-gradient(160deg,#085041 0%,#D85A30 100%);display:flex;align-items:center;justify-content:center;position:relative">
         <img src="<?= SITE_URL ?>/assets/images/equipes/2.png" alt="Céphas HOUNZANDJI"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
              style="width:100%;height:100%;object-fit:cover;object-position:top;display:block">
@@ -589,7 +589,7 @@ try {
         </div>
       </div>
       <div style="padding:22px 20px 20px">
-        <div style="font-size:17px;font-weight:700;color:#1C1917;margin-bottom:8px">Céphas HOUNZANDJI</div>
+        <div style="font-size:17px;font-weight:700;color:#1A1A18;margin-bottom:8px">Céphas HOUNZANDJI</div>
         <p style="font-size:13px;color:#6b7280;line-height:1.7;margin-bottom:18px">
           Gestionnaire de projet et consultant formateur en entrepreneuriat, il possède une solide expérience de 20 ans dans l'accompagnement entrepreneurial au Bénin. Actuellement directeur du centre d'incubation Ariziki, il continue à soutenir des start-ups et favoriser l'innovation.
         </p>
@@ -603,7 +603,7 @@ try {
 
     <!-- Membre 3 -->
     <div style="background:#fff;border:1px solid #fde68a;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,.08);transition:transform .25s,box-shadow .25s" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,.14)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 6px 28px rgba(0,0,0,.08)'">
-      <div style="height:240px;background:linear-gradient(160deg,#1C1917 0%,#D97706 100%);display:flex;align-items:center;justify-content:center;position:relative">
+      <div style="height:240px;background:linear-gradient(160deg,#1A1A18 0%,#C04A22 100%);display:flex;align-items:center;justify-content:center;position:relative">
         <img src="<?= SITE_URL ?>/assets/images/equipes/3.png" alt="Annick Chaffa"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
              style="width:100%;height:100%;object-fit:cover;object-position:top;display:block">
@@ -613,7 +613,7 @@ try {
         </div>
       </div>
       <div style="padding:22px 20px 20px">
-        <div style="font-size:17px;font-weight:700;color:#1C1917;margin-bottom:8px">Annick Chaffa</div>
+        <div style="font-size:17px;font-weight:700;color:#1A1A18;margin-bottom:8px">Annick Chaffa</div>
         <p style="font-size:13px;color:#6b7280;line-height:1.7;margin-bottom:18px">
           Ingénieur agronome et experte en entrepreneuriat vert, Annick est Chargée des programmes au centre d'incubation Ariziki. Elle supervise la qualité des services fournis par les coachs et consultants, et s'engage à promouvoir des projets qui allient viabilité économique et protection de l'environnement.
         </p>
@@ -659,29 +659,29 @@ try {
       <div>
         <h5 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:14px">Navigation</h5>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px">
-          <li><a href="<?= SITE_URL ?>/index.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Accueil</a></li>
-          <li><a href="<?= SITE_URL ?>/index.php#tarifs" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Formations</a></li>
-          <li><a href="<?= SITE_URL ?>/index.php#equipe" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Notre équipe</a></li>
-          <li><a href="<?= SITE_URL ?>/index.php#comment" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Comment ça marche</a></li>
-          <li><a href="<?= SITE_URL ?>/blog.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Blog</a></li>
+          <li><a href="<?= SITE_URL ?>/index.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Accueil</a></li>
+          <li><a href="<?= SITE_URL ?>/index.php#tarifs" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Formations</a></li>
+          <li><a href="<?= SITE_URL ?>/index.php#equipe" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Notre équipe</a></li>
+          <li><a href="<?= SITE_URL ?>/index.php#comment" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Comment ça marche</a></li>
+          <li><a href="<?= SITE_URL ?>/blog.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Blog</a></li>
         </ul>
       </div>
       <div>
         <h5 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:14px">Mon compte</h5>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px">
-          <li><a href="<?= SITE_URL ?>/auth.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Se connecter</a></li>
-          <li><a href="<?= SITE_URL ?>/auth.php?mode=signup" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">S'inscrire</a></li>
-          <li><a href="<?= SITE_URL ?>/dashboard.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Mon espace</a></li>
-          <li><a href="<?= SITE_URL ?>/payment.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Abonnement</a></li>
-          <li><a href="<?= SITE_URL ?>/resources.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Bibliothèque</a></li>
+          <li><a href="<?= SITE_URL ?>/auth.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Se connecter</a></li>
+          <li><a href="<?= SITE_URL ?>/auth.php?mode=signup" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">S'inscrire</a></li>
+          <li><a href="<?= SITE_URL ?>/dashboard.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Mon espace</a></li>
+          <li><a href="<?= SITE_URL ?>/payment.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Abonnement</a></li>
+          <li><a href="<?= SITE_URL ?>/resources.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Bibliothèque</a></li>
         </ul>
       </div>
       <div>
         <h5 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:14px">Légal</h5>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px">
-          <li><a href="<?= SITE_URL ?>/rgpd.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Confidentialité</a></li>
-          <li><a href="<?= SITE_URL ?>/rgpd.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Mentions légales</a></li>
-          <li><a href="<?= SITE_URL ?>/rgpd.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='rgba(255,255,255,.55)'">RGPD</a></li>
+          <li><a href="<?= SITE_URL ?>/rgpd.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Confidentialité</a></li>
+          <li><a href="<?= SITE_URL ?>/rgpd.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Mentions légales</a></li>
+          <li><a href="<?= SITE_URL ?>/rgpd.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">RGPD</a></li>
         </ul>
       </div>
     </div>
@@ -689,7 +689,7 @@ try {
       <p style="font-size:12px;color:rgba(255,255,255,.3)">© <?= date('Y') ?> <?= SITE_NAME ?> — Parakou, Bénin</p>
       <p style="font-size:12px;color:rgba(255,255,255,.3)">
         Fait par
-        <a href="https://aichaporfolio.vercel.app/" target="_blank" style="color:#F59E0B;text-decoration:none;font-weight:600" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Aïchatou BIO SANNA</a>
+        <a href="https://aichaporfolio.vercel.app/" target="_blank" style="color:#D85A30;text-decoration:none;font-weight:600" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Aïchatou BIO SANNA</a>
       </p>
     </div>
   </div>

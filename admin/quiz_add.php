@@ -102,10 +102,10 @@ $NB_REPONSES  = 4;
 <link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 <style>
 .q-block{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px}
-.q-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:#F59E0B;color:#1C1917;border-radius:50%;font-size:12px;font-weight:800;margin-right:8px}
+.q-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:#D85A30;color:#1A1A18;border-radius:50%;font-size:12px;font-weight:800;margin-right:8px}
 .ans-grid{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:8px;align-items:center;padding:8px;background:#fff;border:1px solid #f3f4f6;border-radius:8px;margin-bottom:6px}
 .fld{width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box}
-.fld:focus{outline:none;border-color:#F59E0B}
+.fld:focus{outline:none;border-color:#D85A30}
 </style>
 </head>
 <body class="admin-layout">
@@ -189,7 +189,7 @@ $NB_REPONSES  = 4;
 
       <?php for ($qi = 0; $qi < $NB_QUESTIONS; $qi++): ?>
       <div class="q-block">
-        <div style="font-size:14px;font-weight:700;color:#1C1917;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:700;color:#1A1A18;margin-bottom:14px">
           <span class="q-num"><?= $qi+1 ?></span> Question <?= $qi+1 ?>
         </div>
 
@@ -228,7 +228,7 @@ $NB_REPONSES  = 4;
               <?= chr(65+$ai) ?>
             </span>
             <input type="checkbox" name="a_correct[<?= $qi ?>][<?= $ai ?>]" value="1"
-              style="width:16px;height:16px;accent-color:#F59E0B;cursor:pointer" title="Bonne réponse">
+              style="width:16px;height:16px;accent-color:#D85A30;cursor:pointer" title="Bonne réponse">
             <small style="font-size:9px;color:#9ca3af">Correct</small>
           </div>
           <input type="text" name="a_texte[<?= $qi ?>][<?= $ai ?>]"

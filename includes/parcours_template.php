@@ -110,7 +110,7 @@ $progMoyen  = $nbCours > 0 ? (int)round(array_sum(array_column($cours,'progressi
 .seq-title.done { color:#999; text-decoration:line-through; }
 .seq-badges { display:flex; gap:5px; }
 .seq-badge { display:inline-flex; align-items:center; gap:3px; font-size:10px; padding:2px 6px; border-radius:100px; font-weight:600; }
-.seq-badge.vid { background:#FEF3C7; color:#92400E; }
+.seq-badge.vid { background:#FBE3DA; color:#92400E; }
 .seq-badge.pdf { background:#DBEAFE; color:#1E40AF; }
 .seq-badge.quiz { background:#EDE9FE; color:#5B21B6; }
 .seq-badge.act  { background:#FCE7F3; color:#9D174D; }

@@ -496,7 +496,7 @@ function emailBienvenue(string $email, string $prenom): bool
     <!DOCTYPE html>
     <html lang='fr'>
     <head><meta charset='UTF-8'></head>
-    <body style='margin:0;padding:0;background:#FFFBEB;font-family:Plus Jakarta Sans,Arial,sans-serif;'>
+    <body style='margin:0;padding:0;background:#F5F0E8;font-family:Plus Jakarta Sans,Arial,sans-serif;'>
       <table width='100%' cellpadding='0' cellspacing='0'>
         <tr><td align='center' style='padding:40px 16px;'>
           <table width='520' cellpadding='0' cellspacing='0'
@@ -505,7 +505,7 @@ function emailBienvenue(string $email, string $prenom): bool
 
             <!-- Header -->
             <tr>
-              <td style='background:linear-gradient(135deg,#F59E0B,#EF4444);
+              <td style='background:linear-gradient(135deg,#D85A30,#085041);
                          padding:32px 40px;text-align:center;'>
                 <div style='width:52px;height:52px;border-radius:14px;
                             background:rgba(255,255,255,.2);
@@ -521,15 +521,15 @@ function emailBienvenue(string $email, string $prenom): bool
             <!-- Body -->
             <tr>
               <td style='padding:36px 40px;'>
-                <p style='margin:0 0 16px;color:#1C1917;font-size:15px;line-height:1.7;'>
+                <p style='margin:0 0 16px;color:#1A1A18;font-size:15px;line-height:1.7;'>
                   Ton compte <strong>$siteName</strong> est prêt. 🚀<br>
                   Tu peux dès maintenant accéder à tes cours et commencer ton parcours entrepreneurial.
                 </p>
 
                 <table cellpadding='0' cellspacing='0' style='margin:24px 0;'>
                   <tr>
-                    <td style='background:#FEF3C7;border-radius:10px;padding:14px 20px;
-                               border-left:4px solid #F59E0B;'>
+                    <td style='background:#FBE3DA;border-radius:10px;padding:14px 20px;
+                               border-left:4px solid #D85A30;'>
                       <p style='margin:0;color:#92400E;font-size:13px;line-height:1.6;'>
                         ✅ Cours gratuits illimités dès maintenant<br>
                         🎓 Certificat Université de Parakou à l'obtention<br>
@@ -543,7 +543,7 @@ function emailBienvenue(string $email, string $prenom): bool
                 <div style='text-align:center;margin:28px 0;'>
                   <a href='$siteUrl/dashboard.php'
                      style='display:inline-block;padding:13px 32px;
-                            background:linear-gradient(135deg,#F59E0B,#EF4444);
+                            background:linear-gradient(135deg,#D85A30,#085041);
                             color:#fff;text-decoration:none;border-radius:10px;
                             font-weight:800;font-size:14px;
                             box-shadow:0 3px 10px rgba(245,158,11,.3);'>

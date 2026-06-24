@@ -139,7 +139,7 @@ $pageTitle = 'Certificats';
                 </td>
                 <td style="padding:12px 16px;font-size:13px">
                   <?= h($intituleRow) ?>
-                  <?php if ($estBundleRow): ?><span style="background:#FEF3C7;color:#D97706;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:700;margin-left:4px">Bundle</span><?php endif; ?>
+                  <?php if ($estBundleRow): ?><span style="background:#FBE3DA;color:#C04A22;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:700;margin-left:4px">Bundle</span><?php endif; ?>
                 </td>
                 <td style="padding:12px 16px;font-size:12px">
                   <span class="badge <?= $typeRow === 'Connaissance' ? 'badge-success' : 'badge-neutral' ?>"><?= $typeRow ?></span>

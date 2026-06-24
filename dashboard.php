@@ -54,14 +54,14 @@ $pageTitle = 'Mon espace';
 <style>
 /* Variables Sunrise Africa */
 :root {
-  --amber:       #F59E0B;
-  --amber-light: #FEF3C7;
-  --amber-dark:  #D97706;
+  --amber:       #D85A30;
+  --amber-light: #FBE3DA;
+  --amber-dark:  #C04A22;
   --text-muted:  #6b7280;
 }
 
 /* ── Layout dashboard ── */
-body.user-dash-page { background: #FFFBEB !important; }
+body.user-dash-page { background: #F5F0E8 !important; }
 
 .user-dash-layout {
   display: flex !important;
@@ -86,24 +86,24 @@ body.user-dash-page { background: #FFFBEB !important; }
 .user-sidebar-profile {
   padding: 24px 16px 16px;
   text-align: center;
-  background: linear-gradient(135deg, #1C1917, #292524);
+  background: linear-gradient(135deg, #1A1A18, #292524);
   border-bottom: 1px solid rgba(255,255,255,.08);
 }
 .user-avatar-ring {
   width: 64px; height: 64px; border-radius: 50%;
   margin: 0 auto 10px;
-  border: 3px solid #F59E0B;
+  border: 3px solid #D85A30;
   overflow: hidden;
   display: flex; align-items: center; justify-content: center;
 }
 .user-avatar-ring img { width: 100%; height: 100%; object-fit: cover; }
 .user-avatar-placeholder {
   width: 100%; height: 100%;
-  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  background: linear-gradient(135deg, #D85A30, #085041);
   color: #fff; font-size: 22px; font-weight: 800;
   display: flex; align-items: center; justify-content: center;
 }
-.user-sidebar-name  { font-size: 14px; font-weight: 700; color: #FEF3C7; }
+.user-sidebar-name  { font-size: 14px; font-weight: 700; color: #FBE3DA; }
 .user-sidebar-email { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 2px; }
 .user-sidebar-nav   { padding: 8px 0; }
 .user-nav-item {
@@ -114,10 +114,10 @@ body.user-dash-page { background: #FFFBEB !important; }
   border-left: 3px solid transparent;
 }
 .user-nav-item i { font-size: 17px; flex-shrink: 0; }
-.user-nav-item:hover { background: #FFFBEB; color: #D97706; }
+.user-nav-item:hover { background: #F5F0E8; color: #C04A22; }
 .user-nav-item.active {
-  background: #FEF3C7; color: #D97706;
-  font-weight: 600; border-left-color: #F59E0B;
+  background: #FBE3DA; color: #C04A22;
+  font-weight: 600; border-left-color: #D85A30;
 }
 .user-sidebar-footer { border-top: 1px solid #f3f4f6; padding: 6px 0; }
 
@@ -131,20 +131,20 @@ body.user-dash-page { background: #FFFBEB !important; }
 }
 .user-nav-item:hover,
 .user-nav-item:hover i {
-  color: #D97706 !important;
-  background: #FFFBEB !important;
+  color: #C04A22 !important;
+  background: #F5F0E8 !important;
 }
 .user-nav-item.active,
 .user-nav-item.active i {
-  color: #D97706 !important;
-  background: #FEF3C7 !important;
+  color: #C04A22 !important;
+  background: #FBE3DA !important;
   font-weight: 600 !important;
 }
 
 /* ── Main ── */
 .user-dash-main { flex: 1; min-width: 0; }
 .dash-topbar    { margin-bottom: 20px; }
-.dash-title     { font-size: 22px; font-weight: 800; color: #1C1917; margin-bottom: 4px; }
+.dash-title     { font-size: 22px; font-weight: 800; color: #1A1A18; margin-bottom: 4px; }
 .dash-sub       { font-size: 13px; color: #6b7280; }
 
 /* ── Stat cards ── */
@@ -162,24 +162,24 @@ body.user-dash-page { background: #FFFBEB !important; }
 }
 .dash-stat-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0;
-  height: 3px; background: linear-gradient(90deg, #F59E0B, #EF4444);
+  height: 3px; background: linear-gradient(90deg, #D85A30, #085041);
 }
 .dash-stat-icon {
   width: 44px; height: 44px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-size: 20px; flex-shrink: 0;
 }
-.dash-stat-val   { font-size: 24px; font-weight: 800; color: #1C1917; line-height: 1; }
+.dash-stat-val   { font-size: 24px; font-weight: 800; color: #1A1A18; line-height: 1; }
 .dash-stat-label { font-size: 11px; color: #6b7280; margin-top: 2px; }
 
 /* ── Sections ── */
 .dash-section       { margin-bottom: 32px; }
 .dash-section-title {
-  font-size: 16px; font-weight: 700; color: #1C1917;
+  font-size: 16px; font-weight: 700; color: #1A1A18;
   margin-bottom: 16px;
   display: flex; align-items: center; gap: 8px;
 }
-.dash-section-title i { font-size: 20px; color: #F59E0B; }
+.dash-section-title i { font-size: 20px; color: #D85A30; }
 
 /* ── Module cards ── */
 .dash-modules-grid {
@@ -200,23 +200,23 @@ body.user-dash-page { background: #FFFBEB !important; }
 }
 .dash-module-info    { padding: 12px 14px; }
 .dash-module-cat     { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
-.dash-module-info h3 { font-size: 13px; font-weight: 700; color: #1C1917; margin: 4px 0 10px; line-height: 1.35; }
+.dash-module-info h3 { font-size: 13px; font-weight: 700; color: #1A1A18; margin: 4px 0 10px; line-height: 1.35; }
 .dash-progress-wrap  { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .dash-progress-bar   { flex: 1; height: 5px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
-.dash-progress-fill  { height: 100%; background: linear-gradient(90deg, #F59E0B, #EF4444); border-radius: 3px; }
-.dash-pct            { font-size: 11px; font-weight: 700; color: #D97706; flex-shrink: 0; }
+.dash-progress-fill  { height: 100%; background: linear-gradient(90deg, #D85A30, #085041); border-radius: 3px; }
+.dash-pct            { font-size: 11px; font-weight: 700; color: #C04A22; flex-shrink: 0; }
 .dash-module-meta    { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #9ca3af; }
-.dash-module-continue { font-size: 11px; font-weight: 700; color: #F59E0B; display: flex; align-items: center; gap: 3px; }
+.dash-module-continue { font-size: 11px; font-weight: 700; color: #D85A30; display: flex; align-items: center; gap: 3px; }
 
 /* ── Empty state ── */
 .dash-empty { text-align: center; padding: 48px 24px; background: #fff; border: 1px dashed #fde68a; border-radius: 16px; }
 .dash-empty i  { font-size: 48px; color: #fde68a; display: block; margin-bottom: 12px; }
-.dash-empty h3 { font-size: 16px; font-weight: 700; color: #1C1917; margin-bottom: 6px; }
+.dash-empty h3 { font-size: 16px; font-weight: 700; color: #1A1A18; margin-bottom: 6px; }
 .dash-empty p  { font-size: 13px; color: #6b7280; }
 .dash-empty .btn-primary {
   display: inline-flex; align-items: center; gap: 6px;
-  background: linear-gradient(135deg, #F59E0B, #D97706);
-  color: #1C1917; padding: 10px 22px; border-radius: 9px;
+  background: linear-gradient(135deg, #D85A30, #C04A22);
+  color: #1A1A18; padding: 10px 22px; border-radius: 9px;
   font-weight: 700; font-size: 13px; text-decoration: none;
   margin-top: 16px;
 }
@@ -235,10 +235,10 @@ body.user-dash-page { background: #FFFBEB !important; }
 .dash-avail-thumb  { height: 80px; overflow: hidden; background: #f9fafb; }
 .dash-avail-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .dash-avail-info   { padding: 10px 12px 12px; }
-.dash-avail-info h3 { font-size: 12px; font-weight: 700; color: #1C1917; margin: 4px 0; line-height: 1.35; }
+.dash-avail-info h3 { font-size: 12px; font-weight: 700; color: #1A1A18; margin: 4px 0; line-height: 1.35; }
 .dash-enroll-btn {
   font-size: 11px; font-weight: 700;
-  background: linear-gradient(135deg, #F59E0B, #D97706);
+  background: linear-gradient(135deg, #D85A30, #C04A22);
   color: #fff; padding: 4px 12px; border-radius: 6px;
 }
 
@@ -263,10 +263,10 @@ body.user-dash-page { background: #FFFBEB !important; }
 /* FORCE couleurs sidebar - override style.css */
 aside.user-sidebar nav a.user-nav-item { color: #6b7280 !important; }
 aside.user-sidebar nav a.user-nav-item * { color: #6b7280 !important; }
-aside.user-sidebar nav a.user-nav-item:hover { color: #D97706 !important; background: #FFFBEB !important; }
-aside.user-sidebar nav a.user-nav-item:hover * { color: #D97706 !important; }
-aside.user-sidebar nav a.user-nav-item.active { color: #D97706 !important; background: #FEF3C7 !important; }
-aside.user-sidebar nav a.user-nav-item.active * { color: #D97706 !important; }
+aside.user-sidebar nav a.user-nav-item:hover { color: #C04A22 !important; background: #F5F0E8 !important; }
+aside.user-sidebar nav a.user-nav-item:hover * { color: #C04A22 !important; }
+aside.user-sidebar nav a.user-nav-item.active { color: #C04A22 !important; background: #FBE3DA !important; }
+aside.user-sidebar nav a.user-nav-item.active * { color: #C04A22 !important; }
 </style>
 </head>
 <body class="user-dash-page">
@@ -290,8 +290,8 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #D97706 !important; }
       <div class="user-sidebar-email"><?= h($user['email']) ?></div>
     </div>
     <nav class="user-sidebar-nav">
-  <div onclick="location='<?= SITE_URL ?>/dashboard.php'" class="user-nav-item active" style="cursor:pointer;color:#D97706;background:#FEF3C7;border-left:3px solid #F59E0B">
-    <i class="ti ti-layout-dashboard" style="color:#D97706"></i> Tableau de bord
+  <div onclick="location='<?= SITE_URL ?>/dashboard.php'" class="user-nav-item active" style="cursor:pointer;color:#C04A22;background:#FBE3DA;border-left:3px solid #D85A30">
+    <i class="ti ti-layout-dashboard" style="color:#C04A22"></i> Tableau de bord
   </div>
   <div onclick="location='<?= SITE_URL ?>/favorites.php'" class="user-nav-item" style="cursor:pointer;color:#6b7280">
     <i class="ti ti-heart" style="color:#6b7280"></i> Mes favoris
@@ -355,19 +355,19 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #D97706 !important; }
     } catch (Exception $e) {}
     ?>
     <?php if ($defiSemaine): ?>
-    <div style="background:linear-gradient(135deg,#1C1917,#292524);border-radius:16px;padding:24px;margin-bottom:28px;display:flex;align-items:flex-start;gap:18px">
-      <div style="width:48px;height:48px;border-radius:12px;background:#F59E0B;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <i class="ti ti-trophy" style="font-size:22px;color:#1C1917"></i>
+    <div style="background:linear-gradient(135deg,#1A1A18,#292524);border-radius:16px;padding:24px;margin-bottom:28px;display:flex;align-items:flex-start;gap:18px">
+      <div style="width:48px;height:48px;border-radius:12px;background:#D85A30;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="ti ti-trophy" style="font-size:22px;color:#1A1A18"></i>
       </div>
       <div style="flex:1">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F59E0B;margin-bottom:6px">🏆 Défi de la semaine</div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D85A30;margin-bottom:6px">🏆 Défi de la semaine</div>
         <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:6px"><?= h($defiSemaine['titre']) ?></div>
         <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:12px"><?= h(substr($defiSemaine['description'],0,150)) ?>...</div>
         <div style="display:flex;align-items:center;gap:12px">
-          <a href="<?= SITE_URL ?>/forum.php" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#F59E0B;color:#1C1917;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">
+          <a href="<?= SITE_URL ?>/forum.php" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#D85A30;color:#1A1A18;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">
             <i class="ti ti-send"></i> Soumettre ma réponse
           </a>
-          <span style="font-size:12px;color:#F59E0B"><i class="ti ti-star"></i> +<?= $defiSemaine['xp_reward'] ?> XP</span>
+          <span style="font-size:12px;color:#D85A30"><i class="ti ti-star"></i> +<?= $defiSemaine['xp_reward'] ?> XP</span>
         </div>
       </div>
     </div>
@@ -393,7 +393,7 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #D97706 !important; }
         </div>
       </div>
       <div class="dash-stat-card">
-        <div class="dash-stat-icon" style="background:#FEF3C7;color:#D97706">
+        <div class="dash-stat-icon" style="background:#FBE3DA;color:#C04A22">
           <i class="ti ti-certificate"></i>
         </div>
         <div>
@@ -402,7 +402,7 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #D97706 !important; }
         </div>
       </div>
       <div class="dash-stat-card">
-        <div class="dash-stat-icon" style="background:#FEF2F2;color:#EF4444">
+        <div class="dash-stat-icon" style="background:#F0F9F5;color:#085041">
           <i class="ti ti-help-circle"></i>
         </div>
         <div>
@@ -419,18 +419,18 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #D97706 !important; }
       $certs = $certsStmt->fetchAll();
     ?>
     <section class="dash-section">
-      <h2 class="dash-section-title"><i class="ti ti-certificate" style="color:#F59E0B"></i> Mes certificats</h2>
+      <h2 class="dash-section-title"><i class="ti ti-certificate" style="color:#D85A30"></i> Mes certificats</h2>
       <div style="display:flex;flex-wrap:wrap;gap:12px">
         <?php foreach ($certs as $cert): ?>
         <a href="<?= SITE_URL ?>/certificate.php?code=<?= h($cert['code_unique']) ?>"
-           style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#FFFBEB;border:1px solid #F59E0B;border-radius:10px;text-decoration:none;color:inherit;transition:.15s"
-           onmouseover="this.style.background='#FEF3C7'" onmouseout="this.style.background='#FFFBEB'">
-          <i class="ti ti-certificate" style="font-size:24px;color:#F59E0B"></i>
+           style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#F5F0E8;border:1px solid #D85A30;border-radius:10px;text-decoration:none;color:inherit;transition:.15s"
+           onmouseover="this.style.background='#FBE3DA'" onmouseout="this.style.background='#F5F0E8'">
+          <i class="ti ti-certificate" style="font-size:24px;color:#D85A30"></i>
           <div>
             <div style="font-weight:600;font-size:14px"><?= h($cert['course_titre']) ?></div>
             <div style="font-size:11px;color:var(--text-muted)">Obtenu le <?= date('d/m/Y', strtotime($cert['delivre_le'])) ?></div>
           </div>
-          <i class="ti ti-download" style="margin-left:8px;color:#F59E0B"></i>
+          <i class="ti ti-download" style="margin-left:8px;color:#D85A30"></i>
         </a>
         <?php endforeach; ?>
       </div>

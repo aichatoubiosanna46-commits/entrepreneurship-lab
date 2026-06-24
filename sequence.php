@@ -54,16 +54,16 @@ if (!empty($seq['mot_de_passe'])) {
     if (empty($_SESSION[$sessionKey])):
 ?>
 <div style="max-width:400px;margin:60px auto;background:#fff;border-radius:16px;padding:32px;border:1px solid #e5e7eb;text-align:center">
-  <i class="ti ti-lock" style="font-size:48px;color:#F59E0B;display:block;margin-bottom:16px"></i>
-  <h2 style="font-size:18px;font-weight:700;color:#1C1917;margin-bottom:8px">Séquence protégée</h2>
+  <i class="ti ti-lock" style="font-size:48px;color:#D85A30;display:block;margin-bottom:16px"></i>
+  <h2 style="font-size:18px;font-weight:700;color:#1A1A18;margin-bottom:8px">Séquence protégée</h2>
   <p style="font-size:13px;color:#6b7280;margin-bottom:20px">Saisissez le mot de passe pour accéder à cette séquence.</p>
   <?php if (isset($pwError)): ?>
-  <div style="background:#fef2f2;color:#dc2626;padding:10px;border-radius:8px;font-size:13px;margin-bottom:14px"><?= h($pwError) ?></div>
+  <div style="background:#F0F9F5;color:#dc2626;padding:10px;border-radius:8px;font-size:13px;margin-bottom:14px"><?= h($pwError) ?></div>
   <?php endif; ?>
   <form method="POST" style="display:flex;flex-direction:column;gap:12px">
     <input type="password" name="seq_password" placeholder="Mot de passe..." required
       style="padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;font-family:inherit;text-align:center">
-    <button type="submit" style="padding:12px;background:#F59E0B;color:#1C1917;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
+    <button type="submit" style="padding:12px;background:#D85A30;color:#1A1A18;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
       Déverrouiller
     </button>
   </form>
@@ -384,11 +384,11 @@ $pct = progressionCours($userId, $seq['course_id']);
 <?php include __DIR__ . '/includes/header.php'; ?>
 
 <?php if (!empty($sequence['deadline']) && strtotime($sequence['deadline']) > time()): ?>
-<div style="background:#FEF3C7;border:1px solid #fde68a;border-radius:10px;padding:12px 18px;margin:12px 24px;display:flex;align-items:center;gap:12px">
-  <i class="ti ti-clock" style="font-size:20px;color:#D97706;flex-shrink:0"></i>
+<div style="background:#FBE3DA;border:1px solid #fde68a;border-radius:10px;padding:12px 18px;margin:12px 24px;display:flex;align-items:center;gap:12px">
+  <i class="ti ti-clock" style="font-size:20px;color:#C04A22;flex-shrink:0"></i>
   <div>
     <div style="font-size:12px;font-weight:700;color:#92400e">Date limite</div>
-    <div id="seq-countdown" style="font-size:14px;font-weight:800;color:#D97706"></div>
+    <div id="seq-countdown" style="font-size:14px;font-weight:800;color:#C04A22"></div>
   </div>
 </div>
 <script>
@@ -425,7 +425,7 @@ $pct = progressionCours($userId, $seq['course_id']);
       <!-- PDF en lecture directe -->
       <div style="margin-top:20px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-size:14px;font-weight:600;color:#1C1917"><i class="ti ti-file-type-pdf" style="color:#dc2626"></i> Document PDF</div>
+          <div style="font-size:14px;font-weight:600;color:#1A1A18"><i class="ti ti-file-type-pdf" style="color:#dc2626"></i> Document PDF</div>
           <a href="<?= h($seq['pdf_url']) ?>" target="_blank" download style="font-size:12px;color:#6b7280;text-decoration:none;padding:6px 12px;border:1px solid #e5e7eb;border-radius:6px">
             <i class="ti ti-download"></i> Télécharger
           </a>
@@ -443,16 +443,16 @@ $pct = progressionCours($userId, $seq['course_id']);
 if ($userId) {
     $pct_cours = progressionCours($userId, $course['id'] ?? 0);
     if ($pct_cours >= 100): ?>
-<div style="background:linear-gradient(135deg,#FEF3C7,#FFFBEB);border:2px solid #F59E0B;border-radius:16px;padding:28px;margin:24px 0;text-align:center">
+<div style="background:linear-gradient(135deg,#FBE3DA,#F5F0E8);border:2px solid #D85A30;border-radius:16px;padding:28px;margin:24px 0;text-align:center">
     <div style="font-size:48px;margin-bottom:12px">🎉</div>
-    <h3 style="font-size:20px;font-weight:800;color:#1C1917;margin-bottom:8px">Félicitations <?= h(explode(' ', $_SESSION['user_nom'] ?? '')[0]) ?> !</h3>
+    <h3 style="font-size:20px;font-weight:800;color:#1A1A18;margin-bottom:8px">Félicitations <?= h(explode(' ', $_SESSION['user_nom'] ?? '')[0]) ?> !</h3>
     <p style="font-size:14px;color:#6b7280;margin-bottom:16px">Tu as complété l'intégralité de ce cours. Ton certificat est disponible !</p>
     <a href="<?= SITE_URL ?>/certificate.php?course=<?= $course['id'] ?? 0 ?>"
-       style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#F59E0B;color:#1C1917;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none">
+       style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#D85A30;color:#1A1A18;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none">
         <i class="ti ti-certificate"></i> Télécharger mon certificat
     </a>
     <a href="<?= SITE_URL ?>/satisfaction.php?course_id=<?= $course['id'] ?? 0 ?>"
-       style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#fff;border:2px solid #F59E0B;color:#D97706;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;margin-top:10px">
+       style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#fff;border:2px solid #D85A30;color:#C04A22;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;margin-top:10px">
         <i class="ti ti-star"></i> Donner mon avis sur ce cours
     </a>
 </div>
@@ -484,8 +484,8 @@ if ($userId) {
       ?>
       <?php if (!empty($seq['video_url']) && $userId): ?>
       <div style="margin-top:20px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:14px;padding:20px">
-        <div style="font-size:13px;font-weight:700;color:#1C1917;margin-bottom:14px">
-          <i class="ti ti-message-circle" style="color:#F59E0B"></i> Commentaires sur la vidéo
+        <div style="font-size:13px;font-weight:700;color:#1A1A18;margin-bottom:14px">
+          <i class="ti ti-message-circle" style="color:#D85A30"></i> Commentaires sur la vidéo
         </div>
         <!-- Formulaire -->
         <form method="POST" style="display:flex;gap:10px;margin-bottom:16px;align-items:flex-end">
@@ -500,7 +500,7 @@ if ($userId) {
             <input type="text" name="commentaire" placeholder="Votre commentaire à ce moment de la vidéo..." required
               style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-family:inherit;box-sizing:border-box">
           </div>
-          <button type="submit" style="padding:8px 14px;background:#F59E0B;color:#1C1917;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
+          <button type="submit" style="padding:8px 14px;background:#D85A30;color:#1A1A18;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
             <i class="ti ti-send"></i> Poster
           </button>
         </form>
@@ -513,11 +513,11 @@ if ($userId) {
           <?php $min=floor($vc['timecode']/60); $sec=$vc['timecode']%60; ?>
           <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:#fff;border-radius:8px;border:1px solid #f3f4f6">
             <button type="button" onclick="seekVideo(<?= $vc['timecode'] ?>)"
-              style="font-family:monospace;font-size:11px;font-weight:700;color:#F59E0B;background:#FEF3C7;padding:3px 8px;border-radius:4px;border:none;cursor:pointer;flex-shrink:0">
+              style="font-family:monospace;font-size:11px;font-weight:700;color:#D85A30;background:#FBE3DA;padding:3px 8px;border-radius:4px;border:none;cursor:pointer;flex-shrink:0">
               <?= sprintf('%d:%02d', $min, $sec) ?>
             </button>
             <div style="flex:1">
-              <span style="font-size:12px;font-weight:700;color:#1C1917"><?= h($vc['nom'].' '.$vc['prenom']) ?></span>
+              <span style="font-size:12px;font-weight:700;color:#1A1A18"><?= h($vc['nom'].' '.$vc['prenom']) ?></span>
               <span style="font-size:11px;color:#9ca3af;margin-left:8px"><?= date('d/m/Y', strtotime($vc['created_at'])) ?></span>
               <p style="font-size:13px;color:#374151;margin:4px 0 0"><?= h($vc['commentaire']) ?></p>
             </div>
@@ -609,7 +609,7 @@ if ($userId) {
         <!-- Chapitres vidéo -->
         <div style="margin-top:16px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:16px">
           <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;margin-bottom:10px">
-            <i class="ti ti-list" style="color:#F59E0B"></i> Chapitres
+            <i class="ti ti-list" style="color:#D85A30"></i> Chapitres
           </div>
           <div style="display:flex;flex-direction:column;gap:4px">
             <?php foreach ($chapters as $ch): ?>
@@ -621,9 +621,9 @@ if ($userId) {
             <button type="button"
                     onclick="seekVideo(<?= $ch['timecode'] ?>)"
                     style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;text-align:left;font-family:inherit;font-size:13px;transition:.15s"
-                    onmouseover="this.style.background='#FFFBEB';this.style.borderColor='#F59E0B'"
+                    onmouseover="this.style.background='#F5F0E8';this.style.borderColor='#D85A30'"
                     onmouseout="this.style.background='#fff';this.style.borderColor='#e5e7eb'">
-              <span style="font-family:monospace;font-size:11px;font-weight:700;color:#F59E0B;background:#FEF3C7;padding:2px 8px;border-radius:4px;flex-shrink:0"><?= $label ?></span>
+              <span style="font-family:monospace;font-size:11px;font-weight:700;color:#D85A30;background:#FBE3DA;padding:2px 8px;border-radius:4px;flex-shrink:0"><?= $label ?></span>
               <span style="color:#374151"><?= h($ch['titre']) ?></span>
               <i class="ti ti-player-play" style="margin-left:auto;color:#9ca3af;font-size:14px"></i>
             </button>
@@ -650,11 +650,11 @@ if ($userId) {
       <?php endif; ?>
 
       <?php if (!empty($seq['contenu_riche'])): ?>
-      <div class="seq-text-body seq-rich-content" style="font-size:15px;line-height:1.8;color:#1C1917">
+      <div class="seq-text-body seq-rich-content" style="font-size:15px;line-height:1.8;color:#1A1A18">
         <?= $seq['contenu_riche'] ?>
       </div>
       <?php elseif (!empty($seq['contenu'])): ?>
-      <div class="seq-text-body" style="font-size:15px;line-height:1.8;color:#1C1917;white-space:pre-wrap">
+      <div class="seq-text-body" style="font-size:15px;line-height:1.8;color:#1A1A18;white-space:pre-wrap">
         <?= h($seq['contenu']) ?>
       </div>
       <?php endif; ?>
@@ -787,8 +787,8 @@ if ($userId) {
 function autoAdvance(nextUrl) {
   if (!nextUrl) return;
   const banner = document.createElement('div');
-  banner.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1C1917;color:#fff;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.3)';
-  banner.innerHTML = '<i class="ti ti-arrow-right" style="color:#F59E0B;font-size:18px"></i> Passage automatique à la séquence suivante... <span id="countdown" style="color:#F59E0B;font-weight:800">5</span>';
+  banner.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A18;color:#fff;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.3)';
+  banner.innerHTML = '<i class="ti ti-arrow-right" style="color:#D85A30;font-size:18px"></i> Passage automatique à la séquence suivante... <span id="countdown" style="color:#D85A30;font-weight:800">5</span>';
   document.body.appendChild(banner);
   let n = 5;
   const t = setInterval(() => {

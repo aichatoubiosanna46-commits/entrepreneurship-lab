@@ -33,10 +33,10 @@ $types = [
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
 /* Variables Sunrise Africa (alignées sur style.css / dashboard / coaching) */
-:root{--amber:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#D97706;--text-muted:#6b7280}
-body.lib-page{background:#FFFBEB}
+:root{--amber:#D85A30;--amber-light:#FBE3DA;--amber-dark:#C04A22;--text-muted:#6b7280}
+body.lib-page{background:#F5F0E8}
 
-.lib-hero{background:linear-gradient(135deg,#1C1917,#292524);padding:52px 24px 40px;text-align:center}
+.lib-hero{background:linear-gradient(135deg,#1A1A18,#292524);padding:52px 24px 40px;text-align:center}
 .lib-hero h1{font-size:32px;font-weight:800;color:#fff;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:10px}
 .lib-hero h1 i{color:var(--amber)}
 .lib-hero p{font-size:14px;color:rgba(255,255,255,.6);max-width:560px;margin:0 auto}
@@ -49,10 +49,10 @@ body.lib-page{background:#FFFBEB}
 .res-card { background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s; }
 .res-card:hover { transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.09); }
 .res-icon { width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px; }
-.res-title { font-size:15px;font-weight:700;line-height:1.3;color:#1C1917; }
+.res-title { font-size:15px;font-weight:700;line-height:1.3;color:#1A1A18; }
 .res-desc { font-size:13px;color:var(--text-muted);line-height:1.5;flex:1; }
 .res-meta { display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text-muted); }
-.res-download { display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 16px;border-radius:9px;background:linear-gradient(135deg,var(--amber),var(--amber-dark));color:#1C1917;font-size:13px;font-weight:700;text-decoration:none;transition:opacity .15s; }
+.res-download { display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 16px;border-radius:9px;background:linear-gradient(135deg,var(--amber),var(--amber-dark));color:#1A1A18;font-size:13px;font-weight:700;text-decoration:none;transition:opacity .15s; }
 .res-download:hover { opacity:.9; }
 .lock-badge { display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:10px 16px;border-radius:9px;background:#f9fafb;color:var(--text-muted);font-size:12px;border:1px solid #e5e7eb; }
 .lib-empty { text-align:center;padding:60px 24px;background:#fff;border:1px dashed #fde68a;border-radius:16px;color:var(--text-muted); }
@@ -69,7 +69,7 @@ body.lib-page{background:#FFFBEB}
 
 <div class="lib-wrap">
   <div class="type-filters">
-    <a href="<?= SITE_URL ?>/resources.php" class="type-btn <?= !$type ? 'active' : '' ?>" style="<?= !$type ? 'background:var(--amber);border-color:var(--amber);color:#1C1917' : '' ?>">
+    <a href="<?= SITE_URL ?>/resources.php" class="type-btn <?= !$type ? 'active' : '' ?>" style="<?= !$type ? 'background:var(--amber);border-color:var(--amber);color:#1A1A18' : '' ?>">
       <i class="ti ti-grid-4x4"></i> Tout afficher
     </a>
     <?php foreach ($types as $key => $t): ?>

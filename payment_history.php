@@ -137,7 +137,7 @@ $planNames = ['decouverte'=>'Découverte','business_plan'=>'Business Plan','lanc
                   </button>
                 </form>
               <?php elseif ($refundStatus === 'demande'): ?>
-                <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#FEF3C7;color:#92400e">Remb. demandé</span>
+                <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#FBE3DA;color:#92400e">Remb. demandé</span>
               <?php elseif ($refundStatus === 'rembourse'): ?>
                 <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#EAF3DE;color:#27500A">Remboursé</span>
               <?php elseif ($refundStatus === 'refuse'): ?>

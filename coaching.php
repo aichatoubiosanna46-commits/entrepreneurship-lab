@@ -19,7 +19,7 @@ $sessions = $sessions->fetchAll();
 // Lien Calendly depuis settings
 try { $calendlyUrl = $pdo->query("SELECT valeur FROM settings WHERE cle='calendly_url'")->fetchColumn(); } catch(Exception $e){$calendlyUrl='';}
 
-$statusColors = ['planifie'=>'#D97706','confirme'=>'#16a34a','annule'=>'#dc2626','termine'=>'#6b7280'];
+$statusColors = ['planifie'=>'#C04A22','confirme'=>'#16a34a','annule'=>'#dc2626','termine'=>'#6b7280'];
 $statusLabels = ['planifie'=>'En attente','confirme'=>'Confirmé ✓','annule'=>'Annulé','termine'=>'Terminé'];
 ?>
 <!DOCTYPE html>
@@ -32,22 +32,22 @@ $statusLabels = ['planifie'=>'En attente','confirme'=>'Confirmé ✓','annule'=>
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/user-dashboard.css">
 <style>
-:root{--amber:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#D97706;--text-muted:#6b7280}
-.user-dash-page{background:#FFFBEB}
+:root{--amber:#D85A30;--amber-light:#FBE3DA;--amber-dark:#C04A22;--text-muted:#6b7280}
+.user-dash-page{background:#F5F0E8}
 .user-dash-layout{display:flex;max-width:1200px;margin:0 auto;padding:28px 20px;gap:24px;align-items:flex-start}
 .user-sidebar{width:220px;flex-shrink:0;background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;position:sticky;top:80px}
-.user-sidebar-profile{padding:24px 16px 16px;text-align:center;background:linear-gradient(135deg,#1C1917,#292524)}
-.user-avatar-ring{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;border:3px solid #F59E0B;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.user-avatar-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#F59E0B,#EF4444);color:#fff;font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center}
-.user-sidebar-name{font-size:14px;font-weight:700;color:#FEF3C7}
+.user-sidebar-profile{padding:24px 16px 16px;text-align:center;background:linear-gradient(135deg,#1A1A18,#292524)}
+.user-avatar-ring{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;border:3px solid #D85A30;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.user-avatar-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#D85A30,#085041);color:#fff;font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.user-sidebar-name{font-size:14px;font-weight:700;color:#FBE3DA}
 .user-sidebar-nav{padding:8px 0}
 .user-nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#6b7280;text-decoration:none;transition:.15s;border-left:3px solid transparent}
 .user-nav-item i{font-size:17px;flex-shrink:0}
-.user-nav-item:hover{background:#FFFBEB;color:#D97706}
-.user-nav-item.active{background:#FEF3C7;color:#D97706;font-weight:600;border-left-color:#F59E0B}
+.user-nav-item:hover{background:#F5F0E8;color:#C04A22}
+.user-nav-item.active{background:#FBE3DA;color:#C04A22;font-weight:600;border-left-color:#D85A30}
 .user-sidebar-footer{border-top:1px solid #f3f4f6;padding:6px 0}
 .user-dash-main{flex:1;min-width:0}
-.dash-title{font-size:22px;font-weight:800;color:#1C1917;margin-bottom:20px}
+.dash-title{font-size:22px;font-weight:800;color:#1A1A18;margin-bottom:20px}
 @media(max-width:768px){.user-dash-layout{flex-direction:column}.user-sidebar{width:100%;position:static}}
 </style>
 </head>
@@ -78,7 +78,7 @@ $statusLabels = ['planifie'=>'En attente','confirme'=>'Confirmé ✓','annule'=>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
       <h1 class="dash-title" style="margin:0">Mes sessions coaching 1:1</h1>
       <?php if ($calendlyUrl): ?>
-      <a href="<?= h($calendlyUrl) ?>" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#1C1917;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">
+      <a href="<?= h($calendlyUrl) ?>" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,#D85A30,#C04A22);color:#1A1A18;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">
         <i class="ti ti-calendar-plus"></i> Réserver une session
       </a>
       <?php endif; ?>
@@ -89,10 +89,10 @@ $statusLabels = ['planifie'=>'En attente','confirme'=>'Confirmé ✓','annule'=>
     <?php if (empty($sessions)): ?>
     <div style="text-align:center;padding:60px 24px;background:#fff;border:1px dashed #fde68a;border-radius:16px">
       <i class="ti ti-video-off" style="font-size:48px;color:#fde68a;display:block;margin-bottom:12px"></i>
-      <h3 style="font-size:18px;font-weight:700;color:#1C1917;margin-bottom:8px">Aucune session planifiée</h3>
+      <h3 style="font-size:18px;font-weight:700;color:#1A1A18;margin-bottom:8px">Aucune session planifiée</h3>
       <p style="font-size:13px;color:#6b7280;margin-bottom:20px">Réservez une session coaching 1:1 avec votre mentor via Calendly.</p>
       <?php if ($calendlyUrl): ?>
-      <a href="<?= h($calendlyUrl) ?>" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#F59E0B;color:#1C1917;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">
+      <a href="<?= h($calendlyUrl) ?>" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#D85A30;color:#1A1A18;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none">
         <i class="ti ti-calendar-plus"></i> Réserver maintenant →
       </a>
       <?php endif; ?>
@@ -102,24 +102,24 @@ $statusLabels = ['planifie'=>'En attente','confirme'=>'Confirmé ✓','annule'=>
       <?php foreach ($sessions as $s): ?>
       <?php $isPast = strtotime($s['date_heure']) < time(); ?>
       <div style="background:#fff;border:1px solid <?= $s['statut']==='confirme' ? '#86efac' : '#e5e7eb' ?>;border-radius:16px;padding:20px;display:flex;align-items:flex-start;gap:16px">
-        <div style="width:52px;height:52px;border-radius:14px;background:<?= $s['statut']==='confirme' ? '#ECFDF5' : '#FEF3C7' ?>;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <i class="ti ti-video" style="font-size:22px;color:<?= $statusColors[$s['statut']] ?? '#D97706' ?>"></i>
+        <div style="width:52px;height:52px;border-radius:14px;background:<?= $s['statut']==='confirme' ? '#ECFDF5' : '#FBE3DA' ?>;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ti-video" style="font-size:22px;color:<?= $statusColors[$s['statut']] ?? '#C04A22' ?>"></i>
         </div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:16px;font-weight:700;color:#1C1917;margin-bottom:4px"><?= h($s['titre']) ?></div>
+          <div style="font-size:16px;font-weight:700;color:#1A1A18;margin-bottom:4px"><?= h($s['titre']) ?></div>
           <div style="font-size:13px;color:#6b7280;margin-bottom:10px">
             Avec <?= h(($s['coach_prenom']??'').' '.($s['coach_nom']??'Votre mentor')) ?>
           </div>
           <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px">
             <span style="display:flex;align-items:center;gap:5px;color:#374151">
-              <i class="ti ti-calendar" style="color:#F59E0B"></i>
+              <i class="ti ti-calendar" style="color:#D85A30"></i>
               <?= date('l d F Y', strtotime($s['date_heure'])) ?>
             </span>
             <span style="display:flex;align-items:center;gap:5px;color:#374151">
-              <i class="ti ti-clock" style="color:#F59E0B"></i>
+              <i class="ti ti-clock" style="color:#D85A30"></i>
               <?= date('H:i', strtotime($s['date_heure'])) ?> · <?= $s['duree_minutes'] ?> min
             </span>
-            <span style="padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:<?= $s['statut']==='confirme'?'#ECFDF5':($s['statut']==='annule'?'#fef2f2':'#FEF3C7') ?>;color:<?= $statusColors[$s['statut']] ?? '#D97706' ?>">
+            <span style="padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:<?= $s['statut']==='confirme'?'#ECFDF5':($s['statut']==='annule'?'#F0F9F5':'#FBE3DA') ?>;color:<?= $statusColors[$s['statut']] ?? '#C04A22' ?>">
               <?= $statusLabels[$s['statut']] ?>
             </span>
           </div>

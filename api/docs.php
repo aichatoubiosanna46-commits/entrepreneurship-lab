@@ -16,23 +16,23 @@ body{background:#0f172a;color:#e2e8f0;font-family:'Plus Jakarta Sans',sans-serif
 .docs-header{margin-bottom:48px}
 .docs-title{font-size:32px;font-weight:800;color:#fff;margin-bottom:8px}
 .docs-sub{font-size:14px;color:#94a3b8}
-.base-url{display:inline-flex;align-items:center;gap:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#F59E0B;margin-top:12px}
+.base-url{display:inline-flex;align-items:center;gap:8px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#D85A30;margin-top:12px}
 .endpoint-group{margin-bottom:40px}
-.group-title{font-size:16px;font-weight:700;color:#F59E0B;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #1e293b;display:flex;align-items:center;gap:8px}
+.group-title{font-size:16px;font-weight:700;color:#D85A30;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #1e293b;display:flex;align-items:center;gap:8px}
 .endpoint{background:#1e293b;border:1px solid #334155;border-radius:12px;margin-bottom:12px;overflow:hidden}
 .ep-header{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
 .ep-method{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;flex-shrink:0}
-.get{background:#0d9488;color:#fff}.post{background:#7c3aed;color:#fff}.put{background:#d97706;color:#fff}.delete{background:#dc2626;color:#fff}
+.get{background:#0d9488;color:#fff}.post{background:#7c3aed;color:#fff}.put{background:#C04A22;color:#fff}.delete{background:#dc2626;color:#fff}
 .ep-path{font-family:'JetBrains Mono',monospace;font-size:13px;color:#e2e8f0;flex:1}
 .ep-desc{font-size:12px;color:#64748b}
 .ep-body{display:none;padding:0 18px 16px;border-top:1px solid #334155}
 .ep-body.open{display:block}
-.ep-auth{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 8px;border-radius:6px;background:#292524;color:#F59E0B;margin-top:10px;margin-bottom:10px}
+.ep-auth{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 8px;border-radius:6px;background:#292524;color:#D85A30;margin-top:10px;margin-bottom:10px}
 .code{background:#0f172a;border:1px solid #334155;border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#86efac;overflow-x:auto;margin-top:10px}
 .param-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
 .param-table th{text-align:left;padding:6px 10px;color:#64748b;font-weight:600;border-bottom:1px solid #334155}
 .param-table td{padding:8px 10px;border-bottom:1px solid #1e293b;vertical-align:top}
-.required{color:#ef4444;font-size:10px;font-weight:700}
+.required{color:#085041;font-size:10px;font-weight:700}
 .optional{color:#64748b;font-size:10px}
 </style>
 </head>
@@ -82,7 +82,7 @@ body{background:#0f172a;color:#e2e8f0;font-family:'Plus Jakarta Sans',sans-serif
           <tr><th>Paramètre</th><th>Type</th><th>Description</th></tr>
           <?php foreach ($params as $pname => $pinfo): ?>
           <tr>
-            <td><code style="color:#F59E0B"><?= $pname ?></code> <span class="<?= $pinfo['req']?'required':'optional' ?>"><?= $pinfo['req']?'requis':'optionnel' ?></span></td>
+            <td><code style="color:#D85A30"><?= $pname ?></code> <span class="<?= $pinfo['req']?'required':'optional' ?>"><?= $pinfo['req']?'requis':'optionnel' ?></span></td>
             <td style="color:#64748b"><?= $pinfo['type'] ?></td>
             <td style="color:#94a3b8"><?= $pinfo['desc'] ?></td>
           </tr>

@@ -122,7 +122,7 @@ $currentPage = 'question_bank.php';
         <div style="font-size:12px;font-weight:600;color:#6b7280;margin:12px 0 8px">RÉPONSES (coche = correcte)</div>
         <?php for ($ai=0; $ai<4; $ai++): ?>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-          <input type="checkbox" name="a_correct[<?= $ai ?>]" value="1" style="width:16px;height:16px;accent-color:#F59E0B;flex-shrink:0">
+          <input type="checkbox" name="a_correct[<?= $ai ?>]" value="1" style="width:16px;height:16px;accent-color:#D85A30;flex-shrink:0">
           <input type="text" name="a_texte[<?= $ai ?>]" placeholder="Réponse <?= chr(65+$ai) ?>..." class="fld">
         </div>
         <?php endfor; ?>

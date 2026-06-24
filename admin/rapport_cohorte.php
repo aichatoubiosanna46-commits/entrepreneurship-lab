@@ -90,7 +90,7 @@ $currentPage = 'rapport_cohorte.php';
   <!-- Stats -->
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
     <div class="admin-card" style="text-align:center">
-      <div style="font-size:32px;font-weight:800;color:#F59E0B"><?= $stats['total'] ?></div>
+      <div style="font-size:32px;font-weight:800;color:#D85A30"><?= $stats['total'] ?></div>
       <div style="font-size:13px;color:#6b7280">Étudiants dans la cohorte</div>
     </div>
     <div class="admin-card" style="text-align:center">
@@ -113,7 +113,7 @@ $currentPage = 'rapport_cohorte.php';
         <tr>
           <td><strong><?= h($s['nom'].' '.$s['prenom']) ?></strong></td>
           <td><?= h($s['email']) ?></td>
-          <td style="text-align:center"><span style="background:#FEF3C7;color:#D97706;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:700"><?= $s['nb_cours'] ?></span></td>
+          <td style="text-align:center"><span style="background:#FBE3DA;color:#C04A22;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:700"><?= $s['nb_cours'] ?></span></td>
           <td style="text-align:center"><strong><?= number_format($s['xp_total']) ?> XP</strong></td>
           <td style="font-size:12px;color:#9ca3af"><?= date('d/m/Y', strtotime($s['created_at'])) ?></td>
         </tr>

@@ -33,7 +33,7 @@ require_once __DIR__ . '/includes/header.php';
 
   <div style="text-align:center;margin-bottom:32px">
     <h1 style="font-size:28px;font-weight:700;margin-bottom:8px">
-      <i class="ti ti-trophy" style="color:#F59E0B"></i> Classement
+      <i class="ti ti-trophy" style="color:#D85A30"></i> Classement
     </h1>
     <p style="color:var(--text-muted)">Top 20 des apprenants les plus actifs</p>
     <?php if (estConnecte() && $monRang): ?>
@@ -53,7 +53,7 @@ require_once __DIR__ . '/includes/header.php';
         <?php
           $rang = $i + 1;
           $isMe = estConnecte() && $_SESSION['user_id'] == $u['id'];
-          $medalColors = [1 => '#F59E0B', 2 => '#6B7280', 3 => '#B45309'];
+          $medalColors = [1 => '#D85A30', 2 => '#6B7280', 3 => '#A83E1C'];
           $medalColor  = $medalColors[$rang] ?? null;
         ?>
         <div style="display:flex;align-items:center;gap:16px;padding:16px 24px;border-bottom:<?= $i < count($leaders)-1 ? '1px solid var(--border,#e5e7eb)' : 'none' ?>;background:<?= $isMe ? '#F5F3FF' : '' ?>">

@@ -84,7 +84,7 @@ $currentPage = 'settings.php';
         <input type="text" name="fb_pixel_id" value="<?= $s('fb_pixel_id') ?>" placeholder="123456789012345">
       </div>
       <?php if ($settings['ga4_measurement_id'] ?? ''): ?>
-      <div class="alert" style="background:#FEF3C7;border:1px solid #fde68a;color:#92400e;display:flex;gap:8px;padding:10px 14px;border-radius:8px;font-size:12px">
+      <div class="alert" style="background:#FBE3DA;border:1px solid #fde68a;color:#92400e;display:flex;gap:8px;padding:10px 14px;border-radius:8px;font-size:12px">
         <i class="ti ti-check-circle" style="flex-shrink:0"></i>
         Google Analytics actif — ID : <strong><?= $s('ga4_measurement_id') ?></strong>
       </div>

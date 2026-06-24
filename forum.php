@@ -114,7 +114,7 @@ require_once __DIR__ . '/includes/header.php';
           <div style="flex:1;min-width:0">
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
               <?php if ($t['epingle']): ?>
-                <span style="background:#FEF3C7;color:#92400E;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px">
+                <span style="background:#FBE3DA;color:#92400E;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px">
                   <i class="ti ti-pin"></i> Épinglé
                 </span>
               <?php endif; ?>

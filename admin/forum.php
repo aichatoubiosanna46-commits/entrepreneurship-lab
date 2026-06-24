@@ -115,7 +115,7 @@ $pageTitle = 'Modération Forum';
                 <td style="padding:12px 16px;font-size:13px;color:var(--text-muted)"><?= h($t['prenom'] . ' ' . $t['nom']) ?></td>
                 <td style="padding:12px 16px;text-align:center;font-size:13px"><?= $t['nb_reponses'] ?></td>
                 <td style="padding:12px 16px;text-align:center">
-                  <?php if ($t['epingle']): ?><span style="font-size:11px;background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:99px;margin:2px"><i class="ti ti-pin"></i></span><?php endif; ?>
+                  <?php if ($t['epingle']): ?><span style="font-size:11px;background:#FBE3DA;color:#92400E;padding:2px 8px;border-radius:99px;margin:2px"><i class="ti ti-pin"></i></span><?php endif; ?>
                   <?php if ($t['ferme']): ?><span style="font-size:11px;background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:99px;margin:2px"><i class="ti ti-lock"></i></span><?php endif; ?>
                   <?php if (!$t['epingle'] && !$t['ferme']): ?><span style="color:#9ca3af;font-size:12px">Ouvert</span><?php endif; ?>
                 </td>

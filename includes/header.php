@@ -48,8 +48,8 @@ if (estConnecte()) {
            alt="<?= SITE_NAME ?>"
            style="height:38px;width:auto"
            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div style="display:none;width:36px;height:36px;background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:10px;align-items:center;justify-content:center;flex-shrink:0">
-        <i class="ti ti-star" style="font-size:18px;color:#1C1917"></i>
+      <div style="display:none;width:36px;height:36px;background:linear-gradient(135deg,#D85A30,#C04A22);border-radius:10px;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="ti ti-star" style="font-size:18px;color:#1A1A18"></i>
       </div>
     </a>
 
@@ -84,7 +84,7 @@ if (estConnecte()) {
       <?php if (estConnecte()):
         try { $xpUser = (int)getPDO()->query("SELECT xp_total FROM users WHERE id=".(int)$_SESSION['user_id'])->fetchColumn(); } catch(Exception $e){$xpUser=0;}
       ?>
-      <div style="display:flex;align-items:center;gap:5px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#F59E0B">
+      <div style="display:flex;align-items:center;gap:5px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#D85A30">
         <i class="ti ti-star" style="font-size:13px"></i> <?= number_format($xpUser) ?> XP
       </div>
       <?php endif; ?>
@@ -146,17 +146,17 @@ if (estConnecte()) {
 
 <style>
 .nav-icon-btn { width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;transition:.15s;position:relative;font-size:20px;z-index:1; }
-.nav-icon-btn:hover { background:rgba(255,255,255,.12);color:#F59E0B; }
+.nav-icon-btn:hover { background:rgba(255,255,255,.12);color:#D85A30; }
 .nav-bell { position:relative; }
-.nav-notif-badge { position:absolute;top:2px;right:2px;background:#EF4444;color:#fff;font-size:9px;font-weight:800;border-radius:99px;padding:1px 4px;min-width:14px;text-align:center;line-height:1.4;box-shadow:0 0 0 2px #1C1917; }
+.nav-notif-badge { position:absolute;top:2px;right:2px;background:#085041;color:#fff;font-size:9px;font-weight:800;border-radius:99px;padding:1px 4px;min-width:14px;text-align:center;line-height:1.4;box-shadow:0 0 0 2px #1A1A18; }
 
 /* ── Fix sidebar liens noirs ── */
 .user-sidebar-nav a.user-nav-item { color: #6b7280 !important; }
 .user-sidebar-nav a.user-nav-item * { color: #6b7280 !important; }
-.user-sidebar-nav a.user-nav-item:hover { color: #D97706 !important; background: #FFFBEB !important; }
-.user-sidebar-nav a.user-nav-item:hover * { color: #D97706 !important; }
-.user-sidebar-nav a.user-nav-item.active { color: #D97706 !important; background: #FEF3C7 !important; border-left-color: #F59E0B !important; }
-.user-sidebar-nav a.user-nav-item.active * { color: #D97706 !important; }
+.user-sidebar-nav a.user-nav-item:hover { color: #C04A22 !important; background: #F5F0E8 !important; }
+.user-sidebar-nav a.user-nav-item:hover * { color: #C04A22 !important; }
+.user-sidebar-nav a.user-nav-item.active { color: #C04A22 !important; background: #FBE3DA !important; border-left-color: #D85A30 !important; }
+.user-sidebar-nav a.user-nav-item.active * { color: #C04A22 !important; }
 .user-sidebar-footer a.user-nav-item { color: #6b7280 !important; }
 </style>
 
@@ -167,7 +167,7 @@ if (estConnecte()) {
 <?php if (!isset($_COOKIE['cookies_accepted'])): ?>
 <div id="cookie-banner" style="position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1a1a2e;color:#e5e7eb;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;box-shadow:0 -2px 16px rgba(0,0,0,.3)">
   <span>
-    <i class="ti ti-cookie" style="color:#F59E0B;margin-right:6px"></i>
+    <i class="ti ti-cookie" style="color:#D85A30;margin-right:6px"></i>
     Cette plateforme utilise des cookies essentiels pour fonctionner. Aucun cookie publicitaire ou de tracking.
   </span>
   <div style="display:flex;gap:10px;flex-shrink:0">

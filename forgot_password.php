@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; background: #FFFBEB; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; background: #F5F0E8; }
 
 .auth-container { display: flex; min-height: 100vh; }
 
@@ -78,19 +78,19 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
 .auth-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 .auth-logo-mark {
   width: 44px; height: 44px; border-radius: 12px;
-  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  background: linear-gradient(135deg, #D85A30, #085041);
   display: flex; align-items: center; justify-content: center;
   font-size: 19px; font-weight: 800; color: #fff; flex-shrink: 0;
   box-shadow: 0 4px 14px rgba(245,158,11,.4);
 }
-.auth-logo-name { font-size: 17px; font-weight: 700; color: #FEF3C7; }
+.auth-logo-name { font-size: 17px; font-weight: 700; color: #FBE3DA; }
 
 .auth-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 28px 0; }
 .auth-hero h1 {
   font-size: 32px; font-weight: 800; color: #fff;
   line-height: 1.2; margin-bottom: 14px;
 }
-.auth-hero h1 em { font-style: normal; color: #F59E0B; }
+.auth-hero h1 em { font-style: normal; color: #D85A30; }
 .auth-hero p {
   font-size: 14px; color: rgba(255,255,255,.7);
   line-height: 1.75; max-width: 340px; margin-bottom: 32px;
@@ -101,7 +101,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
   width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
   background: rgba(245,158,11,.2); border: 1px solid rgba(245,158,11,.4);
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 800; color: #F59E0B;
+  font-size: 13px; font-weight: 800; color: #D85A30;
 }
 .auth-step-text strong { display: block; font-size: 13px; color: #fff; margin-bottom: 2px; }
 .auth-step-text span   { font-size: 12px; color: rgba(255,255,255,.55); }
@@ -111,7 +111,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
   font-size: 12px; color: rgba(255,255,255,.5);
   text-decoration: none; transition: color .15s;
 }
-.auth-back-link:hover { color: #F59E0B; }
+.auth-back-link:hover { color: #D85A30; }
 
 /* ── Panneau droit ── */
 .auth-form-panel {
@@ -122,17 +122,17 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
 
 .auth-icon-wrap {
   width: 64px; height: 64px; border-radius: 16px;
-  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
-  border: 2px solid #F59E0B;
+  background: linear-gradient(135deg, #FBE3DA, #FDE68A);
+  border: 2px solid #D85A30;
   display: flex; align-items: center; justify-content: center;
   font-size: 28px; margin-bottom: 20px;
 }
-.auth-form-title { font-size: 24px; font-weight: 800; color: #1C1917; margin-bottom: 6px; }
+.auth-form-title { font-size: 24px; font-weight: 800; color: #1A1A18; margin-bottom: 6px; }
 .auth-form-sub   { font-size: 13px; color: #6b7280; margin-bottom: 24px; line-height: 1.6; }
 
 /* Form */
 .form-group { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
-.form-group label { font-size: 13px; font-weight: 600; color: #1C1917; }
+.form-group label { font-size: 13px; font-weight: 600; color: #1A1A18; }
 .input-icon-wrap { position: relative; }
 .input-icon {
   position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
@@ -141,12 +141,12 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
 .input-icon-wrap input {
   width: 100%; padding: 11px 14px 11px 40px;
   border: 1.5px solid #e5e7eb; border-radius: 10px;
-  font-size: 14px; font-family: inherit; color: #1C1917;
+  font-size: 14px; font-family: inherit; color: #1A1A18;
   background: #fff; transition: border-color .2s, box-shadow .2s;
   box-sizing: border-box;
 }
 .input-icon-wrap input:focus {
-  outline: none; border-color: #F59E0B;
+  outline: none; border-color: #D85A30;
   box-shadow: 0 0 0 3px rgba(245,158,11,.12);
 }
 
@@ -157,16 +157,16 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
   font-size: 13px; margin-bottom: 16px;
 }
 .alert i { font-size: 18px; flex-shrink: 0; }
-.alert-error   { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+.alert-error   { background: #F0F9F5; color: #dc2626; border: 1px solid #fca5a5; }
 .alert-success { background: #ECFDF5; color: #15803d; border: 1px solid #86efac; }
-.alert-demo    { background: #FFFBEB; color: #D97706; border: 1px solid #fde68a; font-size: 12px; }
+.alert-demo    { background: #F5F0E8; color: #C04A22; border: 1px solid #fde68a; font-size: 12px; }
 
 /* Button */
 .btn-submit {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   width: 100%; padding: 13px;
-  background: linear-gradient(135deg, #F59E0B, #D97706);
-  color: #1C1917; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, #D85A30, #C04A22);
+  color: #1A1A18; border: none; border-radius: 10px;
   font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit;
   box-shadow: 0 3px 10px rgba(245,158,11,.3);
   transition: opacity .15s, transform .1s;
@@ -177,7 +177,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
   display: flex; align-items: center; justify-content: center; gap: 6px;
   margin-top: 20px; font-size: 13px; color: #6b7280; text-decoration: none;
 }
-.back-to-login:hover { color: #F59E0B; }
+.back-to-login:hover { color: #D85A30; }
 
 /* Success state */
 .success-wrap { text-align: center; padding: 12px 0; }
@@ -189,7 +189,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
   font-size: 32px; margin: 0 auto 20px;
   color: #16a34a;
 }
-.success-wrap h3 { font-size: 20px; font-weight: 800; color: #1C1917; margin-bottom: 8px; }
+.success-wrap h3 { font-size: 20px; font-weight: 800; color: #1A1A18; margin-bottom: 8px; }
 .success-wrap p  { font-size: 13px; color: #6b7280; line-height: 1.65; margin-bottom: 24px; }
 
 @media (max-width: 860px) {
@@ -296,7 +296,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
             <i class="ti ti-info-circle" style="flex-shrink:0"></i>
             <div>
               <strong>Mode démo</strong> (SMTP non configuré) :<br>
-              <a href="<?= h($resetLink) ?>" style="color:#D97706;word-break:break-all;font-size:11px">
+              <a href="<?= h($resetLink) ?>" style="color:#C04A22;word-break:break-all;font-size:11px">
                 <?= h($resetLink) ?>
               </a>
             </div>
@@ -311,7 +311,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
       <?php else: ?>
 
         <div class="auth-icon-wrap">
-          <i class="ti ti-lock-question" style="font-size:28px;color:#D97706" aria-hidden="true"></i>
+          <i class="ti ti-lock-question" style="font-size:28px;color:#C04A22" aria-hidden="true"></i>
         </div>
         <h2 class="auth-form-title">Mot de passe oublié ?</h2>
         <p class="auth-form-sub">

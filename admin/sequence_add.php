@@ -146,7 +146,7 @@ $currentPage = 'sequence_add.php';
               <?php $types = ['video'=>'🎬 Vidéo','texte'=>'📄 Texte','ebook'=>'📚 eBook riche','audio'=>'🎵 Audio','quiz'=>'❓ Quiz','assignment'=>'📋 Livrable']; ?>
               <?php foreach ($types as $val => $lbl): ?>
               <label style="display:flex;align-items:center;gap:6px;padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:13px;transition:.15s" onclick="switchType('<?= $val ?>')">
-                <input type="radio" name="type_contenu" value="<?= $val ?>" <?= $val==='video'?'checked':'' ?> style="accent-color:#F59E0B">
+                <input type="radio" name="type_contenu" value="<?= $val ?>" <?= $val==='video'?'checked':'' ?> style="accent-color:#D85A30">
                 <?= $lbl ?>
               </label>
               <?php endforeach; ?>
@@ -179,7 +179,7 @@ $currentPage = 'sequence_add.php';
         </div>
 
         <div class="admin-card type-panel" id="panel-ebook" style="margin-bottom:20px;display:none">
-          <div class="admin-card-title"><i class="ti ti-book" style="color:#D97706"></i> eBook interactif</div>
+          <div class="admin-card-title"><i class="ti ti-book" style="color:#C04A22"></i> eBook interactif</div>
           <div class="alert alert-info" style="margin-bottom:16px"><i class="ti ti-info-circle"></i> L'éditeur eBook permet d'intégrer textes, images, encadrés, listes, tableaux et plus encore.</div>
           <div class="form-group">
             <div id="editor-ebook" style="min-height:400px"></div>
@@ -193,7 +193,7 @@ $currentPage = 'sequence_add.php';
 
         <!-- Audio -->
         <div class="admin-card type-panel" id="panel-audio" style="margin-bottom:20px;display:none">
-          <div class="admin-card-title"><i class="ti ti-music" style="color:#EF4444"></i> Contenu audio</div>
+          <div class="admin-card-title"><i class="ti ti-music" style="color:#085041"></i> Contenu audio</div>
           <div class="form-group">
             <label>URL du fichier audio (MP3, OGG)</label>
             <input type="url" name="audio_url" placeholder="https://...">
@@ -206,7 +206,7 @@ $currentPage = 'sequence_add.php';
 
         <!-- Quiz / Assignment -->
         <div class="admin-card type-panel" id="panel-quiz" style="margin-bottom:20px;display:none">
-          <div class="admin-card-title"><i class="ti ti-help-circle" style="color:#F59E0B"></i> Quiz associé</div>
+          <div class="admin-card-title"><i class="ti ti-help-circle" style="color:#D85A30"></i> Quiz associé</div>
           <p style="font-size:13px;color:var(--text-muted)">Crée d'abord le quiz depuis <a href="<?= SITE_URL ?>/admin/quiz_add.php" style="color:var(--primary)">Admin → Quiz</a>, puis associe-le ici.</p>
         </div>
         <div class="admin-card type-panel" id="panel-assignment" style="margin-bottom:20px;display:none">

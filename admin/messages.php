@@ -48,13 +48,13 @@ $currentPage = 'messages.php';
 .msg-layout{display:grid;grid-template-columns:280px 1fr;gap:20px;height:calc(100vh - 160px)}
 .msg-sidebar{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow-y:auto}
 .msg-student{padding:14px 16px;border-bottom:1px solid #f3f4f6;cursor:pointer;transition:.15s}
-.msg-student:hover,.msg-student.active{background:#FEF3C7}
-.msg-student .name{font-size:13px;font-weight:600;color:#1C1917}
+.msg-student:hover,.msg-student.active{background:#FBE3DA}
+.msg-student .name{font-size:13px;font-weight:600;color:#1A1A18}
 .msg-student .email{font-size:11px;color:#9ca3af}
 .msg-main{display:flex;flex-direction:column;gap:16px}
 .msg-bubble{padding:14px 16px;border-radius:12px;font-size:13px;line-height:1.6;max-width:80%}
-.msg-from-student{background:#f3f4f6;color:#1C1917;align-self:flex-start}
-.msg-from-admin{background:linear-gradient(135deg,#F59E0B,#D97706);color:#1C1917;align-self:flex-end}
+.msg-from-student{background:#f3f4f6;color:#1A1A18;align-self:flex-start}
+.msg-from-admin{background:linear-gradient(135deg,#D85A30,#C04A22);color:#1A1A18;align-self:flex-end}
 .msg-time{font-size:10px;color:#9ca3af;margin-top:4px}
 .reply-form{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
 </style>

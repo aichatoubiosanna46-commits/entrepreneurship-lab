@@ -232,7 +232,7 @@ $pageTitle = 'Gradebook';
                         <?= $g['note'] ?>/<?= $a['note_max'] ?>
                       </span>
                     <?php elseif ($g): ?>
-                      <span style="font-size:11px;color:#92400E;background:#FEF3C7;padding:2px 8px;border-radius:99px"><?= $g['statut'] ?></span>
+                      <span style="font-size:11px;color:#92400E;background:#FBE3DA;padding:2px 8px;border-radius:99px"><?= $g['statut'] ?></span>
                     <?php else: ?>
                       <span style="color:#9ca3af">—</span>
                     <?php endif; ?>

@@ -48,15 +48,15 @@ try {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
-body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
+body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
 .coach-wrap{max-width:1100px;margin:0 auto;padding:32px 24px}
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
 .stat-card{background:#fff;border-radius:14px;padding:20px 24px;border:1px solid #e5e7eb}
-.stat-num{font-size:32px;font-weight:800;color:#1C1917;margin-bottom:4px}
+.stat-num{font-size:32px;font-weight:800;color:#1A1A18;margin-bottom:4px}
 .stat-label{font-size:13px;color:#6b7280}
 .action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
-.action-card{background:#fff;border-radius:12px;padding:20px;border:1px solid #e5e7eb;text-decoration:none;color:#1C1917;display:flex;align-items:center;gap:14px;transition:.15s}
-.action-card:hover{border-color:#F59E0B;background:#FFFBEB}
+.action-card{background:#fff;border-radius:12px;padding:20px;border:1px solid #e5e7eb;text-decoration:none;color:#1A1A18;display:flex;align-items:center;gap:14px;transition:.15s}
+.action-card:hover{border-color:#D85A30;background:#F5F0E8}
 .action-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 </style>
 </head>
@@ -64,8 +64,8 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
 <?php include __DIR__ . '/includes/header.php'; ?>
 <div class="coach-wrap">
   <div style="margin-bottom:24px">
-    <h1 style="font-size:24px;font-weight:800;color:#1C1917;margin-bottom:4px">
-      <i class="ti ti-star" style="color:#F59E0B"></i> Espace Coach
+    <h1 style="font-size:24px;font-weight:800;color:#1A1A18;margin-bottom:4px">
+      <i class="ti ti-star" style="color:#D85A30"></i> Espace Coach
     </h1>
     <p style="font-size:14px;color:#6b7280">Gérez les livrables et accompagnez les apprenants</p>
   </div>
@@ -73,7 +73,7 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
   <!-- Stats -->
   <div class="stat-grid">
     <div class="stat-card">
-      <div class="stat-num" style="color:#F59E0B"><?= $enAttente ?></div>
+      <div class="stat-num" style="color:#D85A30"><?= $enAttente ?></div>
       <div class="stat-label">Livrables en attente de correction</div>
     </div>
     <div class="stat-card">
@@ -89,7 +89,7 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
   <!-- Actions rapides -->
   <div class="action-grid" style="margin-bottom:28px">
     <a href="<?= SITE_URL ?>/admin/review_center.php" class="action-card">
-      <div class="action-icon" style="background:#FEF3C7"><i class="ti ti-clipboard-check" style="color:#D97706"></i></div>
+      <div class="action-icon" style="background:#FBE3DA"><i class="ti ti-clipboard-check" style="color:#C04A22"></i></div>
       <div><div style="font-weight:700;font-size:14px">Review Center</div><div style="font-size:12px;color:#6b7280">Corriger les livrables</div></div>
     </a>
     <a href="<?= SITE_URL ?>/admin/messages.php" class="action-card">
@@ -104,7 +104,7 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
 
   <!-- Derniers livrables -->
   <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden">
-    <div style="padding:16px 20px;border-bottom:1px solid #f3f4f6;font-size:14px;font-weight:700;color:#1C1917">
+    <div style="padding:16px 20px;border-bottom:1px solid #f3f4f6;font-size:14px;font-weight:700;color:#1A1A18">
       Livrables en attente
     </div>
     <?php if (empty($derniersSoumis)): ?>
@@ -132,7 +132,7 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
           <td style="padding:12px 16px;font-size:12px;color:#9ca3af"><?= date('d/m/Y H:i', strtotime($sub['created_at'])) ?></td>
           <td style="padding:12px 16px">
             <a href="<?= SITE_URL ?>/admin/review_submission.php?id=<?= $sub['id'] ?>"
-               style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#F59E0B;color:#1C1917;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none">
+               style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#D85A30;color:#1A1A18;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none">
               <i class="ti ti-pencil-check"></i> Corriger
             </a>
           </td>

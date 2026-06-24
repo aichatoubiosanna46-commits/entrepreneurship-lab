@@ -70,19 +70,19 @@ if ($userId && !empty($course['prerequis_course_id'])) {
         <div style="max-width:500px;margin:80px auto;padding:0 24px;text-align:center">
           <div style="background:#fff;border-radius:20px;padding:40px;border:1px solid #e5e7eb;box-shadow:0 4px 24px rgba(0,0,0,.06)">
             <div style="font-size:48px;margin-bottom:16px">🔒</div>
-            <h2 style="font-size:20px;font-weight:800;color:#1C1917;margin-bottom:10px">Cours prérequis non complété</h2>
+            <h2 style="font-size:20px;font-weight:800;color:#1A1A18;margin-bottom:10px">Cours prérequis non complété</h2>
             <p style="font-size:14px;color:#6b7280;margin-bottom:20px;line-height:1.7">
               Pour accéder à <strong><?= h($course['titre']) ?></strong>, tu dois d'abord compléter le cours prérequis :
             </p>
-            <div style="background:#FEF3C7;border-radius:12px;padding:16px;margin-bottom:20px">
-              <div style="font-size:15px;font-weight:700;color:#1C1917"><?= h($prereqCourse['titre'] ?? '') ?></div>
-              <div style="font-size:13px;color:#D97706;margin-top:4px">Progression actuelle : <?= $prereqPct ?>%</div>
+            <div style="background:#FBE3DA;border-radius:12px;padding:16px;margin-bottom:20px">
+              <div style="font-size:15px;font-weight:700;color:#1A1A18"><?= h($prereqCourse['titre'] ?? '') ?></div>
+              <div style="font-size:13px;color:#C04A22;margin-top:4px">Progression actuelle : <?= $prereqPct ?>%</div>
               <div style="height:6px;background:#e5e7eb;border-radius:3px;margin-top:8px;overflow:hidden">
-                <div style="height:100%;width:<?= $prereqPct ?>%;background:#F59E0B;border-radius:3px"></div>
+                <div style="height:100%;width:<?= $prereqPct ?>%;background:#D85A30;border-radius:3px"></div>
               </div>
             </div>
             <a href="<?= SITE_URL ?>/module.php?slug=<?= h($prereqCourse['slug'] ?? '') ?>"
-               style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#F59E0B;color:#1C1917;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none">
+               style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#D85A30;color:#1A1A18;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none">
               <i class="ti ti-arrow-right"></i> Continuer le prérequis
             </a>
           </div>

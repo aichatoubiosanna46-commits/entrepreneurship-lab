@@ -429,7 +429,7 @@ function togglePrix(val) {
 const tarifData = {
   decouverte:    { label:'🆓 Découverte',    color:'#EAF3DE', border:'#97C459', text:'#27500A', hint:'Visible par tous sans paiement. Accès 100% gratuit.', type:'gratuit' },
   essentiel:     { label:'⭐ Essentiel',     color:'#EDE9FE', border:'#8B5CF6', text:'#4C1D95', hint:'Réservé aux abonnés Essentiel — 5 000 FCFA/mois.', type:'payant' },
-  business_plan: { label:'📊 Business Plan', color:'#FEF3C7', border:'#F5C518', text:'#92400E', hint:'Réservé aux abonnés Business Plan — 15 000 FCFA/mois.', type:'payant' },
+  business_plan: { label:'📊 Business Plan', color:'#FBE3DA', border:'#F5C518', text:'#92400E', hint:'Réservé aux abonnés Business Plan — 15 000 FCFA/mois.', type:'payant' },
   lancement:     { label:'🚀 Lancement',     color:'#D1FAE5', border:'#10b981', text:'#065F46', hint:'Réservé aux abonnés Lancement — 25 000 FCFA/mois.', type:'payant' },
 };
 

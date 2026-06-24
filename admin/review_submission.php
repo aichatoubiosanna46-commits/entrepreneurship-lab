@@ -184,12 +184,12 @@ $currentPage = 'review_submission.php';
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
         <div class="admin-card">
           <div style="font-size:12px;font-weight:700;color:#9ca3af;margin-bottom:10px">ÉTUDIANT</div>
-          <div style="font-size:15px;font-weight:700;color:#1C1917"><?= h($sub['prenom'].' '.$sub['nom']) ?></div>
+          <div style="font-size:15px;font-weight:700;color:#1A1A18"><?= h($sub['prenom'].' '.$sub['nom']) ?></div>
           <div style="font-size:12px;color:#6b7280"><?= h($sub['email']) ?></div>
         </div>
         <div class="admin-card">
           <div style="font-size:12px;font-weight:700;color:#9ca3af;margin-bottom:10px">DEVOIR</div>
-          <div style="font-size:15px;font-weight:700;color:#1C1917"><?= h($sub['assignment_titre']) ?></div>
+          <div style="font-size:15px;font-weight:700;color:#1A1A18"><?= h($sub['assignment_titre']) ?></div>
           <div style="font-size:12px;color:#6b7280">
             Note max : <strong><?= $sub['note_max'] ?></strong>
             <?php if ($sub['note_min'] ?? 0): ?>
@@ -236,7 +236,7 @@ $currentPage = 'review_submission.php';
           <tbody>
             <?php foreach ($history as $h2): ?>
             <tr>
-              <td><span style="background:#FEF3C7;color:#D97706;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:700">v<?= $h2['version'] ?></span></td>
+              <td><span style="background:#FBE3DA;color:#C04A22;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:700">v<?= $h2['version'] ?></span></td>
               <td><?= $h2['note'] !== null ? $h2['note'].'/'.$sub['note_max'] : '—' ?></td>
               <td style="font-size:12px;color:#6b7280;max-width:200px"><?= h(mb_substr($h2['feedback']??'—',0,80)) ?></td>
               <td style="font-size:11px;color:#9ca3af"><?= date('d/m/Y H:i', strtotime($h2['created_at'])) ?></td>

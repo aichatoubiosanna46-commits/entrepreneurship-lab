@@ -100,7 +100,7 @@ $currentPage = 'quizzes.php';
           <td><?= $q['module_titre'] ? h($q['module_titre']) : '<span style="color:#9ca3af">—</span>' ?></td>
           <td><?= $q['course_titre'] ? h($q['course_titre']) : '<span style="color:#9ca3af">—</span>' ?></td>
           <td style="text-align:center">
-            <span style="background:#FEF3C7;color:#D97706;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700">
+            <span style="background:#FBE3DA;color:#C04A22;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700">
               <?= $q['nb_questions'] ?>
             </span>
           </td>

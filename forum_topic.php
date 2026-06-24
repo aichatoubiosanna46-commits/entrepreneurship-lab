@@ -144,7 +144,7 @@ require_once __DIR__ . '/includes/header.php';
       <div style="flex:1">
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
           <?php if ($topic['epingle']): ?>
-            <span style="background:#FEF3C7;color:#92400E;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px"><i class="ti ti-pin"></i> Épinglé</span>
+            <span style="background:#FBE3DA;color:#92400E;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px"><i class="ti ti-pin"></i> Épinglé</span>
           <?php endif; ?>
           <?php if ($topic['ferme']): ?>
             <span style="background:#FEE2E2;color:#991B1B;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px"><i class="ti ti-lock"></i> Fermé</span>

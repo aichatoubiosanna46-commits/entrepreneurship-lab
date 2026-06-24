@@ -13,30 +13,30 @@ require_once __DIR__ . '/includes/functions.php';
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
-body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
-.about-hero{background:linear-gradient(135deg,#1C1917,#292524);padding:80px 24px;text-align:center;color:#fff}
+body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
+.about-hero{background:linear-gradient(135deg,#1A1A18,#292524);padding:80px 24px;text-align:center;color:#fff}
 .about-hero h1{font-size:36px;font-weight:800;margin-bottom:16px}
-.about-hero h1 em{font-style:normal;color:#F59E0B}
+.about-hero h1 em{font-style:normal;color:#D85A30}
 .about-hero p{font-size:16px;color:rgba(255,255,255,.7);max-width:600px;margin:0 auto;line-height:1.8}
 .about-wrap{max-width:1000px;margin:0 auto;padding:60px 24px}
 .about-section{margin-bottom:60px}
-.about-section h2{font-size:24px;font-weight:800;color:#1C1917;margin-bottom:8px;padding-bottom:12px;border-bottom:3px solid #F59E0B;display:inline-block}
+.about-section h2{font-size:24px;font-weight:800;color:#1A1A18;margin-bottom:8px;padding-bottom:12px;border-bottom:3px solid #D85A30;display:inline-block}
 .about-section p{font-size:15px;color:#374151;line-height:1.8;margin-top:16px}
 .mission-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px}
 .mission-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;text-align:center}
-.mission-card .icon{width:56px;height:56px;border-radius:14px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px}
-.mission-card h3{font-size:15px;font-weight:700;color:#1C1917;margin-bottom:8px}
+.mission-card .icon{width:56px;height:56px;border-radius:14px;background:#FBE3DA;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px}
+.mission-card h3{font-size:15px;font-weight:700;color:#1A1A18;margin-bottom:8px}
 .mission-card p{font-size:13px;color:#6b7280;line-height:1.6}
 .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:28px}
 .team-card{background:#fff;border:1px solid #fde68a;border-radius:16px;overflow:hidden;text-align:center;padding-bottom:20px}
-.team-avatar{height:160px;background:linear-gradient(135deg,#F59E0B,#EF4444);display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;color:#fff}
-.team-name{font-size:16px;font-weight:700;color:#1C1917;margin:14px 14px 4px}
-.team-role{font-size:12px;color:#F59E0B;font-weight:600;margin-bottom:8px}
+.team-avatar{height:160px;background:linear-gradient(135deg,#D85A30,#085041);display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;color:#fff}
+.team-name{font-size:16px;font-weight:700;color:#1A1A18;margin:14px 14px 4px}
+.team-role{font-size:12px;color:#D85A30;font-weight:600;margin-bottom:8px}
 .team-bio{font-size:12px;color:#6b7280;line-height:1.6;padding:0 14px}
 .values-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:20px}
 .value-item{display:flex;align-items:flex-start;gap:12px;padding:16px;background:#fff;border-radius:12px;border:1px solid #e5e7eb}
-.value-item i{font-size:20px;color:#F59E0B;flex-shrink:0;margin-top:2px}
-.value-item strong{display:block;font-size:14px;font-weight:700;color:#1C1917;margin-bottom:4px}
+.value-item i{font-size:20px;color:#D85A30;flex-shrink:0;margin-top:2px}
+.value-item strong{display:block;font-size:14px;font-weight:700;color:#1A1A18;margin-bottom:4px}
 .value-item span{font-size:13px;color:#6b7280;line-height:1.5}
 .partner-logo{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px 28px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#374151}
 @media(max-width:768px){.mission-grid,.team-grid,.values-grid{grid-template-columns:1fr}}
@@ -58,17 +58,17 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
     <p>Ariziki EntrepreneurshipLab est un programme d'e-learning en entrepreneuriat développé par <strong>CPID ONG</strong>, destiné aux étudiants béninois de niveau Licence Professionnelle. Notre mission est de former la prochaine génération d'entrepreneurs béninois en leur donnant les outils concrets pour lancer leur activité avant même d'obtenir leur diplôme.</p>
     <div class="mission-grid">
       <div class="mission-card">
-        <div class="icon"><i class="ti ti-bulb" style="color:#F59E0B"></i></div>
+        <div class="icon"><i class="ti ti-bulb" style="color:#D85A30"></i></div>
         <h3>Pratique avant tout</h3>
         <p>Des formations ancrées dans le contexte béninois, avec des cas réels et des exercices terrain.</p>
       </div>
       <div class="mission-card">
-        <div class="icon"><i class="ti ti-certificate" style="color:#F59E0B"></i></div>
+        <div class="icon"><i class="ti ti-certificate" style="color:#D85A30"></i></div>
         <h3>Certifié officiellement</h3>
         <p>Partenariat avec l'Université de Parakou pour une reconnaissance académique de vos compétences.</p>
       </div>
       <div class="mission-card">
-        <div class="icon"><i class="ti ti-users" style="color:#F59E0B"></i></div>
+        <div class="icon"><i class="ti ti-users" style="color:#D85A30"></i></div>
         <h3>Accompagnement humain</h3>
         <p>Coaching 1:1, forum communautaire et mentors disponibles pour vous guider à chaque étape.</p>
       </div>
@@ -115,18 +115,18 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
   <div class="about-section">
     <h2>Nos partenaires</h2>
     <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:20px">
-      <div class="partner-logo"><i class="ti ti-school" style="color:#F59E0B;margin-right:8px"></i> Université de Parakou</div>
-      <div class="partner-logo"><i class="ti ti-building" style="color:#F59E0B;margin-right:8px"></i> CPID ONG Bénin</div>
-      <div class="partner-logo"><i class="ti ti-device-mobile" style="color:#F59E0B;margin-right:8px"></i> MTN Mobile Money</div>
-      <div class="partner-logo"><i class="ti ti-device-mobile" style="color:#F59E0B;margin-right:8px"></i> Moov Money</div>
+      <div class="partner-logo"><i class="ti ti-school" style="color:#D85A30;margin-right:8px"></i> Université de Parakou</div>
+      <div class="partner-logo"><i class="ti ti-building" style="color:#D85A30;margin-right:8px"></i> CPID ONG Bénin</div>
+      <div class="partner-logo"><i class="ti ti-device-mobile" style="color:#D85A30;margin-right:8px"></i> MTN Mobile Money</div>
+      <div class="partner-logo"><i class="ti ti-device-mobile" style="color:#D85A30;margin-right:8px"></i> Moov Money</div>
     </div>
   </div>
 
   <!-- CTA -->
-  <div style="background:linear-gradient(135deg,#1C1917,#292524);border-radius:20px;padding:48px;text-align:center">
+  <div style="background:linear-gradient(135deg,#1A1A18,#292524);border-radius:20px;padding:48px;text-align:center">
     <h2 style="font-size:24px;font-weight:800;color:#fff;margin-bottom:12px">Prêt à lancer ton entreprise ?</h2>
     <p style="font-size:14px;color:rgba(255,255,255,.6);margin-bottom:24px">Rejoins plus de 1 200 étudiants entrepreneurs béninois sur Ariziki.</p>
-    <a href="<?= SITE_URL ?>/register.php" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:#F59E0B;color:#1C1917;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none">
+    <a href="<?= SITE_URL ?>/register.php" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:#D85A30;color:#1A1A18;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none">
       <i class="ti ti-rocket"></i> Commencer gratuitement
     </a>
   </div>

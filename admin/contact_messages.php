@@ -39,7 +39,7 @@ $currentPage = 'contact_messages.php';
       <thead><tr><th>Date</th><th>Nom</th><th>Email</th><th>Sujet</th><th>Message</th><th>Statut</th><th>Action</th></tr></thead>
       <tbody>
         <?php foreach($messages as $m): ?>
-        <tr style="<?= !$m['lu'] ? 'background:#FFFBEB;font-weight:500' : '' ?>">
+        <tr style="<?= !$m['lu'] ? 'background:#F5F0E8;font-weight:500' : '' ?>">
           <td style="font-size:12px;color:#6b7280"><?= date('d/m/Y H:i', strtotime($m['created_at'])) ?></td>
           <td><?= h($m['nom']) ?></td>
           <td><a href="mailto:<?= h($m['email']) ?>" style="color:var(--primary)"><?= h($m['email']) ?></a></td>

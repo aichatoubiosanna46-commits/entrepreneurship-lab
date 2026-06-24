@@ -38,27 +38,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
-body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
-.contact-hero{background:linear-gradient(135deg,#1C1917,#292524);padding:60px 24px;text-align:center;color:#fff}
+body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
+.contact-hero{background:linear-gradient(135deg,#1A1A18,#292524);padding:60px 24px;text-align:center;color:#fff}
 .contact-hero h1{font-size:32px;font-weight:800;margin-bottom:10px}
-.contact-hero h1 em{font-style:normal;color:#F59E0B}
+.contact-hero h1 em{font-style:normal;color:#D85A30}
 .contact-hero p{font-size:14px;color:rgba(255,255,255,.6)}
 .contact-wrap{max-width:900px;margin:0 auto;padding:48px 24px;display:grid;grid-template-columns:1fr 360px;gap:32px}
 .contact-form-card{background:#fff;border-radius:16px;padding:32px;border:1px solid #e5e7eb}
 .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
-.form-group label{font-size:13px;font-weight:600;color:#1C1917}
+.form-group label{font-size:13px;font-weight:600;color:#1A1A18}
 .form-group input,.form-group textarea,.form-group select{padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;width:100%;box-sizing:border-box}
-.form-group input:focus,.form-group textarea:focus{outline:none;border-color:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.12)}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:#D85A30;box-shadow:0 0 0 3px rgba(245,158,11,.12)}
 .form-group textarea{resize:vertical;min-height:120px}
-.btn-send{width:100%;padding:13px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#1C1917;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-send{width:100%;padding:13px;background:linear-gradient(135deg,#D85A30,#C04A22);color:#1A1A18;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
 .info-card{background:#fff;border-radius:16px;padding:24px;border:1px solid #e5e7eb;height:fit-content}
 .info-item{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid #f3f4f6}
 .info-item:last-child{border:none}
-.info-item i{width:36px;height:36px;background:#FEF3C7;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#D97706;font-size:18px;flex-shrink:0}
-.info-item strong{display:block;font-size:13px;font-weight:700;color:#1C1917;margin-bottom:2px}
+.info-item i{width:36px;height:36px;background:#FBE3DA;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#C04A22;font-size:18px;flex-shrink:0}
+.info-item strong{display:block;font-size:13px;font-weight:700;color:#1A1A18;margin-bottom:2px}
 .info-item span{font-size:12px;color:#6b7280}
 .alert-success{background:#ECFDF5;border:1px solid #86efac;color:#15803d;padding:14px 16px;border-radius:10px;display:flex;gap:10px;align-items:center;margin-bottom:16px;font-size:13px}
-.alert-error{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:14px 16px;border-radius:10px;display:flex;gap:10px;align-items:center;margin-bottom:16px;font-size:13px}
+.alert-error{background:#F0F9F5;border:1px solid #fca5a5;color:#dc2626;padding:14px 16px;border-radius:10px;display:flex;gap:10px;align-items:center;margin-bottom:16px;font-size:13px}
 @media(max-width:768px){.contact-wrap{grid-template-columns:1fr}}
 </style>
 </head>
@@ -72,7 +72,7 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
 
 <div class="contact-wrap">
   <div class="contact-form-card">
-    <h2 style="font-size:18px;font-weight:700;color:#1C1917;margin-bottom:20px">Envoyer un message</h2>
+    <h2 style="font-size:18px;font-weight:700;color:#1A1A18;margin-bottom:20px">Envoyer un message</h2>
 
     <?php if ($succes): ?>
     <div class="alert-success">
@@ -124,7 +124,7 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
 
   <div>
     <div class="info-card">
-      <h3 style="font-size:15px;font-weight:700;color:#1C1917;margin-bottom:16px">Nos coordonnées</h3>
+      <h3 style="font-size:15px;font-weight:700;color:#1A1A18;margin-bottom:16px">Nos coordonnées</h3>
       <div class="info-item">
         <i class="ti ti-map-pin"></i>
         <div><strong>Adresse</strong><span>Parakou, République du Bénin</span></div>
@@ -144,15 +144,15 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
     </div>
 
     <div class="info-card" style="margin-top:16px">
-      <h3 style="font-size:15px;font-weight:700;color:#1C1917;margin-bottom:14px">Liens utiles</h3>
+      <h3 style="font-size:15px;font-weight:700;color:#1A1A18;margin-bottom:14px">Liens utiles</h3>
       <a href="<?= SITE_URL ?>/catalogue.php" style="display:flex;align-items:center;gap:8px;padding:10px 0;color:#374151;text-decoration:none;border-bottom:1px solid #f3f4f6;font-size:13px">
-        <i class="ti ti-book" style="color:#F59E0B"></i> Catalogue des formations
+        <i class="ti ti-book" style="color:#D85A30"></i> Catalogue des formations
       </a>
       <a href="<?= SITE_URL ?>/about.php" style="display:flex;align-items:center;gap:8px;padding:10px 0;color:#374151;text-decoration:none;border-bottom:1px solid #f3f4f6;font-size:13px">
-        <i class="ti ti-info-circle" style="color:#F59E0B"></i> À propos d'Ariziki
+        <i class="ti ti-info-circle" style="color:#D85A30"></i> À propos d'Ariziki
       </a>
       <a href="<?= SITE_URL ?>/rgpd.php" style="display:flex;align-items:center;gap:8px;padding:10px 0;color:#374151;text-decoration:none;font-size:13px">
-        <i class="ti ti-shield" style="color:#F59E0B"></i> Politique de confidentialité
+        <i class="ti ti-shield" style="color:#D85A30"></i> Politique de confidentialité
       </a>
     </div>
   </div>

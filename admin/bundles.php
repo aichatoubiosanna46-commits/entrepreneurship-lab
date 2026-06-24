@@ -74,7 +74,7 @@ $currentPage = 'bundles.php';
           <?php foreach ($bundles as $b): ?>
           <tr>
             <td><strong><?= h($b['titre']) ?></strong><br><small style="color:#6b7280"><?= h(mb_substr($b['description']??'',0,60)) ?></small></td>
-            <td style="text-align:center"><span style="background:#FEF3C7;color:#D97706;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700"><?= $b['nb_cours'] ?> cours</span></td>
+            <td style="text-align:center"><span style="background:#FBE3DA;color:#C04A22;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700"><?= $b['nb_cours'] ?> cours</span></td>
             <td><strong><?= number_format($b['prix'],0,'.',',') ?> FCFA</strong></td>
             <td><span class="badge <?= $b['actif']?'badge-success':'badge-neutral' ?>"><?= $b['actif']?'Actif':'Inactif' ?></span></td>
             <td>

@@ -69,7 +69,7 @@ $currentPage = 'satisfaction_results.php';
   <!-- Stats globales -->
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
     <div class="admin-card" style="text-align:center">
-      <div style="font-size:36px;font-weight:800;color:#F59E0B"><?= count($reponses) ?></div>
+      <div style="font-size:36px;font-weight:800;color:#D85A30"><?= count($reponses) ?></div>
       <div style="font-size:13px;color:#6b7280">Réponses reçues</div>
     </div>
     <div class="admin-card" style="text-align:center">

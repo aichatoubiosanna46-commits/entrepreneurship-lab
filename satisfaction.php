@@ -53,22 +53,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
-body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
+body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
 .sat-wrap{max-width:600px;margin:0 auto;padding:48px 24px}
 .sat-card{background:#fff;border-radius:20px;padding:40px;border:1px solid #e5e7eb;box-shadow:0 4px 24px rgba(0,0,0,.06)}
-.sat-card h1{font-size:22px;font-weight:800;color:#1C1917;margin-bottom:6px}
+.sat-card h1{font-size:22px;font-weight:800;color:#1A1A18;margin-bottom:6px}
 .sat-card p{font-size:14px;color:#6b7280;margin-bottom:28px}
 .question{margin-bottom:24px}
-.question label{font-size:14px;font-weight:600;color:#1C1917;display:block;margin-bottom:10px}
+.question label{font-size:14px;font-weight:600;color:#1A1A18;display:block;margin-bottom:10px}
 .stars{display:flex;gap:8px}
 .star-btn{font-size:28px;cursor:pointer;opacity:.4;transition:.15s;background:none;border:none;padding:0}
 .star-btn.active,.star-btn:hover{opacity:1}
 .nps-grid{display:flex;gap:6px;flex-wrap:wrap}
 .nps-btn{width:40px;height:40px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;transition:.15s;font-family:inherit}
-.nps-btn.active{background:#F59E0B;border-color:#F59E0B;color:#1C1917}
+.nps-btn.active{background:#D85A30;border-color:#D85A30;color:#1A1A18}
 .text-answer{width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;min-height:80px;box-sizing:border-box}
-.text-answer:focus{outline:none;border-color:#F59E0B}
-.btn-submit{width:100%;padding:14px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#1C1917;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px}
+.text-answer:focus{outline:none;border-color:#D85A30}
+.btn-submit{width:100%;padding:14px;background:linear-gradient(135deg,#D85A30,#C04A22);color:#1A1A18;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px}
 </style>
 </head>
 <body>
@@ -80,7 +80,7 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
     <div style="font-size:64px;margin-bottom:16px">🙏</div>
     <h1>Merci pour votre avis !</h1>
     <p>Votre retour nous aide à améliorer continuellement la qualité des formations Ariziki.</p>
-    <a href="<?= SITE_URL ?>/dashboard.php" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#F59E0B;color:#1C1917;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;margin-top:16px">
+    <a href="<?= SITE_URL ?>/dashboard.php" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#D85A30;color:#1A1A18;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;margin-top:16px">
       <i class="ti ti-arrow-left"></i> Retour au tableau de bord
     </a>
   </div>

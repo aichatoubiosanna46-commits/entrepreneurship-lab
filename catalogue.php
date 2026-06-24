@@ -68,28 +68,28 @@ try {
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
 /* Variables Sunrise Africa (alignées sur style.css / dashboard / coaching) */
-:root{--amber:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#D97706;--text-muted:#6b7280}
-body.cat-page{background:#FFFBEB}
+:root{--amber:#D85A30;--amber-light:#FBE3DA;--amber-dark:#C04A22;--text-muted:#6b7280}
+body.cat-page{background:#F5F0E8}
 
-.cat-hero{background:linear-gradient(135deg,#1C1917,#292524);padding:52px 24px 40px;text-align:center}
+.cat-hero{background:linear-gradient(135deg,#1A1A18,#292524);padding:52px 24px 40px;text-align:center}
 .cat-hero h1{font-size:32px;font-weight:800;color:#fff;margin-bottom:8px}
 .cat-hero h1 em{font-style:normal;color:var(--amber)}
 .cat-hero p{font-size:14px;color:rgba(255,255,255,.6);margin-bottom:24px}
 
 .cat-search-bar{max-width:520px;margin:0 auto;display:flex;gap:8px}
 .cat-search-bar input{flex:1;padding:12px 16px;border-radius:10px;border:none;font-size:14px;font-family:inherit}
-.cat-search-bar button{padding:12px 20px;background:var(--amber);color:#1C1917;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+.cat-search-bar button{padding:12px 20px;background:var(--amber);color:#1A1A18;border:none;border-radius:10px;font-weight:700;cursor:pointer}
 
 .cat-wrap{max-width:1100px;margin:0 auto;padding:32px 20px 60px}
 .cat-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;align-items:center}
 .cat-filter-label{font-size:12px;font-weight:600;color:var(--text-muted)}
 .filter-chip{padding:6px 14px;border-radius:20px;border:1.5px solid #e5e7eb;background:#fff;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;color:var(--text-muted);transition:.15s}
-.filter-chip:hover,.filter-chip.active{background:var(--amber);border-color:var(--amber);color:#1C1917}
+.filter-chip:hover,.filter-chip.active{background:var(--amber);border-color:var(--amber);color:#1A1A18}
 .cat-sort{margin-left:auto}
 .cat-sort select{padding:7px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:12px;font-family:inherit;background:#fff;cursor:pointer}
 
 .cat-stats{display:flex;gap:8px;align-items:center;margin-bottom:20px;font-size:13px;color:var(--text-muted)}
-.cat-stats strong{color:#1C1917}
+.cat-stats strong{color:#1A1A18}
 
 .cours-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 
@@ -103,17 +103,17 @@ body.cat-page{background:#FFFBEB}
 .cours-badge.payant{background:var(--amber-light);color:var(--amber-dark)}
 .cours-body{padding:18px;flex:1;display:flex;flex-direction:column}
 .cours-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-.cours-title{font-size:15px;font-weight:700;color:#1C1917;margin-bottom:8px;line-height:1.35}
+.cours-title{font-size:15px;font-weight:700;color:#1A1A18;margin-bottom:8px;line-height:1.35}
 .cours-desc{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:14px;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .cours-meta{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid #e5e7eb}
-.cours-price{font-size:16px;font-weight:800;color:#1C1917}
+.cours-price{font-size:16px;font-weight:800;color:#1A1A18}
 .cours-price.free{color:#16a34a}
 .cours-info{font-size:11px;color:var(--text-muted);display:flex;gap:10px}
 .cours-info span{display:flex;align-items:center;gap:3px}
-.btn-cours{display:block;width:100%;padding:11px;text-align:center;background:linear-gradient(135deg,var(--amber),var(--amber-dark));color:#1C1917;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;margin-top:14px;transition:opacity .15s}
+.btn-cours{display:block;width:100%;padding:11px;text-align:center;background:linear-gradient(135deg,var(--amber),var(--amber-dark));color:#1A1A18;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;margin-top:14px;transition:opacity .15s}
 .btn-cours:hover{opacity:.9}
-.btn-cours.outline{background:transparent;border:1.5px solid #1C1917;color:#1C1917}
-.btn-cours.outline:hover{background:#1C1917;color:#fff}
+.btn-cours.outline{background:transparent;border:1.5px solid #1A1A18;color:#1A1A18}
+.btn-cours.outline:hover{background:#1A1A18;color:#fff}
 
 .empty-state{text-align:center;padding:60px 24px;background:#fff;border:1px dashed #fde68a;border-radius:16px;color:var(--text-muted)}
 .empty-state i{font-size:48px;display:block;margin-bottom:12px;color:#fde68a}
@@ -179,12 +179,12 @@ body.cat-page{background:#FFFBEB}
   <div class="cours-grid">
     <?php foreach ($cours as $c): ?>
     <div class="cours-card">
-      <div class="cours-thumb" style="background:<?= h($c['cat_couleur'] ?? '#F59E0B') ?>22">
+      <div class="cours-thumb" style="background:<?= h($c['cat_couleur'] ?? '#D85A30') ?>22">
         <?php if ($c['miniature']): ?>
           <img src="<?= SITE_URL ?>/assets/uploads/<?= h($c['miniature']) ?>" alt="<?= h($c['titre']) ?>">
         <?php else: ?>
           <div class="cours-thumb-ph">
-            <i class="ti <?= h($c['cat_icone'] ?? 'ti-book') ?>" style="color:<?= h($c['cat_couleur'] ?? '#F59E0B') ?>"></i>
+            <i class="ti <?= h($c['cat_icone'] ?? 'ti-book') ?>" style="color:<?= h($c['cat_couleur'] ?? '#D85A30') ?>"></i>
           </div>
         <?php endif; ?>
         <span class="cours-badge <?= $c['type']==='gratuit' ? 'gratuit' : 'payant' ?>">
@@ -193,7 +193,7 @@ body.cat-page{background:#FFFBEB}
       </div>
       <div class="cours-body">
         <?php if ($c['cat_nom']): ?>
-        <div class="cours-cat" style="color:<?= h($c['cat_couleur'] ?? '#F59E0B') ?>"><?= h($c['cat_nom']) ?></div>
+        <div class="cours-cat" style="color:<?= h($c['cat_couleur'] ?? '#D85A30') ?>"><?= h($c['cat_nom']) ?></div>
         <?php endif; ?>
         <div class="cours-title"><?= h($c['titre']) ?></div>
         <?php if ($c['description']): ?>

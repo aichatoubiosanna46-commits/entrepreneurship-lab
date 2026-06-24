@@ -39,16 +39,16 @@ try {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
-body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
+body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
 .msg-wrap{max-width:800px;margin:0 auto;padding:40px 24px}
 .msg-card{background:#fff;border-radius:16px;padding:24px;border:1px solid #e5e7eb;margin-bottom:14px}
 .msg-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.msg-sujet{font-size:15px;font-weight:700;color:#1C1917}
+.msg-sujet{font-size:15px;font-weight:700;color:#1A1A18}
 .msg-meta{font-size:11px;color:#9ca3af}
 .msg-body{font-size:13px;color:#374151;line-height:1.7}
 .msg-badge{font-size:11px;padding:2px 10px;border-radius:20px;font-weight:600}
 .badge-coach{background:#EDE9FE;color:#7c3aed}
-.badge-moi{background:#FEF3C7;color:#D97706}
+.badge-moi{background:#FBE3DA;color:#C04A22}
 .form-card{background:#fff;border-radius:16px;padding:28px;border:1px solid #fde68a;margin-bottom:24px}
 </style>
 </head>
@@ -56,20 +56,20 @@ body{background:#FFFBEB;font-family:'Plus Jakarta Sans',sans-serif}
 <?php include __DIR__ . '/includes/header.php'; ?>
 <?= flash() ?>
 <div class="msg-wrap">
-  <h1 style="font-size:24px;font-weight:800;color:#1C1917;margin-bottom:24px">
-    <i class="ti ti-messages" style="color:#F59E0B"></i> Messages avec le coach
+  <h1 style="font-size:24px;font-weight:800;color:#1A1A18;margin-bottom:24px">
+    <i class="ti ti-messages" style="color:#D85A30"></i> Messages avec le coach
   </h1>
 
   <!-- Nouveau message -->
   <div class="form-card">
-    <h2 style="font-size:15px;font-weight:700;color:#1C1917;margin-bottom:16px">Envoyer un message</h2>
+    <h2 style="font-size:15px;font-weight:700;color:#1A1A18;margin-bottom:16px">Envoyer un message</h2>
     <form method="POST">
       <div style="display:flex;flex-direction:column;gap:12px">
         <input type="text" name="sujet" placeholder="Sujet *" required
           style="padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit">
         <textarea name="contenu" rows="4" placeholder="Votre message..." required
           style="padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;resize:vertical"></textarea>
-        <button type="submit" style="padding:11px 20px;background:#F59E0B;color:#1C1917;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;align-self:flex-start">
+        <button type="submit" style="padding:11px 20px;background:#D85A30;color:#1A1A18;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;align-self:flex-start">
           <i class="ti ti-send"></i> Envoyer
         </button>
       </div>

@@ -67,10 +67,10 @@ if (estConnecte()) {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <style>
-:root{--gold:#F59E0B;--gold-dark:#D97706;--navy:#1C1917;--bg:#FFFBEB;--muted:#6b7280;--border:#e5e7eb}
+:root{--gold:#D85A30;--gold-dark:#C04A22;--navy:#1A1A18;--bg:#F5F0E8;--muted:#6b7280;--border:#e5e7eb}
 body{background:#fff;font-family:'Plus Jakarta Sans',sans-serif}
 
-.cd-hero{background:linear-gradient(135deg,#1C1917 0%,#292524 100%);padding:52px 24px 48px;color:#fff}
+.cd-hero{background:linear-gradient(135deg,#1A1A18 0%,#292524 100%);padding:52px 24px 48px;color:#fff}
 .cd-hero-inner{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 340px;gap:40px;align-items:start}
 .cd-breadcrumb{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:16px}
 .cd-breadcrumb a{color:rgba(255,255,255,.6);text-decoration:none}
@@ -85,9 +85,9 @@ body{background:#fff;font-family:'Plus Jakarta Sans',sans-serif}
 .cd-card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.15);position:sticky;top:80px}
 .cd-card-thumb{height:180px;border-radius:10px;overflow:hidden;margin-bottom:20px;background:#f3f4f6}
 .cd-card-thumb img{width:100%;height:100%;object-fit:cover}
-.cd-card-price{font-size:32px;font-weight:800;color:#1C1917;margin-bottom:16px}
+.cd-card-price{font-size:32px;font-weight:800;color:#1A1A18;margin-bottom:16px}
 .cd-card-price.free{color:#16a34a;font-size:24px}
-.btn-enroll{display:block;width:100%;padding:14px;text-align:center;background:linear-gradient(135deg,var(--gold),#D97706);color:#1C1917;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;text-decoration:none;transition:opacity .15s;margin-bottom:10px}
+.btn-enroll{display:block;width:100%;padding:14px;text-align:center;background:linear-gradient(135deg,var(--gold),#C04A22);color:#1A1A18;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;text-decoration:none;transition:opacity .15s;margin-bottom:10px}
 .btn-enroll:hover{opacity:.9}
 .btn-enroll.enrolled{background:#ECFDF5;color:#16a34a;border:1.5px solid #86efac}
 .cd-card-perks{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:9px}
@@ -97,14 +97,14 @@ body{background:#fff;font-family:'Plus Jakarta Sans',sans-serif}
 .cd-body{max-width:1000px;margin:0 auto;padding:40px 24px 60px;display:grid;grid-template-columns:1fr 340px;gap:40px}
 .cd-main{}
 .cd-section{margin-bottom:36px}
-.cd-section-title{font-size:18px;font-weight:700;color:#1C1917;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #F59E0B;display:inline-block}
+.cd-section-title{font-size:18px;font-weight:700;color:#1A1A18;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #D85A30;display:inline-block}
 .cd-desc{font-size:14px;color:#374151;line-height:1.8}
 
 .cd-module{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px}
 .cd-module-header{padding:14px 18px;background:#f9fafb;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
 .cd-module-header i.arrow{margin-left:auto;transition:transform .2s;color:var(--muted)}
 .cd-module-header.open i.arrow{transform:rotate(180deg)}
-.cd-module-title{font-size:14px;font-weight:600;color:#1C1917;flex:1}
+.cd-module-title{font-size:14px;font-weight:600;color:#1A1A18;flex:1}
 .cd-module-count{font-size:12px;color:var(--muted)}
 .cd-module-body{display:none;padding:4px 0}
 .cd-module-body.open{display:block}
@@ -112,9 +112,9 @@ body{background:#fff;font-family:'Plus Jakarta Sans',sans-serif}
 .cd-seq-item i{color:var(--muted);font-size:15px}
 
 .cd-perks-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.cd-perk-item{display:flex;align-items:flex-start;gap:10px;padding:14px;background:#FFFBEB;border-radius:10px;border:1px solid #fde68a}
+.cd-perk-item{display:flex;align-items:flex-start;gap:10px;padding:14px;background:#F5F0E8;border-radius:10px;border:1px solid #fde68a}
 .cd-perk-item i{font-size:20px;color:var(--gold);flex-shrink:0}
-.cd-perk-item strong{display:block;font-size:13px;font-weight:700;color:#1C1917;margin-bottom:2px}
+.cd-perk-item strong{display:block;font-size:13px;font-weight:700;color:#1A1A18;margin-bottom:2px}
 .cd-perk-item span{font-size:12px;color:var(--muted)}
 
 @media(max-width:900px){
@@ -138,7 +138,7 @@ body{background:#fff;font-family:'Plus Jakarta Sans',sans-serif}
         <?= h($course['titre']) ?>
       </div>
       <?php if ($course['cat_nom']): ?>
-      <div class="cd-cat-tag" style="background:<?= h($course['cat_couleur'] ?? '#F59E0B') ?>33;color:<?= h($course['cat_couleur'] ?? '#F59E0B') ?>">
+      <div class="cd-cat-tag" style="background:<?= h($course['cat_couleur'] ?? '#D85A30') ?>33;color:<?= h($course['cat_couleur'] ?? '#D85A30') ?>">
         <i class="ti <?= h($course['cat_icone'] ?? 'ti-book') ?>"></i>
         <?= h($course['cat_nom']) ?>
       </div>
@@ -231,7 +231,7 @@ body{background:#fff;font-family:'Plus Jakarta Sans',sans-serif}
       ?>
       <div class="cd-module">
         <div class="cd-module-header" onclick="toggleModule(this)">
-          <span style="width:26px;height:26px;border-radius:50%;background:var(--gold);color:#1C1917;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0"><?= $i+1 ?></span>
+          <span style="width:26px;height:26px;border-radius:50%;background:var(--gold);color:#1A1A18;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0"><?= $i+1 ?></span>
           <div class="cd-module-title"><?= h($mod['titre']) ?></div>
           <div class="cd-module-count"><?= count($seqList) ?> leçon<?= count($seqList)>1?'s':'' ?></div>
           <i class="ti ti-chevron-down arrow"></i>
