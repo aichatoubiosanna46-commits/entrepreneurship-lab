@@ -41,20 +41,20 @@ try {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Entrepreneurship-lab-Ariziki</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/home.css">
 <style>
 :root {
-  --navy:        #1C1917;
-  --navy-mid:    #292524;
-  --gold:        #F59E0B;
-  --gold-dark:   #D97706;
-  --gold-pale:   rgba(245,158,11,.12);
-  --gold-border: rgba(245,158,11,.35);
-  --text-muted:  #6B7280;
-  --bg-light:    #FFFBEB;
+  --navy:        #085041;
+  --navy-mid:    #0e7a5c;
+  --gold:        #D85A30;
+  --gold-dark:   #C04A22;
+  --gold-pale:   rgba(216,90,48,.12);
+  --gold-border: rgba(216,90,48,.35);
+  --text-muted:  #6b7069;
+  --bg-light:    #F5F0E8;
   --radius:      10px;
   --radius-lg:   14px;
 }

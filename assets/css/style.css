@@ -1,31 +1,44 @@
 /* style.css - Ariziki EntrepreneurshipLab - Sunrise Africa */
 
 :root {
-  --primary:       #F59E0B;
-  --primary-dark:  #D97706;
-  --primary-mid:   #B45309;
-  --primary-light: #FEF3C7;
-  --primary-glow:  rgba(245,158,11,.15);
-  --accent:        #EF4444;
-  --accent-light:  #FEF2F2;
-  --navy:          #1C1917;
+  /* Charte graphique officielle Ariziki */
+  --teal:          #085041;
+  --teal-mid:      #0e7a5c;
+  --teal-light:    #d0ece4;
+  --teal-pale:     #f0f9f5;
+  --coral:         #D85A30;
+  --coral-dark:    #C04A22;
+  --coral-light:   #fbe3da;
+  --sand:          #F5F0E8;
+  --dark:          #1A1A18;
+
+  --primary:       #D85A30;
+  --primary-dark:  #C04A22;
+  --primary-mid:   #a83e1c;
+  --primary-light: #fbe3da;
+  --primary-glow:  rgba(216,90,48,.15);
+  --accent:        #085041;
+  --accent-light:  #d0ece4;
+  --navy:          #1A1A18;
   --green:         #16a34a;
   --green-light:   #dcfce7;
   --danger:        #dc2626;
   --danger-light:  #fef2f2;
-  --text:          #1C1917;
-  --text-muted:    #6b7280;
+  --text:          #1A1A18;
+  --text-muted:    #6b7069;
   --border:        #e5e7eb;
-  --bg:            #FFFBEB;
+  --bg:            #F5F0E8;
   --white:         #ffffff;
   --radius:        10px;
   --radius-lg:     14px;
   --shadow-sm:     0 1px 3px rgba(0,0,0,.08);
   --shadow-md:     0 4px 16px rgba(0,0,0,.1);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   color: var(--text);
 }
+
+h1, h2, h3, h4, h5, h6 { font-family: 'Syne', sans-serif; font-weight: 800; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #fff; -webkit-font-smoothing: antialiased; }

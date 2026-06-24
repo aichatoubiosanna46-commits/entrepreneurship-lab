@@ -1,12 +1,12 @@
-/* home.css - Sunrise Africa */
+/* home.css - Charte graphique Ariziki */
 :root {
-  --h-primary: #F59E0B;
-  --h-accent:  #EF4444;
-  --h-navy:    #1C1917;
-  --h-light:   #FFFBEB;
+  --h-primary: #D85A30;
+  --h-accent:  #085041;
+  --h-navy:    #1A1A18;
+  --h-light:   #F5F0E8;
 }
-.pricing-card.featured { border-color: var(--h-primary); box-shadow: 0 6px 24px rgba(245,158,11,.2); }
+.pricing-card.featured { border-color: var(--h-primary); box-shadow: 0 6px 24px rgba(216,90,48,.2); }
 .btn-pricing { background: var(--h-navy); color: #fff; display: block; text-align: center; text-decoration: none; border-radius: 8px; padding: 10px; font-size: 10px; font-weight: 700; transition: background .2s; }
-.btn-pricing:hover { background: #292524; }
-.btn-pricing.gold { background: var(--h-primary); color: var(--h-navy); }
-.btn-pricing.gold:hover { background: #D97706; }
+.btn-pricing:hover { background: #085041; }
+.btn-pricing.gold { background: var(--h-primary); color: #fff; }
+.btn-pricing.gold:hover { background: #C04A22; }

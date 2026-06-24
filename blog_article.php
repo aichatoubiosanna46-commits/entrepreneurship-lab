@@ -42,7 +42,7 @@ $metaDesc  = $article['meta_description'] ?: ($article['resume'] ?: mb_substr(st
 <?php endif; ?>
 <meta property="og:type" content="article">
 <meta property="og:url" content="<?= SITE_URL ?>/blog_article.php?slug=<?= h($slug) ?>">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
 </head>
