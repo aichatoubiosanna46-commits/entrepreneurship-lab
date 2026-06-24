@@ -46,14 +46,49 @@ try {
     $history = $history->fetchAll();
 } catch(Exception $e) { $history = []; }
 
+// Rubrique d'évaluation associée à l'assignment
+$rubrique = null;
+try {
+    $rStmt = $pdo->prepare('SELECT * FROM rubriques WHERE assignment_id = ? LIMIT 1');
+    $rStmt->execute([$sub['assignment_id']]);
+    $rubrique = $rStmt->fetch();
+} catch (Exception $e) { $rubrique = null; }
+$rubriqueCriteres = [];
+if ($rubrique && !empty($rubrique['criteres'])) {
+    $rubriqueCriteres = json_decode($rubrique['criteres'], true) ?: [];
+}
+$existingNotes = [];
+if (!empty($sub['rubrique_notes'])) {
+    $existingNotes = json_decode($sub['rubrique_notes'], true) ?: [];
+}
+
 $erreur = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifierCSRF();
 
-    $note     = (float)str_replace(',', '.', $_POST['note'] ?? 0);
     $feedback = trim($_POST['feedback'] ?? '');
     $statut   = in_array($_POST['statut'], ['accepte', 'refuse']) ? $_POST['statut'] : 'accepte';
+    $audioFeedbackPath = trim($_POST['audio_feedback_path'] ?? '') ?: ($sub['audio_feedback_path'] ?? null);
+
+    // Si une rubrique existe, la note globale = somme des notes par critère
+    $rubriqueNotesJson = null;
+    if (!empty($rubriqueCriteres)) {
+        $critNotes = [];
+        $sumNote = 0;
+        foreach ($rubriqueCriteres as $i => $crit) {
+            $val = (float)str_replace(',', '.', $_POST['critere_note'][$i] ?? 0);
+            $max = (float)($crit['points'] ?? 0);
+            if ($val < 0) $val = 0;
+            if ($val > $max) $val = $max;
+            $critNotes[] = ['nom' => $crit['nom'] ?? '', 'note' => $val, 'max' => $max];
+            $sumNote += $val;
+        }
+        $rubriqueNotesJson = json_encode($critNotes, JSON_UNESCAPED_UNICODE);
+        $note = $sumNote;
+    } else {
+        $note = (float)str_replace(',', '.', $_POST['note'] ?? 0);
+    }
 
     if ($note < 0 || $note > (float)$sub['note_max']) {
         $erreur = 'La note doit être comprise entre 0 et ' . $sub['note_max'] . '.';
@@ -81,9 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $pdo->prepare(
             'UPDATE assignment_submissions
-             SET statut=?, note=?, feedback=?, feedback_fichier=?, correction_par=?, corrige_le=NOW(), updated_at=NOW()
+             SET statut=?, note=?, feedback=?, feedback_fichier=?, rubrique_notes=?, audio_feedback_path=?, correction_par=?, corrige_le=NOW(), updated_at=NOW()
              WHERE id=?'
-        )->execute([$statut, $note, $feedback, $feedbackFichier, $adminId, $id]);
+        )->execute([$statut, $note, $feedback, $feedbackFichier, $rubriqueNotesJson, $audioFeedbackPath, $adminId, $id]);
 
         // Sauvegarder dans l'historique
         try {
@@ -184,6 +219,12 @@ $currentPage = 'review_submission.php';
           </a>
         </div>
         <?php endif; ?>
+        <?php if (!empty($sub['audio_path'])): ?>
+        <div style="margin-top:12px">
+          <div style="font-size:12px;color:#6b7280;margin-bottom:4px">Audio soumis par l'étudiant :</div>
+          <audio controls src="<?= SITE_URL ?>/<?= h($sub['audio_path']) ?>" style="width:100%"></audio>
+        </div>
+        <?php endif; ?>
       </div>
 
       <!-- Historique soumissions -->
@@ -226,6 +267,47 @@ $currentPage = 'review_submission.php';
         <form method="POST" enctype="multipart/form-data">
           <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
 
+          <?php if (!empty($rubriqueCriteres)): ?>
+          <div class="form-group">
+            <label><i class="ti ti-table" style="color:var(--primary)"></i> Grille de rubrique
+              <?php if ($sub['note_min'] ?? 0): ?>
+              <small style="color:#dc2626">· Min total : <?= $sub['note_min'] ?></small>
+              <?php endif; ?>
+            </label>
+            <table class="admin-table" style="font-size:13px">
+              <thead><tr><th>Critère</th><th style="width:90px">Note</th><th style="width:50px">Max</th></tr></thead>
+              <tbody>
+                <?php foreach ($rubriqueCriteres as $i => $crit): ?>
+                <?php $prevVal = $existingNotes[$i]['note'] ?? ''; ?>
+                <tr>
+                  <td><?= h($crit['nom'] ?? '') ?></td>
+                  <td>
+                    <input type="number" name="critere_note[<?= $i ?>]" min="0" max="<?= h($crit['points'] ?? 0) ?>" step="0.5"
+                           value="<?= h($prevVal) ?>" required class="rubrique-note-input"
+                           style="width:100%;padding:6px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;text-align:center;box-sizing:border-box">
+                  </td>
+                  <td style="text-align:center;color:#6b7280"><?= h($crit['points'] ?? 0) ?></td>
+                </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+            <div style="text-align:right;margin-top:6px;font-size:13px;font-weight:700">
+              Total : <span id="rubriqueTotalDisplay"><?= h($sub['note'] ?? 0) ?></span> / <?= $sub['note_max'] ?>
+            </div>
+          </div>
+          <script>
+          (function() {
+            const inputs = document.querySelectorAll('.rubrique-note-input');
+            const totalEl = document.getElementById('rubriqueTotalDisplay');
+            function recompute() {
+              let sum = 0;
+              inputs.forEach(i => sum += parseFloat(i.value || 0));
+              totalEl.textContent = sum;
+            }
+            inputs.forEach(i => i.addEventListener('input', recompute));
+          })();
+          </script>
+          <?php else: ?>
           <div class="form-group">
             <label>Note (sur <?= $sub['note_max'] ?>)
               <?php if ($sub['note_min'] ?? 0): ?>
@@ -236,6 +318,7 @@ $currentPage = 'review_submission.php';
                    value="<?= h($sub['note'] ?? '') ?>" required
                    style="width:100%;padding:10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:15px;font-weight:700;text-align:center;box-sizing:border-box;font-family:inherit">
           </div>
+          <?php endif; ?>
 
           <div class="form-group">
             <label>Décision</label>
@@ -268,6 +351,25 @@ $currentPage = 'review_submission.php';
             <small style="color:#9ca3af;font-size:11px">Grille annotée, corrigé type, commentaires...</small>
           </div>
 
+          <div class="form-group">
+            <label>Feedback audio (optionnel)</label>
+            <?php if (!empty($sub['audio_feedback_path'])): ?>
+            <div style="margin-bottom:8px">
+              <div style="font-size:11px;color:#6b7280;margin-bottom:4px">Feedback audio actuel :</div>
+              <audio controls src="<?= SITE_URL ?>/<?= h($sub['audio_feedback_path']) ?>" style="width:100%"></audio>
+            </div>
+            <?php endif; ?>
+            <div id="audioRecorder" data-target="feedback" data-id="<?= $id ?>" style="border:1px solid #e5e7eb;border-radius:8px;padding:12px">
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <button type="button" class="btn-outline btn-sm" data-action="start"><i class="ti ti-microphone"></i> Démarrer</button>
+                <button type="button" class="btn-outline btn-sm" data-action="stop" disabled><i class="ti ti-player-stop"></i> Arrêter</button>
+                <span class="rec-status" style="font-size:12px;color:#6b7280"></span>
+              </div>
+              <div class="rec-preview" style="margin-top:8px"></div>
+              <input type="hidden" name="audio_feedback_path" class="audio-path-input" value="">
+            </div>
+          </div>
+
           <button type="submit" class="btn-primary btn-full" style="padding:13px">
             <i class="ti ti-check"></i> Enregistrer la correction
           </button>
@@ -282,6 +384,71 @@ function setTemplate(text) {
   document.getElementById('feedbackArea').value = text;
   document.getElementById('feedbackArea').focus();
 }
+
+// Enregistreur audio réutilisable (MediaRecorder) — feedback coach
+document.querySelectorAll('[id="audioRecorder"], .audioRecorder').forEach(function(box) {
+  let mediaRecorder = null;
+  let chunks = [];
+  const startBtn  = box.querySelector('[data-action="start"]');
+  const stopBtn   = box.querySelector('[data-action="stop"]');
+  const statusEl  = box.querySelector('.rec-status');
+  const previewEl = box.querySelector('.rec-preview');
+  const pathInput = box.querySelector('.audio-path-input');
+  const target    = box.dataset.target || 'feedback';
+
+  if (!startBtn || !stopBtn) return;
+
+  startBtn.addEventListener('click', async function() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      chunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+      mediaRecorder.onstop = async function() {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        previewEl.innerHTML = '';
+        const audio = document.createElement('audio');
+        audio.controls = true;
+        audio.src = URL.createObjectURL(blob);
+        previewEl.appendChild(audio);
+        statusEl.textContent = 'Envoi en cours...';
+
+        const fd = new FormData();
+        fd.append('audio', blob, 'audio.webm');
+        fd.append('target', target);
+        fd.append('csrf_token', '<?= csrfToken() ?>');
+
+        try {
+          const res = await fetch('<?= SITE_URL ?>/upload_audio.php', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (data.path) {
+            pathInput.value = data.path;
+            statusEl.textContent = 'Audio prêt — sera enregistré à la validation.';
+          } else {
+            statusEl.textContent = 'Erreur : ' + (data.error || 'upload échoué');
+          }
+        } catch (e) {
+          statusEl.textContent = 'Erreur réseau lors de l\'envoi.';
+        }
+        stream.getTracks().forEach(t => t.stop());
+      };
+      mediaRecorder.start();
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      statusEl.textContent = 'Enregistrement en cours...';
+    } catch (e) {
+      statusEl.textContent = 'Impossible d\'accéder au micro.';
+    }
+  });
+
+  stopBtn.addEventListener('click', function() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+  });
+});
 </script>
 </body>
 </html>
