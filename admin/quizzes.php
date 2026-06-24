@@ -105,7 +105,7 @@ $currentPage = 'quizzes.php';
             </span>
           </td>
           <td style="text-align:center"><?= $q['nb_resultats'] ?></td>
-          <td style="text-align:center"><?= $q['seuil_reussite'] ?>%</td>
+          <td style="text-align:center"><?= $q['score_min'] ?>%</td>
           <td>
             <span class="badge <?= $q['actif'] ? 'badge-success' : 'badge-neutral' ?>">
               <?= $q['actif'] ? 'Actif' : 'Inactif' ?>

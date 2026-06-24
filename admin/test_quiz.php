@@ -6,7 +6,7 @@ $pdo = getPDO();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titre = trim($_POST['titre'] ?? '');
     if ($titre) {
-        $pdo->prepare('INSERT INTO quizzes (titre, seuil_reussite, actif) VALUES (?,60,1)')
+        $pdo->prepare('INSERT INTO quizzes (titre, score_min, actif) VALUES (?,60,1)')
             ->execute([$titre]);
         echo 'Quiz créé ! ID: ' . $pdo->lastInsertId();
     } else {

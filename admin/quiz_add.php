@@ -12,7 +12,7 @@ $erreur = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titre       = trim($_POST['titre'] ?? '');
     $description = trim($_POST['description'] ?? '');
-    $seuil       = (int)($_POST['seuil_reussite'] ?? 60);
+    $seuil       = (int)($_POST['score_min'] ?? 70);
     $actif       = isset($_POST['actif']) ? 1 : 0;
     $seqIdPost   = (int)($_POST['sequence_id'] ?? 0);
     $qtextes     = $_POST['q_texte']       ?? [];
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tentMax    = (int)($_POST['tentatives_max'] ?? 0);
         $aleatoire  = isset($_POST['ordre_aleatoire']) ? 1 : 0;
         $pdo->prepare(
-            'INSERT INTO quizzes (sequence_id, module_id, titre, description, seuil_reussite, actif, duree_minutes, tentatives_max, ordre_aleatoire) VALUES (?,NULL,?,?,?,?,?,?,?)'
+            'INSERT INTO quizzes (sequence_id, module_id, titre, description, score_min, actif, duree_minutes, tentatives_max, ordre_aleatoire) VALUES (?,NULL,?,?,?,?,?,?,?)'
         )->execute([$seqIdPost ?: null, $titre, $description, $seuil, $actif, $dureeMin ?: null, $tentMax ?: null, $aleatoire]);
         $quizId = (int)$pdo->lastInsertId();
 
@@ -154,7 +154,7 @@ $NB_REPONSES  = 4;
         </div>
         <div class="form-group">
           <label>Seuil de réussite (%)</label>
-          <input type="number" name="seuil_reussite" value="60" min="0" max="100" class="fld">
+          <input type="number" name="score_min" value="70" min="0" max="100" class="fld">
         </div>
       </div>
       <div class="form-row">

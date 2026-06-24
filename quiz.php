@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'submi
         if ($given == array_map('strval', $correctIds)) $score += $q['points'];
     }
     $pct   = $maxScore > 0 ? round($score / $maxScore * 100) : 0;
-    $reussi = $pct >= ($quiz['seuil_reussite'] ?? 60);
+    $reussi = $pct >= ($quiz['score_min'] ?? 70);
     // Correction fill_blank: comparer texte saisi avec bonne réponse
     foreach ($questions as $q) {
         if ($q['type'] === 'fill_blank' && !empty($q['answers'])) {
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'submi
         }
     }
     $pct    = $maxScore > 0 ? round($score / $maxScore * 100) : 0;
-    $reussi = $pct >= ($quiz['seuil_reussite'] ?? 60);
+    $reussi = $pct >= ($quiz['score_min'] ?? 70);
 
     $pdo->prepare('INSERT INTO quiz_results (user_id,quiz_id,score,reussi,created_at) VALUES (?,?,?,?,NOW()) ON DUPLICATE KEY UPDATE score=VALUES(score),reussi=VALUES(reussi),created_at=NOW()')
         ->execute([$userId, $quizId, $pct, $reussi ? 1 : 0]);
@@ -218,7 +218,7 @@ if (!$quizStarted && !empty($questions)): ?>
       </div>
       <?php endif; ?>
       <div style="text-align:center">
-        <div style="font-size:24px;font-weight:800;color:#16a34a"><?= $quiz['seuil_reussite'] ?? 60 ?>%</div>
+        <div style="font-size:24px;font-weight:800;color:#16a34a"><?= $quiz['score_min'] ?? 70 ?>%</div>
         <div style="font-size:12px;color:#9ca3af">pour réussir</div>
       </div>
       <?php if ($quiz['tentatives_max'] ?? 0): ?>
@@ -442,7 +442,7 @@ if (!$quizStarted && !empty($questions)): ?>
 
 <script>
 const totalQuestions = <?= count($questions) ?>;
-const seuil = <?= $quiz['seuil_reussite'] ?? 60 ?>;
+const seuil = <?= $quiz['score_min'] ?? 70 ?>;
 let scores = {}; // question_id => points gagnés
 let selectedAnswers = {}; // question_id => [answer_ids]
 
