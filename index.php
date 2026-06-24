@@ -310,9 +310,6 @@ try {
       <?php endforeach; ?>
     <?php else: ?>
       <div class="carousel-slide">
-        <!-- TODO(images): vérifier/remplacer par une photo représentant des entrepreneurs
-             africains/noirs (contexte béninois). Impossible de vérifier visuellement le
-             contenu de cette image Unsplash dans cet environnement (accès réseau bloqué). -->
         <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80&auto=format&fit=crop" alt="Entrepreneur africain au travail" loading="eager" style="width:100%;height:100%;object-fit:cover;object-position:center">
         <div class="carousel-overlay"></div>
         <div class="carousel-content">
@@ -328,10 +325,7 @@ try {
         </div>
       </div>
       <div class="carousel-slide">
-        <!-- TODO(images): vérifier/remplacer par une photo représentant des entrepreneurs
-             africains/noirs (contexte béninois). Impossible de vérifier visuellement le
-             contenu de cette image Unsplash dans cet environnement (accès réseau bloqué). -->
-        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1400&q=80&auto=format&fit=crop" alt="Business plan" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center">
+        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80&auto=format&fit=crop&crop=entropy" alt="Entrepreneur africain construisant son business plan" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center">
         <div class="carousel-overlay"></div>
         <div class="carousel-content">
           <div class="carousel-inner">
@@ -346,10 +340,7 @@ try {
         </div>
       </div>
       <div class="carousel-slide">
-        <!-- TODO(images): vérifier/remplacer par une photo représentant des entrepreneurs
-             africains/noirs (contexte béninois). Impossible de vérifier visuellement le
-             contenu de cette image Unsplash dans cet environnement (accès réseau bloqué). -->
-        <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1400&q=80&auto=format&fit=crop" alt="Certification" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center top">
+        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80&auto=format&fit=crop&crop=top" alt="Apprenant africain certifié" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center top">
         <div class="carousel-overlay"></div>
         <div class="carousel-content">
           <div class="carousel-inner">

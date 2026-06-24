@@ -135,14 +135,20 @@ function connecterUtilisateur(array $user): void {
  */
 function estConnecte(): bool {
     if (!isset($_SESSION['user_id'])) return false;
-    // Vérifier que le token de session correspond (anti-partage)
-    if (isset($_SESSION['session_token'])) {
-        try {
-            $pdo = getPDO();
-            $stmt = $pdo->prepare('SELECT session_token FROM users WHERE id=? AND actif=1');
-            $stmt->execute([$_SESSION['user_id']]);
-            $row = $stmt->fetch();
-            if ($row && $row['session_token'] && $row['session_token'] !== $_SESSION['session_token']) {
+    // Vérifier que l'utilisateur existe toujours (ex: après réimport de la base)
+    try {
+        $pdo  = getPDO();
+        $stmt = $pdo->prepare('SELECT session_token FROM users WHERE id=? AND actif=1');
+        $stmt->execute([$_SESSION['user_id']]);
+        $row = $stmt->fetch();
+        if (!$row) {
+            session_unset();
+            session_destroy();
+            return false;
+        }
+        // Vérifier que le token de session correspond (anti-partage)
+        if (isset($_SESSION['session_token'])) {
+            if ($row['session_token'] && $row['session_token'] !== $_SESSION['session_token']) {
                 session_destroy();
                 return false;
             }
@@ -155,8 +161,8 @@ function estConnecte(): bool {
             if (function_exists('maybeRunInactivityCheck')) {
                 maybeRunInactivityCheck();
             }
-        } catch (Exception $e) {}
-    }
+        }
+    } catch (Exception $e) {}
     if (!isset($_SESSION['user_id'])) return false;
 
     // Vérifier fingerprint si présent
