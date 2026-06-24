@@ -31,36 +31,45 @@ $types = [
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/home.css">
 <style>
-.lib-wrap { max-width:1100px;margin:40px auto;padding:0 24px 80px; }
-.lib-header { text-align:center;margin-bottom:40px; }
-.lib-header h1 { font-size:32px;font-weight:800;margin:0 0 8px; }
-.lib-header p { color:var(--text-muted,#6b7280);font-size:15px; }
+/* Variables Sunrise Africa (alignées sur style.css / dashboard / coaching) */
+:root{--amber:#F59E0B;--amber-light:#FEF3C7;--amber-dark:#D97706;--text-muted:#6b7280}
+body.lib-page{background:#FFFBEB}
+
+.lib-hero{background:linear-gradient(135deg,#1C1917,#292524);padding:52px 24px 40px;text-align:center}
+.lib-hero h1{font-size:32px;font-weight:800;color:#fff;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:10px}
+.lib-hero h1 i{color:var(--amber)}
+.lib-hero p{font-size:14px;color:rgba(255,255,255,.6);max-width:560px;margin:0 auto}
+
+.lib-wrap { max-width:1100px;margin:0 auto;padding:32px 20px 60px; }
 .type-filters { display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:32px; }
-.type-btn { display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;border:1px solid var(--border,#e5e7eb);font-size:13px;font-weight:600;text-decoration:none;color:var(--text,#111);background:#fff;transition:.15s; }
+.type-btn { display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:20px;border:1.5px solid #e5e7eb;font-size:13px;font-weight:600;text-decoration:none;color:var(--text-muted);background:#fff;transition:.15s; }
 .type-btn:hover,.type-btn.active { border-color:transparent;color:#fff; }
 .resources-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px; }
-.res-card { background:#fff;border:1px solid var(--border,#e5e7eb);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:14px; }
+.res-card { background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s; }
+.res-card:hover { transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.09); }
 .res-icon { width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px; }
-.res-title { font-size:15px;font-weight:700;line-height:1.3; }
-.res-desc { font-size:13px;color:var(--text-muted,#6b7280);line-height:1.5;flex:1; }
-.res-meta { display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text-muted,#6b7280); }
-.res-download { display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:#534AB7;color:#fff;font-size:13px;font-weight:600;text-decoration:none; }
-.res-download:hover { background:#3d369a; }
-.lock-badge { display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;background:#f9fafb;color:var(--text-muted,#6b7280);font-size:12px;border:1px solid #e5e7eb; }
+.res-title { font-size:15px;font-weight:700;line-height:1.3;color:#1C1917; }
+.res-desc { font-size:13px;color:var(--text-muted);line-height:1.5;flex:1; }
+.res-meta { display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--text-muted); }
+.res-download { display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 16px;border-radius:9px;background:linear-gradient(135deg,var(--amber),var(--amber-dark));color:#1C1917;font-size:13px;font-weight:700;text-decoration:none;transition:opacity .15s; }
+.res-download:hover { opacity:.9; }
+.lock-badge { display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:10px 16px;border-radius:9px;background:#f9fafb;color:var(--text-muted);font-size:12px;border:1px solid #e5e7eb; }
+.lib-empty { text-align:center;padding:60px 24px;background:#fff;border:1px dashed #fde68a;border-radius:16px;color:var(--text-muted); }
+.lib-empty i { font-size:48px;display:block;margin-bottom:12px;color:#fde68a; }
 </style>
 </head>
-<body>
+<body class="lib-page">
 <?php include __DIR__ . '/includes/header.php'; ?>
-<div class="lib-wrap">
-  <div class="lib-header">
-    <h1><i class="ti ti-library" style="color:#6C47D4"></i> Bibliothèque de ressources</h1>
-    <p>Business plans, templates réseaux sociaux, scripts de vente — tout pour booster votre entrepreneuriat</p>
-  </div>
 
+<div class="lib-hero">
+  <h1><i class="ti ti-library"></i> Bibliothèque de ressources</h1>
+  <p>Business plans, templates réseaux sociaux, scripts de vente — tout pour booster votre entrepreneuriat</p>
+</div>
+
+<div class="lib-wrap">
   <div class="type-filters">
-    <a href="<?= SITE_URL ?>/resources.php" class="type-btn <?= !$type ? 'active' : '' ?>" style="<?= !$type ? 'background:#534AB7;border-color:#534AB7;color:#fff' : '' ?>">
+    <a href="<?= SITE_URL ?>/resources.php" class="type-btn <?= !$type ? 'active' : '' ?>" style="<?= !$type ? 'background:var(--amber);border-color:var(--amber);color:#1C1917' : '' ?>">
       <i class="ti ti-grid-4x4"></i> Tout afficher
     </a>
     <?php foreach ($types as $key => $t): ?>
@@ -72,8 +81,8 @@ $types = [
   </div>
 
   <?php if (empty($resources)): ?>
-    <div style="text-align:center;padding:60px;color:var(--text-muted,#6b7280)">
-      <i class="ti ti-files" style="font-size:48px;display:block;margin-bottom:12px"></i>
+    <div class="lib-empty">
+      <i class="ti ti-files"></i>
       <p>Aucune ressource disponible pour l'instant.</p>
     </div>
   <?php else: ?>
@@ -88,7 +97,7 @@ $types = [
       </div>
       <div>
         <div class="res-title"><?= h($r['titre']) ?></div>
-        <div style="font-size:11px;color:var(--text-muted,#6b7280);margin-top:3px"><?= $t['label'] ?></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px"><?= $t['label'] ?></div>
       </div>
       <?php if ($r['description']): ?>
         <div class="res-desc"><?= h($r['description']) ?></div>
