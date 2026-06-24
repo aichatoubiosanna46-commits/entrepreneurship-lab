@@ -35,8 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'react
     }
     exit;
 }
-?>
-
 
 require_once __DIR__ . '/includes/security.php';
 
@@ -72,6 +70,23 @@ $repStmt = $pdo->prepare(
 );
 $repStmt->execute([$id]);
 $reponses = $repStmt->fetchAll();
+
+// Réactions : compte par emoji pour le topic et chaque réponse
+$reactionEmojis = ['👍', '❤️', '💡'];
+function chargerReactions(PDO $pdo, int $topicId, ?int $replyId, array $emojis): array {
+    $counts = [];
+    foreach ($emojis as $e) {
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM forum_reactions WHERE topic_id=? AND reply_id IS ? AND emoji=?');
+        $stmt->execute([$topicId, $replyId, $e]);
+        $counts[$e] = (int)$stmt->fetchColumn();
+    }
+    return $counts;
+}
+$topicReactions = chargerReactions($pdo, $id, null, $reactionEmojis);
+$replyReactions = [];
+foreach ($reponses as $r) {
+    $replyReactions[$r['id']] = chargerReactions($pdo, $id, (int)$r['id'], $reactionEmojis);
+}
 
 // Soumission réponse
 $erreur = '';
@@ -140,6 +155,17 @@ require_once __DIR__ . '/includes/header.php';
           · <i class="ti ti-eye"></i> <?= $topic['nb_vues'] ?> vues
         </div>
         <div style="font-size:15px;line-height:1.6;white-space:pre-wrap"><?= h($topic['contenu']) ?></div>
+
+        <!-- Réactions topic -->
+        <div class="reaction-bar" data-topic-id="<?= $id ?>" data-reply-id="" style="display:flex;gap:8px;margin-top:14px">
+          <?php foreach ($reactionEmojis as $emoji): ?>
+            <button type="button" class="reaction-btn" data-emoji="<?= h($emoji) ?>"
+                    style="border:1px solid var(--border,#e5e7eb);background:#f9fafb;border-radius:99px;padding:4px 10px;font-size:13px;cursor:pointer"
+                    <?= estConnecte() ? '' : 'disabled title="Connectez-vous pour réagir"' ?>>
+              <?= $emoji ?> <span class="reaction-count"><?= $topicReactions[$emoji] ?></span>
+            </button>
+          <?php endforeach; ?>
+        </div>
       </div>
     </div>
   </div>
@@ -162,6 +188,17 @@ require_once __DIR__ . '/includes/header.php';
               <?php endif; ?>
             </div>
             <div style="font-size:14px;line-height:1.6;white-space:pre-wrap"><?= h($r['contenu']) ?></div>
+
+            <!-- Réactions réponse -->
+            <div class="reaction-bar" data-topic-id="<?= $id ?>" data-reply-id="<?= $r['id'] ?>" style="display:flex;gap:8px;margin-top:10px">
+              <?php foreach ($reactionEmojis as $emoji): ?>
+                <button type="button" class="reaction-btn" data-emoji="<?= h($emoji) ?>"
+                        style="border:1px solid var(--border,#e5e7eb);background:#f9fafb;border-radius:99px;padding:3px 9px;font-size:12px;cursor:pointer"
+                        <?= estConnecte() ? '' : 'disabled title="Connectez-vous pour réagir"' ?>>
+                  <?= $emoji ?> <span class="reaction-count"><?= $replyReactions[$r['id']][$emoji] ?></span>
+                </button>
+              <?php endforeach; ?>
+            </div>
           </div>
         </div>
       </div>
@@ -197,5 +234,33 @@ require_once __DIR__ . '/includes/header.php';
     </div>
   <?php endif; ?>
 </div>
+
+<script>
+document.querySelectorAll('.reaction-btn').forEach(function(btn) {
+  btn.addEventListener('click', async function() {
+    if (btn.disabled) return;
+    const bar     = btn.closest('.reaction-bar');
+    const topicId = bar.dataset.topicId;
+    const replyId = bar.dataset.replyId || '';
+    const emoji   = btn.dataset.emoji;
+    const countEl = btn.querySelector('.reaction-count');
+
+    try {
+      const fd = new FormData();
+      fd.append('action', 'react');
+      fd.append('topic_id', topicId);
+      if (replyId) fd.append('reply_id', replyId);
+      fd.append('emoji', emoji);
+
+      const res = await fetch('<?= SITE_URL ?>/forum_topic.php?id=<?= $id ?>', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (typeof data.count === 'number') {
+        countEl.textContent = data.count;
+        btn.style.background = data.action === 'added' ? '#EDE9FE' : '#f9fafb';
+      }
+    } catch (e) { /* silencieux */ }
+  });
+});
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

@@ -10,12 +10,21 @@ sendSecurityHeaders();
 
 $pdo = getPDO();
 
-// Filtre optionnel par cours
-$courseFilter = (int)($_GET['course_id'] ?? 0);
+// Filtre optionnel par cours (course_id=0/general => topics sans cours, "" => tous)
+$generalOnly  = isset($_GET['course_id']) && $_GET['course_id'] === '0';
+$courseFilter = $generalOnly ? 0 : (int)($_GET['course_id'] ?? 0);
 
 // Comptage total
-$whereClause = $courseFilter ? 'WHERE ft.course_id = ?' : 'WHERE 1=1';
-$params      = $courseFilter ? [$courseFilter] : [];
+if ($generalOnly) {
+    $whereClause = 'WHERE ft.course_id IS NULL';
+    $params      = [];
+} elseif ($courseFilter) {
+    $whereClause = 'WHERE ft.course_id = ?';
+    $params      = [$courseFilter];
+} else {
+    $whereClause = 'WHERE 1=1';
+    $params      = [];
+}
 
 $countStmt = $pdo->prepare("SELECT COUNT(*) FROM forum_topics ft $whereClause");
 $countStmt->execute($params);
@@ -60,17 +69,27 @@ require_once __DIR__ . '/includes/header.php';
     <?php endif; ?>
   </div>
 
+  <!-- Onglets / filtre -->
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <a href="<?= SITE_URL ?>/forum.php" style="padding:7px 16px;border-radius:99px;font-size:13px;font-weight:600;text-decoration:none;<?= (!$courseFilter && !$generalOnly) ? 'background:var(--primary,#6C47D4);color:#fff' : 'background:#f3f4f6;color:var(--text)' ?>">
+      Tous les sujets
+    </a>
+    <a href="<?= SITE_URL ?>/forum.php?course_id=0" style="padding:7px 16px;border-radius:99px;font-size:13px;font-weight:600;text-decoration:none;<?= $generalOnly ? 'background:var(--primary,#6C47D4);color:#fff' : 'background:#f3f4f6;color:var(--text)' ?>">
+      <i class="ti ti-message-circle"></i> Forum général
+    </a>
+  </div>
+
   <!-- Filtre cours -->
   <form method="GET" style="margin-bottom:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
     <select name="course_id" onchange="this.form.submit()" style="padding:8px 12px;border:1px solid var(--border,#e5e7eb);border-radius:8px;font-size:14px">
       <option value="">Tous les cours</option>
       <?php foreach ($cours as $c): ?>
-        <option value="<?= $c['id'] ?>" <?= $courseFilter == $c['id'] ? 'selected' : '' ?>>
+        <option value="<?= $c['id'] ?>" <?= ($courseFilter == $c['id'] && !$generalOnly) ? 'selected' : '' ?>>
           <?= h($c['titre']) ?>
         </option>
       <?php endforeach; ?>
     </select>
-    <?php if ($courseFilter): ?>
+    <?php if ($courseFilter || $generalOnly): ?>
       <a href="forum.php" style="font-size:13px;color:var(--text-muted)">Réinitialiser</a>
     <?php endif; ?>
   </form>
