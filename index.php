@@ -80,29 +80,20 @@ try {
   cursor: pointer; text-decoration: none; transition: background .2s;
 }
 .elab-nav-btn:hover { background: var(--gold-dark); }
+.elab-nav-burger { display: none; background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; padding: 4px; }
+.elab-nav-mobile { display: none; flex-direction: column; background: var(--navy); border-top: 1px solid rgba(255,255,255,.1); position: sticky; top: 0; z-index: 199; }
+.elab-nav-mobile.open { display: flex; }
+.elab-nav-mobile a { color: rgba(255,255,255,.8); font-size: 13px; text-decoration: none; padding: 14px 24px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.elab-nav-mobile a:hover { color: var(--gold); background: rgba(255,255,255,.04); }
 
-/* CAROUSEL */
-.elab-carousel { position: relative; overflow: hidden; background: var(--navy); height: 500px; width: 100%; }
-.carousel-track { display: flex; height: 100%; will-change: transform; transition: transform .65s cubic-bezier(.4,0,.2,1); }
-.carousel-slide { min-width: 100%; height: 100%; position: relative; flex-shrink: 0; overflow: hidden; background: var(--navy); }
-.carousel-slide.no-img { background: linear-gradient(135deg, var(--navy), var(--navy-mid)); }
-.carousel-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
-.carousel-overlay { position: absolute; inset: 0; background: linear-gradient(100deg, rgba(15,29,53,.85) 35%, rgba(15,29,53,.3) 100%); }
-.carousel-content { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 72px; }
-.carousel-inner { max-width: 580px; }
-.carousel-tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(245,197,24,.15); border: 1px solid rgba(245,197,24,.35);
-  border-radius: 100px; padding: 5px 14px;
-  font-size: 10px; color: var(--gold); margin-bottom: 18px;
-}
-.carousel-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); display: block; }
-.carousel-inner h1 { font-size: clamp(24px, 4vw, 38px); font-weight: 700; color: #fff; line-height: 1.18; margin-bottom: 14px; }
-.carousel-inner h1 em { font-style: normal; color: var(--gold); text-decoration: underline; text-decoration-color: rgba(245,197,24,.45); }
-.carousel-inner p { font-size: 13px; color: rgba(255,255,255,.72); line-height: 1.75; margin-bottom: 24px; max-width: 460px; }
-.carousel-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+/* HERO (image unique) */
+.elab-hero { position: relative; overflow: hidden; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); min-height: 480px; width: 100%; display: flex; align-items: center; justify-content: center; padding: 64px 24px; }
+.elab-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.elab-hero-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(8,80,65,.88) 20%, rgba(8,80,65,.55) 100%); }
+.elab-hero.no-img .elab-hero-overlay { background: none; }
+.elab-hero-content { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; text-align: center; }
 .cbtn-primary {
-  background: var(--gold); color: var(--navy); border: none; border-radius: 8px;
+  background: var(--gold); color: #fff; border: none; border-radius: 8px;
   padding: 12px 24px; font-size: 12px; font-weight: 700;
   cursor: pointer; text-decoration: none; transition: background .2s, transform .15s; display: inline-block;
 }
@@ -113,21 +104,6 @@ try {
   cursor: pointer; text-decoration: none; transition: border-color .2s, color .2s; display: inline-block;
 }
 .cbtn-outline:hover { border-color: var(--gold); color: var(--gold); }
-.carousel-arrow {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 46px; height: 46px; background: rgba(255,255,255,.12);
-  border: 1.5px solid rgba(255,255,255,.2); border-radius: 50%;
-  color: #fff; font-size: 20px; display: grid; place-items: center;
-  cursor: pointer; z-index: 20; transition: background .2s, border-color .2s;
-  backdrop-filter: blur(6px);
-}
-.carousel-arrow:hover { background: rgba(245,197,24,.55); border-color: var(--gold); }
-.carousel-arrow.prev { left: 20px; }
-.carousel-arrow.next { right: 20px; }
-.carousel-dots { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 20; }
-.cdot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.35); cursor: pointer; transition: background .25s, width .3s, border-radius .3s; border: none; }
-.cdot.active { background: var(--gold); width: 28px; border-radius: 4px; }
-.carousel-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--gold); transition: width .1s linear; z-index: 20; }
 
 /* TRUST / STATS */
 .trust-bar { background: var(--navy); padding: 12px 32px; display: flex; justify-content: center; flex-wrap: wrap; gap: 24px; border-top: 1px solid rgba(255,255,255,.08); }
@@ -232,20 +208,30 @@ try {
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
-  .pricing-grid { grid-template-columns: 1fr 1fr; }
+  .pricing-grid, .tarifs-grid { grid-template-columns: 1fr 1fr; }
   .why-grid, .modules-grid { grid-template-columns: 1fr 1fr; }
   .how-steps { grid-template-columns: 1fr 1fr; }
   .equipe-grid { grid-template-columns: 1fr 1fr !important; max-width: 700px !important; }
+  .parcours-grid, .methode-grid { grid-template-columns: 1fr 1fr; }
+  .constat-grid, .temoignages-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr !important; }
 }
 @media (max-width: 768px) {
-  .elab-carousel { height: 380px; }
-  .carousel-content { padding: 0 24px; }
+  .elab-hero { min-height: 400px; padding: 48px 20px; }
   .elab-nav-links { display: none; }
+  .elab-nav-burger { display: block; }
   .equipe-grid { grid-template-columns: 1fr !important; max-width: 420px !important; margin-left: auto !important; margin-right: auto !important; }
+  .elab-section { padding: 40px 20px; }
 }
 @media (max-width: 500px) {
-  .pricing-grid, .why-grid, .modules-grid, .how-steps { grid-template-columns: 1fr; }
+  .pricing-grid, .why-grid, .modules-grid, .how-steps, .tarifs-grid { grid-template-columns: 1fr; }
+  .parcours-grid, .methode-grid { grid-template-columns: 1fr; }
   .equipe-grid { max-width: 100% !important; padding: 0 16px; }
+  .footer-grid { grid-template-columns: 1fr !important; }
+  .methode-band { flex-direction: column; text-align: center; gap: 18px; padding: 24px 20px; }
+  .methode-band > div[style*="width:1px"] { display: none; }
+  .trust-bar { gap: 12px; padding: 10px 16px; }
+  .stats-bar { padding: 14px 16px; gap: 16px; }
 }
 </style>
 </head>
@@ -278,69 +264,44 @@ try {
   <?php else: ?>
     <a href="<?= SITE_URL ?>/register.php" class="elab-nav-btn">Commencer gratuitement →</a>
   <?php endif; ?>
+  <button class="elab-nav-burger" onclick="document.querySelector('.elab-nav-mobile').classList.toggle('open')" aria-label="Menu">
+    <i class="ti ti-menu-2"></i>
+  </button>
 </nav>
+<div class="elab-nav-mobile">
+  <a href="#parcours">Le Parcours</a>
+  <a href="#methode">La Méthode</a>
+  <a href="#temoignages">Témoignages</a>
+  <a href="#tarifs">Tarifs</a>
+  <a href="#equipe">À propos</a>
+</div>
 
 <?= flash() ?>
 
-<?php if (!empty($slides)): ?>
-<!-- CAROUSEL (DB-driven slides) -->
-<div class="elab-carousel" id="mainCarousel">
-  <div class="carousel-track" id="carouselTrack">
-      <?php foreach ($slides as $i => $s): ?>
-      <div class="carousel-slide <?= !$s['image'] ? 'no-img' : '' ?>">
-        <?php if ($s['image']): ?>
-          <img src="<?= SITE_URL ?>/assets/uploads/<?= h($s['image']) ?>" alt="<?= h($s['titre']) ?>"
-               loading="<?= $i === 0 ? 'eager' : 'lazy' ?>"
-               style="width:100%;height:100%;object-fit:cover;object-position:center"
-               onerror="this.style.display='none'">
-        <?php endif; ?>
-        <div class="carousel-overlay"></div>
-        <div class="carousel-content">
-          <div class="carousel-inner">
-            <div class="carousel-tag">Université de Parakou · Certifié</div>
-            <h1><?= h($s['titre']) ?></h1>
-            <?php if ($s['sous_titre']): ?><p><?= h($s['sous_titre']) ?></p><?php endif; ?>
-            <div class="carousel-btns">
-              <?php if ($s['lien']): ?>
-                <a href="<?= h($s['lien']) ?>" class="cbtn-primary"><?= h($s['texte_btn'] ?: 'Commencer') ?> →</a>
-              <?php else: ?>
-                <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary">Commencer gratuitement →</a>
-              <?php endif; ?>
-              <a href="#tarifs" class="cbtn-outline">Voir les formations</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <?php endforeach; ?>
-  </div>
-
-  <?php $nbSlides = count($slides); ?>
-  <?php if ($nbSlides > 1): ?>
-  <button class="carousel-arrow prev" onclick="carouselMove(-1)" aria-label="Précédent"><i class="ti ti-chevron-left"></i></button>
-  <button class="carousel-arrow next" onclick="carouselMove(1)" aria-label="Suivant"><i class="ti ti-chevron-right"></i></button>
-  <div class="carousel-dots" id="carouselDots">
-    <?php for ($i = 0; $i < $nbSlides; $i++): ?>
-      <button class="cdot <?= $i === 0 ? 'active' : '' ?>" onclick="carouselTo(<?= $i ?>)" aria-label="Slide <?= $i+1 ?>"></button>
-    <?php endfor; ?>
-  </div>
+<?php $heroSlide = $slides[0] ?? null; ?>
+<!-- HERO (image unique) -->
+<div class="elab-hero <?= (!$heroSlide || !$heroSlide['image']) ? 'no-img' : '' ?>">
+  <?php if ($heroSlide && $heroSlide['image']): ?>
+    <img src="<?= SITE_URL ?>/assets/uploads/<?= h($heroSlide['image']) ?>" alt="<?= h($heroSlide['titre'] ?? SITE_NAME) ?>"
+         loading="eager" class="elab-hero-img" onerror="this.style.display='none'">
   <?php endif; ?>
-  <div class="carousel-progress" id="carouselProgress"></div>
-</div>
-<?php else: ?>
-<!-- HERO (static fallback, brand-guide spec) -->
-<div class="elab-hero" style="background:linear-gradient(135deg, var(--navy), var(--navy-mid));padding:80px 32px 64px;text-align:center">
-  <div style="max-width:760px;margin:0 auto">
+  <div class="elab-hero-overlay"></div>
+  <div class="elab-hero-content">
     <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:100px;padding:6px 16px;color:rgba(255,255,255,0.9);font-size:13px;">
       <span style="width:7px;height:7px;background:#4dff9e;border-radius:50%;display:inline-block;"></span> Ouvert aux inscriptions — Rentrée 2024
     </div>
-    <h1 style="font-family:'Syne',sans-serif;font-size:clamp(28px,5vw,46px);font-weight:800;color:#fff;line-height:1.15;margin:22px 0 18px">
-      Entreprends <span style="color:#7fffc4">pendant</span> tes études.<br>Pas après.
+    <h1 style="font-family:'Syne',sans-serif;font-size:clamp(26px,5vw,46px);font-weight:800;color:#fff;line-height:1.15;margin:22px 0 18px">
+      <?= $heroSlide ? h($heroSlide['titre']) : 'Entreprends <span style="color:#7fffc4">pendant</span> tes études.<br>Pas après.' ?>
     </h1>
     <p style="font-size:15px;color:rgba(255,255,255,.75);line-height:1.75;max-width:560px;margin:0 auto 28px">
-      Le premier parcours en ligne conçu pour les étudiants béninois qui veulent créer leur activité avant même d'avoir leur diplôme.
+      <?= $heroSlide && $heroSlide['sous_titre'] ? h($heroSlide['sous_titre']) : 'Le premier parcours en ligne conçu pour les étudiants béninois qui veulent créer leur activité avant même d\'avoir leur diplôme.' ?>
     </p>
     <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:44px">
-      <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary" style="font-size:13px;padding:13px 28px">Démarrer gratuitement</a>
+      <?php if ($heroSlide && $heroSlide['lien']): ?>
+        <a href="<?= h($heroSlide['lien']) ?>" class="cbtn-primary" style="font-size:13px;padding:13px 28px"><?= h($heroSlide['texte_btn'] ?: 'Commencer') ?> →</a>
+      <?php else: ?>
+        <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary" style="font-size:13px;padding:13px 28px">Démarrer gratuitement</a>
+      <?php endif; ?>
       <a href="#methode" class="cbtn-outline" style="font-size:13px;padding:12px 28px">▶ Voir la vidéo (2 min)</a>
     </div>
     <div style="display:flex;justify-content:center;gap:40px;flex-wrap:wrap">
@@ -359,7 +320,6 @@ try {
     </div>
   </div>
 </div>
-<?php endif; ?>
 
 <!-- TRUST BAR -->
 <div class="trust-bar">
@@ -429,7 +389,7 @@ try {
   <div class="sec-tag">Le constat</div>
   <div class="sec-title">Le diplôme ne suffit plus.</div>
   <div class="sec-sub">Au Bénin, décrocher un emploi après les études prend en moyenne 3 à 7 ans. Ce n'est pas une fatalité.</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:stretch">
+  <div class="constat-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:stretch">
     <div style="background:#fff;border-radius:var(--radius-lg);padding:28px;border:1px solid rgba(0,0,0,.07)">
       <div style="font-family:'Syne',sans-serif;font-size:48px;font-weight:800;color:var(--gold-dark);line-height:1">30%</div>
       <p style="font-size:12px;color:var(--text-muted);margin:6px 0 20px">des 15–35 ans sont au chômage au Bénin (INSAE 2024)</p>
@@ -460,7 +420,7 @@ try {
   <div class="sec-tag">Le parcours</div>
   <div class="sec-title">30 modules. Une seule direction.</div>
   <div class="sec-sub">Un programme progressif en 3 séries, conçu pour t'amener de l'idée à la première vente — pendant tes études.</div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px">
+  <div class="parcours-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px">
     <div style="background:var(--navy);color:#fff;border-radius:var(--radius-lg);padding:22px">
       <span style="display:inline-block;background:rgba(125,255,196,.18);color:#7fffc4;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">GRATUIT</span>
       <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Phase 0 — Le Déclic</h4>
@@ -502,7 +462,7 @@ try {
   <div class="sec-tag">La méthode</div>
   <div class="sec-title">80% pratique. 20% théorie.</div>
   <div class="sec-sub">On ne te donne pas des cours magistraux. On te met en situation réelle, avec des outils béninois, pour des problèmes béninois.</div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px">
+  <div class="methode-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px">
     <div style="background:#fff;border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06)">
       <div style="font-size:24px;margin-bottom:10px">🎬</div>
       <h4 style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Vidéos interactives</h4>
@@ -524,7 +484,7 @@ try {
       <p style="font-size:11px;color:var(--text-muted);line-height:1.6">Chaque étape franchie débloque un badge vérifiable, jusqu'à la certification finale co-signée par l'université.</p>
     </div>
   </div>
-  <div style="background:var(--navy);border-radius:20px;padding:28px 32px;margin-top:24px;display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+  <div class="methode-band" style="background:var(--navy);border-radius:20px;padding:28px 32px;margin-top:24px;display:flex;align-items:center;gap:32px;flex-wrap:wrap">
     <div style="text-align:center">
       <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px">Pratique</div>
       <div style="font-family:'Syne',sans-serif;font-size:64px;font-weight:800;color:#fff;line-height:1">80<span style="color:#7fffc4">%</span></div>
@@ -546,7 +506,7 @@ try {
   <div class="sec-tag">Ils ont osé</div>
   <div class="sec-title">Des étudiants qui ont franchi le pas.</div>
   <div class="sec-sub">Pas des exceptions. Des exemples reproductibles, avec les bons outils.</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px">
+  <div class="temoignages-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px">
     <div style="background:var(--bg-light);border-radius:var(--radius-lg);padding:26px;border:1px solid rgba(0,0,0,.06)">
       <p style="font-size:13px;color:var(--dark,#1A1A18);line-height:1.75;font-style:italic;margin-bottom:18px">
         « J'ai lancé mon service de livraison de repas en L2. En 6 mois, mes frais de scolarité étaient couverts. Aujourd'hui diplômé, je gère une équipe de 6 personnes. Ce qui a tout changé ? Avoir un cadre pour passer de l'idée à l'action. »
@@ -615,7 +575,7 @@ try {
   <div class="sec-tag">Tarification</div>
   <div class="sec-title">Conçu pour ta bourse d'étudiant.</div>
   <div class="sec-sub">Paiement en Mobile Money. Pas besoin de carte bancaire. Commence gratuitement.</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;align-items:stretch">
+  <div class="tarifs-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;align-items:stretch">
     <div style="background:#fff;border:1.5px solid rgba(0,0,0,.08);border-radius:var(--radius-lg);padding:26px;display:flex;flex-direction:column">
       <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Phase 0</h4>
       <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Découvre ton potentiel entrepreneurial sans aucun engagement.</p>
@@ -772,7 +732,7 @@ try {
 <!-- FOOTER -->
 <footer class="elab-footer">
   <div style="max-width:1100px;margin:0 auto;padding:40px 32px 0">
-    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px">
+    <div class="footer-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px">
       <div>
         <div style="margin-bottom:14px">
           <img src="<?= SITE_URL ?>/assets/images/logo.png" alt="<?= SITE_NAME ?>" style="height:36px;width:auto">
@@ -827,49 +787,5 @@ try {
   </div>
 </footer>
 
-<script>
-(function () {
-  const track    = document.getElementById('carouselTrack');
-  const dots     = document.querySelectorAll('.cdot');
-  const progress = document.getElementById('carouselProgress');
-  if (!track) return;
-  const total = track.children.length;
-  if (total <= 1) return;
-  let current = 0, timer, progTimer, progWidth = 0;
-  const DELAY = 5000, TICK = 50;
-  function goTo(n) {
-    current = (n + total) % total;
-    track.style.transform = 'translateX(-' + (current * 100) + '%)';
-    dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
-    resetProgress();
-  }
-  function resetProgress() {
-    progWidth = 0;
-    if (progress) progress.style.width = '0%';
-    clearInterval(progTimer);
-    progTimer = setInterval(function () {
-      progWidth += (TICK / DELAY) * 100;
-      if (progress) progress.style.width = Math.min(progWidth, 100) + '%';
-    }, TICK);
-  }
-  function startAutoplay() { timer = setInterval(function () { goTo(current + 1); }, DELAY); }
-  function stopAutoplay()  { clearInterval(timer); clearInterval(progTimer); }
-  window.carouselTo   = function (n) { goTo(n); stopAutoplay(); startAutoplay(); };
-  window.carouselMove = function (d) { goTo(current + d); stopAutoplay(); startAutoplay(); };
-  var startX = 0;
-  track.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; }, { passive: true });
-  track.addEventListener('touchend',   function(e) {
-    var diff = startX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) { goTo(current + (diff > 0 ? 1 : -1)); stopAutoplay(); startAutoplay(); }
-  });
-  var wrap = document.getElementById('mainCarousel');
-  if (wrap) {
-    wrap.addEventListener('mouseenter', stopAutoplay);
-    wrap.addEventListener('mouseleave', function () { startAutoplay(); resetProgress(); });
-  }
-  startAutoplay();
-  resetProgress();
-})();
-</script>
 </body>
 </html>
