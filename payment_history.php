@@ -16,6 +16,12 @@ $payments = $pdo->prepare(
 $payments->execute([$userId]);
 $payments = $payments->fetchAll();
 
+try {
+    $invStmt = $pdo->prepare('SELECT * FROM invoices WHERE user_id = ? ORDER BY created_at DESC');
+    $invStmt->execute([$userId]);
+    $invoices = $invStmt->fetchAll();
+} catch (Exception $e) { $invoices = []; }
+
 $subs = $pdo->prepare('SELECT * FROM subscriptions WHERE user_id = ? ORDER BY created_at DESC');
 $subs->execute([$userId]);
 $subs = $subs->fetchAll();
@@ -100,6 +106,7 @@ $planNames = ['decouverte'=>'Découverte','business_plan'=>'Business Plan','lanc
           <th style="padding:12px 16px;text-align:left">Méthode</th>
           <th style="padding:12px 16px;text-align:left">Statut</th>
           <th style="padding:12px 16px;text-align:left">Date</th>
+          <th style="padding:12px 16px;text-align:center">Remboursement</th>
         </tr></thead>
         <tbody>
           <?php foreach ($payments as $p):
@@ -109,13 +116,66 @@ $planNames = ['decouverte'=>'Découverte','business_plan'=>'Business Plan','lanc
           <tr style="border-top:1px solid #e5e7eb">
             <td style="padding:12px 16px;font-family:monospace;font-size:12px"><?= h($p['reference']) ?></td>
             <td style="padding:12px 16px;font-weight:600"><?= number_format($p['montant'],0,',',' ') ?> FCFA</td>
-            <td style="padding:12px 16px"><?= h(str_replace('_',' ',ucfirst($p['methode']))) ?></td>
+            <td style="padding:12px 16px"><?= h(str_replace('_',' ',ucfirst($p['methode'] ?? $p['operateur'] ?? ''))) ?></td>
             <td style="padding:12px 16px">
               <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:<?= $bg ?>;color:<?= $fg ?>">
                 <?= ['en_attente'=>'En attente','valide'=>'Validé','echoue'=>'Échoué','rembourse'=>'Remboursé'][$p['statut']] ?? $p['statut'] ?>
               </span>
             </td>
             <td style="padding:12px 16px;color:var(--text-muted,#6b7280)"><?= date('d/m/Y H:i', strtotime($p['created_at'])) ?></td>
+            <td style="padding:12px 16px;text-align:center">
+              <?php
+                $refundStatus = $p['refund_status'] ?? 'aucun';
+              ?>
+              <?php if ($p['statut'] === 'valide' && $refundStatus === 'aucun'): ?>
+                <form method="POST" action="<?= SITE_URL ?>/refund.php" onsubmit="return confirm('Demander un remboursement pour ce paiement ?')" style="display:inline">
+                  <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+                  <input type="hidden" name="payment_id" value="<?= $p['id'] ?>">
+                  <input type="hidden" name="motif" value="Demande via historique des paiements">
+                  <button type="submit" class="btn" style="font-size:11px;padding:5px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:6px;cursor:pointer">
+                    <i class="ti ti-receipt-refund"></i> Remboursement
+                  </button>
+                </form>
+              <?php elseif ($refundStatus === 'demande'): ?>
+                <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#FEF3C7;color:#92400e">Remb. demandé</span>
+              <?php elseif ($refundStatus === 'rembourse'): ?>
+                <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#EAF3DE;color:#27500A">Remboursé</span>
+              <?php elseif ($refundStatus === 'refuse'): ?>
+                <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#FAECE7;color:#993C1D">Remb. refusé</span>
+              <?php endif; ?>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+    <?php endif; ?>
+
+    <h2 style="font-size:16px;font-weight:700;margin:32px 0 12px">Mes factures</h2>
+    <?php if (empty($invoices)): ?>
+      <p style="color:var(--text-muted,#6b7280);font-size:14px">Aucune facture disponible.</p>
+    <?php else: ?>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:#f9fafb">
+          <th style="padding:12px 16px;text-align:left">Numéro</th>
+          <th style="padding:12px 16px;text-align:left">Montant</th>
+          <th style="padding:12px 16px;text-align:left">Statut</th>
+          <th style="padding:12px 16px;text-align:left">Date</th>
+          <th style="padding:12px 16px;text-align:center">PDF</th>
+        </tr></thead>
+        <tbody>
+          <?php foreach ($invoices as $inv): ?>
+          <tr style="border-top:1px solid #e5e7eb">
+            <td style="padding:12px 16px;font-family:monospace;font-size:12px"><?= h($inv['numero']) ?></td>
+            <td style="padding:12px 16px;font-weight:600"><?= number_format($inv['montant'],0,',',' ') ?> FCFA</td>
+            <td style="padding:12px 16px"><?= ucfirst($inv['statut']) ?></td>
+            <td style="padding:12px 16px;color:var(--text-muted,#6b7280)"><?= date('d/m/Y', strtotime($inv['created_at'])) ?></td>
+            <td style="padding:12px 16px;text-align:center">
+              <a href="<?= SITE_URL ?>/invoice_pdf.php?id=<?= $inv['id'] ?>" class="btn" style="font-size:11px;padding:5px 10px;background:#534AB7;color:#fff;border-radius:6px;text-decoration:none;display:inline-flex;align-items:center;gap:4px">
+                <i class="ti ti-download"></i> PDF
+              </a>
+            </td>
           </tr>
           <?php endforeach; ?>
         </tbody>
