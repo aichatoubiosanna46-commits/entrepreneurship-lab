@@ -72,7 +72,7 @@ if (!empty($seq['mot_de_passe'])) {
 </body></html>
 <?php exit; endif; ?>
 <?php } ?>
-
+<?php
 
 // Vérifier inscription
 if (!estInscrit($userId, $seq['course_id'])) {

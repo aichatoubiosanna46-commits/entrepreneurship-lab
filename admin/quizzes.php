@@ -17,7 +17,6 @@ if (isset($_GET['reset_attempts'])) {
     header('Location: ' . SITE_URL . '/admin/quizzes.php');
     exit;
 }
-?>
 
 // Suppression
 if (isset($_GET['delete'])) {
