@@ -194,9 +194,12 @@ try {
 .hstep p  { font-size: 9px; color: rgba(255,255,255,.5); line-height: 1.6; }
 
 /* CTA */
-.cta-section { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); padding: 48px 32px; text-align: center; }
-.cta-section h2 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
-.cta-section p  { font-size: 11px; color: rgba(15,29,53,.65); margin-bottom: 22px; line-height: 1.7; }
+.cta-section { position:relative; background: #1a1a18; padding: 56px 32px; text-align: center; overflow:hidden; }
+.cta-section::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 30% 30%, rgba(10,92,70,0.45), transparent 60%), radial-gradient(circle at 70% 70%, rgba(216,90,48,0.30), transparent 60%); pointer-events:none; }
+.cta-section > * { position:relative; z-index:1; }
+.cta-section .cta-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #7fffc4; margin-bottom: 10px; }
+.cta-section h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 10px; font-family: 'Syne', sans-serif; }
+.cta-section p  { font-size: 13px; color: rgba(255,255,255,.7); margin-bottom: 22px; line-height: 1.7; max-width:480px; margin-left:auto; margin-right:auto; }
 .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
 /* VUE CONNECTEE */
@@ -262,26 +265,27 @@ try {
     </div>
   </a>
   <div class="elab-nav-links">
-    <a href="<?= SITE_URL ?>">Accueil</a>
-    <a href="<?= SITE_URL ?>/catalogue.php">Formations</a>
-    <a href="#equipe">Notre équipe</a>
-    <a href="#comment">Comment ça marche</a>
+    <a href="#parcours">Le Parcours</a>
+    <a href="#methode">La Méthode</a>
+    <a href="#temoignages">Témoignages</a>
+    <a href="#tarifs">Tarifs</a>
+    <a href="#equipe">À propos</a>
   </div>
   <?php if (estConnecte()): ?>
     <a href="<?= SITE_URL ?>/dashboard.php" class="elab-nav-btn">
       <i class="ti ti-layout-dashboard"></i> Mon espace
     </a>
   <?php else: ?>
-    <a href="<?= SITE_URL ?>/register.php" class="elab-nav-btn">S'inscrire →</a>
+    <a href="<?= SITE_URL ?>/register.php" class="elab-nav-btn">Commencer gratuitement →</a>
   <?php endif; ?>
 </nav>
 
 <?= flash() ?>
 
-<!-- CAROUSEL -->
+<?php if (!empty($slides)): ?>
+<!-- CAROUSEL (DB-driven slides) -->
 <div class="elab-carousel" id="mainCarousel">
   <div class="carousel-track" id="carouselTrack">
-    <?php if (!empty($slides)): ?>
       <?php foreach ($slides as $i => $s): ?>
       <div class="carousel-slide <?= !$s['image'] ? 'no-img' : '' ?>">
         <?php if ($s['image']): ?>
@@ -308,56 +312,9 @@ try {
         </div>
       </div>
       <?php endforeach; ?>
-    <?php else: ?>
-      <div class="carousel-slide">
-        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80&auto=format&fit=crop" alt="Entrepreneur africain au travail" loading="eager" style="width:100%;height:100%;object-fit:cover;object-position:center">
-        <div class="carousel-overlay"></div>
-        <div class="carousel-content">
-          <div class="carousel-inner">
-            <div class="carousel-tag">Fait pour les entrepreneurs béninois</div>
-            <h1>Lance ton business<br><em>avant ton diplôme</em></h1>
-            <p>Des formations pratiques, accessibles et adaptées au contexte africain. Coaching 1:1, paiement MoMo, certification Université de Parakou.</p>
-            <div class="carousel-btns">
-              <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary">Commencer gratuitement →</a>
-              <a href="#tarifs" class="cbtn-outline">Voir les formations</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="carousel-slide">
-        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80&auto=format&fit=crop&crop=entropy" alt="Entrepreneur africain construisant son business plan" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center">
-        <div class="carousel-overlay"></div>
-        <div class="carousel-content">
-          <div class="carousel-inner">
-            <div class="carousel-tag">Trouve ton idée, construis ton plan</div>
-            <h1>De l'idée au<br><em>Business Plan</em></h1>
-            <p>Valide ton projet en 4h avec notre méthode éprouvée. Un mentor t'accompagne à chaque étape, sans jargon ni théorie inutile.</p>
-            <div class="carousel-btns">
-              <a href="#tarifs" class="cbtn-primary">Voir les tarifs →</a>
-              <a href="<?= SITE_URL ?>/register.php" class="cbtn-outline">Créer un compte</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="carousel-slide">
-        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80&auto=format&fit=crop&crop=top" alt="Apprenant africain certifié" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center top">
-        <div class="carousel-overlay"></div>
-        <div class="carousel-content">
-          <div class="carousel-inner">
-            <div class="carousel-tag">Coaching 1:1 · Certification · MoMo</div>
-            <h1>Certifié par<br><em>l'Université de Parakou</em></h1>
-            <p>Rejoins 1 200+ apprenants qui ont transformé leur idée en activité réelle. Paiement simple par Mobile Money, accès à vie.</p>
-            <div class="carousel-btns">
-              <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary">Rejoindre la communauté →</a>
-              <a href="#comment" class="cbtn-outline">Comment ça marche</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    <?php endif; ?>
   </div>
 
-  <?php $nbSlides = !empty($slides) ? count($slides) : 3; ?>
+  <?php $nbSlides = count($slides); ?>
   <?php if ($nbSlides > 1): ?>
   <button class="carousel-arrow prev" onclick="carouselMove(-1)" aria-label="Précédent"><i class="ti ti-chevron-left"></i></button>
   <button class="carousel-arrow next" onclick="carouselMove(1)" aria-label="Suivant"><i class="ti ti-chevron-right"></i></button>
@@ -369,6 +326,40 @@ try {
   <?php endif; ?>
   <div class="carousel-progress" id="carouselProgress"></div>
 </div>
+<?php else: ?>
+<!-- HERO (static fallback, brand-guide spec) -->
+<div class="elab-hero" style="background:linear-gradient(135deg, var(--navy), var(--navy-mid));padding:80px 32px 64px;text-align:center">
+  <div style="max-width:760px;margin:0 auto">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:100px;padding:6px 16px;color:rgba(255,255,255,0.9);font-size:13px;">
+      <span style="width:7px;height:7px;background:#4dff9e;border-radius:50%;display:inline-block;"></span> Ouvert aux inscriptions — Rentrée 2024
+    </div>
+    <h1 style="font-family:'Syne',sans-serif;font-size:clamp(28px,5vw,46px);font-weight:800;color:#fff;line-height:1.15;margin:22px 0 18px">
+      Entreprends <span style="color:#7fffc4">pendant</span> tes études.<br>Pas après.
+    </h1>
+    <p style="font-size:15px;color:rgba(255,255,255,.75);line-height:1.75;max-width:560px;margin:0 auto 28px">
+      Le premier parcours en ligne conçu pour les étudiants béninois qui veulent créer leur activité avant même d'avoir leur diplôme.
+    </p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:44px">
+      <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary" style="font-size:13px;padding:13px 28px">Démarrer gratuitement</a>
+      <a href="#methode" class="cbtn-outline" style="font-size:13px;padding:12px 28px">▶ Voir la vidéo (2 min)</a>
+    </div>
+    <div style="display:flex;justify-content:center;gap:40px;flex-wrap:wrap">
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#7fffc4">30+</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">Modules pratiques</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#7fffc4">1 000</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">objectif Étudiants visés</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#7fffc4">3×</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">Universités partenaires</div>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
 
 <!-- TRUST BAR -->
 <div class="trust-bar">
@@ -433,6 +424,168 @@ try {
 <?php endif; ?>
 <?php endif; ?>
 
+<!-- LE CONSTAT -->
+<div class="elab-section" id="constat" style="background:var(--bg-light)">
+  <div class="sec-tag">Le constat</div>
+  <div class="sec-title">Le diplôme ne suffit plus.</div>
+  <div class="sec-sub">Au Bénin, décrocher un emploi après les études prend en moyenne 3 à 7 ans. Ce n'est pas une fatalité.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:stretch">
+    <div style="background:#fff;border-radius:var(--radius-lg);padding:28px;border:1px solid rgba(0,0,0,.07)">
+      <div style="font-family:'Syne',sans-serif;font-size:48px;font-weight:800;color:var(--gold-dark);line-height:1">30%</div>
+      <p style="font-size:12px;color:var(--text-muted);margin:6px 0 20px">des 15–35 ans sont au chômage au Bénin (INSAE 2024)</p>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px">
+        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-muted);line-height:1.6"><span style="color:var(--gold-dark);flex-shrink:0">●</span> 3 à 7 ans d'attente après le diplôme pour trouver un premier emploi</li>
+        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-muted);line-height:1.6"><span style="color:var(--gold-dark);flex-shrink:0">●</span> Les universités forment des salariés, pas des entrepreneurs</li>
+        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-muted);line-height:1.6"><span style="color:var(--gold-dark);flex-shrink:0">●</span> Les outils et ressources ne sont pas adaptés au contexte béninois</li>
+        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-muted);line-height:1.6"><span style="color:var(--gold-dark);flex-shrink:0">●</span> Pas de soutien structuré pendant les années d'études</li>
+      </ul>
+    </div>
+    <div style="background:#fff;border-radius:var(--radius-lg);padding:28px;border:1px solid rgba(0,0,0,.07);display:flex;flex-direction:column">
+      <h3 style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--navy);margin-bottom:12px">Et si on inversait l'équation ?</h3>
+      <p style="font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">
+        Kossi, 22 ans, L2 à Parakou, a lancé un service de livraison de repas. 3 partenariats avec des restauratrices via WhatsApp. En 6 mois, ses frais de scolarité étaient couverts.
+      </p>
+      <div style="background:var(--navy);border-radius:12px;padding:18px;margin-top:auto">
+        <p style="font-size:12.5px;color:rgba(255,255,255,.9);line-height:1.75;font-style:italic;margin-bottom:8px">
+          « Le plus dur n'était pas de trouver l'idée. C'était d'oser appeler la première restauratrice pour lui proposer un partenariat. »
+        </p>
+        <p style="font-size:11px;color:rgba(255,255,255,.55)">— Kossi, 24 ans, entrepreneur étudiant, Parakou</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LE PARCOURS -->
+<div class="elab-section" id="parcours">
+  <div class="sec-tag">Le parcours</div>
+  <div class="sec-title">30 modules. Une seule direction.</div>
+  <div class="sec-sub">Un programme progressif en 3 séries, conçu pour t'amener de l'idée à la première vente — pendant tes études.</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px">
+    <div style="background:var(--navy);color:#fff;border-radius:var(--radius-lg);padding:22px">
+      <span style="display:inline-block;background:rgba(125,255,196,.18);color:#7fffc4;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">GRATUIT</span>
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Phase 0 — Le Déclic</h4>
+      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">Découvre ton potentiel entrepreneurial et identifie tes premières pistes d'opportunités, sans aucun risque.</p>
+      <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:10px">3 modules d'onboarding</p>
+      <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#7fffc4">0 FCFA</p>
+    </div>
+    <div style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:var(--radius-lg);padding:22px">
+      <span style="display:inline-block;background:rgba(14,122,92,.12);color:var(--navy-mid);font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">ESSENTIEL</span>
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Série 1 — Valider ton idée</h4>
+      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Teste ton idée sur le terrain avant d'investir temps et argent, avec des méthodes simples et adaptées au Bénin.</p>
+      <p style="font-size:10.5px;color:var(--text-muted);margin-bottom:10px">9 modules de validation</p>
+      <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy)">1 000 – 5 000 FCFA</p>
+    </div>
+    <div style="background:var(--bg-light);border:1px solid rgba(0,0,0,.06);border-radius:var(--radius-lg);padding:22px">
+      <span style="display:inline-block;background:rgba(216,90,48,.14);color:var(--gold-dark);font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">AVANCÉ</span>
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Série 2 — Lancer et vendre</h4>
+      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Passe à l'action : premiers clients, premières ventes, premiers retours du marché, avec un accompagnement concret.</p>
+      <p style="font-size:10.5px;color:var(--text-muted);margin-bottom:10px">9 modules de lancement</p>
+      <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy)">5 000 – 10 000 FCFA</p>
+    </div>
+    <div style="background:#1a1a18;color:#fff;border-radius:var(--radius-lg);padding:22px;grid-column:1 / -1">
+      <span style="display:inline-block;background:rgba(255,255,255,.14);color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">EXPERT</span>
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Série 3 — Structurer et scaler</h4>
+      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">Structure ton activité pour durer : gestion, équipe, croissance — et prépare le passage à l'échelle de ton entreprise.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
+        <div>
+          <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:6px">9 modules de croissance</p>
+          <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff">10 000 – 15 000 FCFA</p>
+        </div>
+        <p style="font-size:11px;color:rgba(255,255,255,.65)">🎓 Certification UP &nbsp;|&nbsp; 👤 Coaching 1:1 &nbsp;|&nbsp; 🏆 Badge numérique &nbsp;|&nbsp; 🤝 Réseau Alumni</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LA METHODE -->
+<div class="elab-section" id="methode" style="background:#f0f9f5">
+  <div class="sec-tag">La méthode</div>
+  <div class="sec-title">80% pratique. 20% théorie.</div>
+  <div class="sec-sub">On ne te donne pas des cours magistraux. On te met en situation réelle, avec des outils béninois, pour des problèmes béninois.</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px">
+    <div style="background:#fff;border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06)">
+      <div style="font-size:24px;margin-bottom:10px">🎬</div>
+      <h4 style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Vidéos interactives</h4>
+      <p style="font-size:11px;color:var(--text-muted);line-height:1.6">Des capsules courtes et concrètes, conçues pour être vues entre deux cours, avec des quiz pour ancrer chaque notion.</p>
+    </div>
+    <div style="background:#fff;border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06)">
+      <div style="font-size:24px;margin-bottom:10px">🛠️</div>
+      <h4 style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Outils prêts à l'emploi</h4>
+      <p style="font-size:11px;color:var(--text-muted);line-height:1.6">Modèles, fiches et calculateurs téléchargeables que tu utilises immédiatement sur ton propre projet.</p>
+    </div>
+    <div style="background:#fff;border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06)">
+      <div style="font-size:24px;margin-bottom:10px">🌍</div>
+      <h4 style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Cas 100% béninois</h4>
+      <p style="font-size:11px;color:var(--text-muted);line-height:1.6">Des études de cas tirées d'entrepreneurs étudiants locaux, pas de théories importées hors contexte.</p>
+    </div>
+    <div style="background:#fff;border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06)">
+      <div style="font-size:24px;margin-bottom:10px">🏅</div>
+      <h4 style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Badges & certification</h4>
+      <p style="font-size:11px;color:var(--text-muted);line-height:1.6">Chaque étape franchie débloque un badge vérifiable, jusqu'à la certification finale co-signée par l'université.</p>
+    </div>
+  </div>
+  <div style="background:var(--navy);border-radius:20px;padding:28px 32px;margin-top:24px;display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+    <div style="text-align:center">
+      <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px">Pratique</div>
+      <div style="font-family:'Syne',sans-serif;font-size:64px;font-weight:800;color:#fff;line-height:1">80<span style="color:#7fffc4">%</span></div>
+    </div>
+    <div style="width:1px;height:60px;background:rgba(255,255,255,.15)"></div>
+    <div style="text-align:center">
+      <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px">Théorie</div>
+      <div style="font-family:'Syne',sans-serif;font-size:64px;font-weight:800;color:#fff;line-height:1">20<span style="color:#7fffc4">%</span></div>
+    </div>
+    <div style="width:1px;height:60px;background:rgba(255,255,255,.15)"></div>
+    <p style="font-size:12.5px;color:rgba(255,255,255,.75);line-height:1.7;flex:1;min-width:220px">
+      Chaque module se termine par un livrable concret que tu peux montrer à un client, un partenaire ou un jury.
+    </p>
+  </div>
+</div>
+
+<!-- TEMOIGNAGES -->
+<div class="elab-section" id="temoignages" style="background:#fff">
+  <div class="sec-tag">Ils ont osé</div>
+  <div class="sec-title">Des étudiants qui ont franchi le pas.</div>
+  <div class="sec-sub">Pas des exceptions. Des exemples reproductibles, avec les bons outils.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px">
+    <div style="background:var(--bg-light);border-radius:var(--radius-lg);padding:26px;border:1px solid rgba(0,0,0,.06)">
+      <p style="font-size:13px;color:var(--dark,#1A1A18);line-height:1.75;font-style:italic;margin-bottom:18px">
+        « J'ai lancé mon service de livraison de repas en L2. En 6 mois, mes frais de scolarité étaient couverts. Aujourd'hui diplômé, je gère une équipe de 6 personnes. Ce qui a tout changé ? Avoir un cadre pour passer de l'idée à l'action. »
+      </p>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(8,80,65,.14);color:var(--navy);font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">K</div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--navy)">Kossi</div>
+          <div style="font-size:10.5px;color:var(--text-muted)">24 ans — Livraison de repas, Parakou</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--bg-light);border-radius:var(--radius-lg);padding:26px;border:1px solid rgba(0,0,0,.06)">
+      <p style="font-size:13px;color:var(--dark,#1A1A18);line-height:1.75;font-style:italic;margin-bottom:18px">
+        « Mes compétences en informatique valaient de l'argent, mais je ne le savais pas. En 8 mois, 22 clients actifs. J'ai soutenu ma licence avec mon entreprise comme cas pratique de mon mémoire. »
+      </p>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(216,90,48,.14);color:var(--gold-dark);font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">F</div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--navy)">Fatima</div>
+          <div style="font-size:10.5px;color:var(--text-muted)">26 ans — Développeuse web pour PME, Cotonou</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PARTENAIRES -->
+<div class="elab-section" style="background:var(--bg-light);padding:32px 32px;text-align:center">
+  <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">Soutenu et reconnu par</p>
+  <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">Université de Parakou</span>
+    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">CPID ONG</span>
+    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">ANPE Bénin</span>
+    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">RJEB (Réseau des Jeunes Entrepreneurs Béninois)</span>
+    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">CePEPE Bénin</span>
+  </div>
+</div>
+
 <!-- POURQUOI NOUS -->
 <div class="elab-section">
   <div class="sec-tag">Pourquoi nous ?</div>
@@ -459,75 +612,51 @@ try {
 
 <!-- TARIFS -->
 <div class="elab-section alt" id="tarifs">
-  <div class="sec-tag">Formations</div>
-  <div class="sec-title">Choisis ton parcours</div>
-  <div class="sec-sub">Commence gratuitement, investis quand tu es prêt(e)</div>
-  <div class="pricing-grid">
-    <div class="pricing-card">
-      <div class="pricing-thumb t1"><span class="pricing-badge">Gratuit</span></div>
-      <div class="pricing-body">
-        <h4>Trouver son idée de business</h4>
-        <p class="pricing-desc">Valide ton projet en 4h avec notre méthode simple et adaptée au contexte béninois.</p>
-        <div class="pricing-price"><span class="amount free">Gratuit</span></div>
-        <ul class="pricing-features">
-          <li><i class="ti ti-check"></i> Accès immédiat sans carte</li>
-          <li><i class="ti ti-check"></i> 3 vidéos + guide PDF</li>
-          <li><i class="ti ti-check"></i> Exercice de validation d'idée</li>
-          <li><i class="ti ti-check"></i> Accès à la communauté</li>
-        </ul>
-        <a href="<?= SITE_URL ?>/register.php" class="btn-pricing outline">Commencer gratuitement →</a>
-      </div>
+  <div class="sec-tag">Tarification</div>
+  <div class="sec-title">Conçu pour ta bourse d'étudiant.</div>
+  <div class="sec-sub">Paiement en Mobile Money. Pas besoin de carte bancaire. Commence gratuitement.</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;align-items:stretch">
+    <div style="background:#fff;border:1.5px solid rgba(0,0,0,.08);border-radius:var(--radius-lg);padding:26px;display:flex;flex-direction:column">
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Phase 0</h4>
+      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Découvre ton potentiel entrepreneurial sans aucun engagement.</p>
+      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--navy);margin-bottom:16px">0 FCFA</div>
+      <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:8px;flex:1">
+        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> 3 modules complets</li>
+        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Outils « Radar à Opportunités »</li>
+        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Badge « Explorateur Entrepreneurial »</li>
+        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Accès au forum communautaire</li>
+      </ul>
+      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing outline">Commencer maintenant →</a>
     </div>
-    <div class="pricing-card featured">
-      <div class="pricing-thumb t2"><span class="pricing-badge pop">⭐ Populaire</span></div>
-      <div class="pricing-body">
-        <h4>Business Plan simplifié</h4>
-        <p class="pricing-desc">De l'idée au plan d'action concret. Tout ce qu'il faut pour convaincre un investisseur.</p>
-        <div class="pricing-price"><span class="amount">5 000</span><span class="currency">FCFA</span></div>
-        <ul class="pricing-features">
-          <li><i class="ti ti-check"></i> 8 modules vidéo</li>
-          <li><i class="ti ti-check"></i> Modèle Business Plan téléchargeable</li>
-          <li><i class="ti ti-check"></i> 1 session coaching 1:1 (30 min)</li>
-          <li><i class="ti ti-check"></i> Certificat de complétion</li>
-          <li><i class="ti ti-check"></i> Paiement MoMo accepté</li>
-        </ul>
-        <a href="<?= SITE_URL ?>/register.php" class="btn-pricing gold">S'inscrire 5 000 FCFA →</a>
-      </div>
+    <div style="background:var(--navy);color:#fff;border-radius:var(--radius-lg);padding:26px;display:flex;flex-direction:column;position:relative;box-shadow:0 12px 32px rgba(8,80,65,.25)">
+      <span style="position:absolute;top:-12px;left:26px;background:var(--gold);color:#fff;font-size:10px;font-weight:700;padding:5px 14px;border-radius:100px">🔥 Le plus choisi</span>
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;margin-top:8px">Séries 1 + 2</h4>
+      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">De la validation de ton idée jusqu'à tes premières ventes réelles.</p>
+      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;margin-bottom:16px">15 000 FCFA</div>
+      <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:8px;flex:1">
+        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> 18 modules (Séries 1 & 2)</li>
+        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> Tous les templates & outils</li>
+        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> Coaching mensuel en groupe</li>
+        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> Certification Université de Parakou</li>
+        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> Paiement par tranches possible</li>
+      </ul>
+      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing gold">S'inscrire — Payer en Mobile Money →</a>
     </div>
-    <div class="pricing-card">
-      <div class="pricing-thumb t3"></div>
-      <div class="pricing-body">
-        <h4>Lancer son activité</h4>
-        <p class="pricing-desc">Le parcours complet : coaching intensif, accompagnement terrain et certification universitaire.</p>
-        <div class="pricing-price"><span class="amount">8 000</span><span class="currency">FCFA</span></div>
-        <ul class="pricing-features">
-          <li><i class="ti ti-check"></i> Tous les modules Business Plan inclus</li>
-          <li><i class="ti ti-check"></i> 3 sessions coaching 1:1</li>
-          <li><i class="ti ti-check"></i> Suivi personnalisé 30 jours</li>
-          <li><i class="ti ti-check"></i> Certification Université de Parakou</li>
-          <li><i class="ti ti-check"></i> Accès au réseau d'alumni</li>
-        </ul>
-        <a href="<?= SITE_URL ?>/register.php" class="btn-pricing">S'inscrire 8 000 FCFA →</a>
-      </div>
-    </div>
-    <div class="pricing-card">
-      <div class="pricing-thumb t4"><span class="pricing-badge">Elite</span></div>
-      <div class="pricing-body">
-        <h4>Premium Elite</h4>
-        <p class="pricing-desc">L'accompagnement ultime pour transformer ton idée en entreprise viable avec un suivi intensif.</p>
-        <div class="pricing-price"><span class="amount">15 000</span><span class="currency">FCFA</span></div>
-        <ul class="pricing-features">
-          <li><i class="ti ti-check"></i> Tout le parcours Lancement inclus</li>
-          <li><i class="ti ti-check"></i> 6 sessions coaching 1:1</li>
-          <li><i class="ti ti-check"></i> Suivi personnalisé 90 jours</li>
-          <li><i class="ti ti-check"></i> Accès à vie à tous les contenus</li>
-          <li><i class="ti ti-check"></i> Badge Alumni certifié</li>
-          <li><i class="ti ti-check"></i> Mise en relation investisseurs</li>
-        </ul>
-        <a href="<?= SITE_URL ?>/register.php" class="btn-pricing" style="background:linear-gradient(135deg,#1a0533,#6C47D4)">S'inscrire — 15 000 FCFA →</a>
-      </div>
+    <div style="background:#fff;border:1.5px solid rgba(0,0,0,.08);border-radius:var(--radius-lg);padding:26px;display:flex;flex-direction:column">
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Parcours Complet</h4>
+      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Toutes les séries, du déclic jusqu'à la structuration de ton entreprise.</p>
+      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--navy);margin-bottom:16px">25 000 FCFA</div>
+      <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:8px;flex:1">
+        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> 30 modules complets</li>
+        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Coaching individuel mensuel</li>
+        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Accès réseau alumni</li>
+        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Certificat mention Excellente</li>
+        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Mise en relation partenaires</li>
+      </ul>
+      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing">Accès complet →</a>
     </div>
   </div>
+  <p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:22px">Paiement accepté via MTN Mobile Money · Moov Money · Wave — Paiement en 3 fois disponible sur demande.</p>
 </div>
 
 <!-- COMMENT CA MARCHE -->
@@ -545,10 +674,10 @@ try {
 
 <!-- NOTRE EQUIPE -->
 <div class="elab-section alt" id="equipe" style="text-align:center">
-  <div class="sec-tag">👥 L'équipe</div>
-  <div class="sec-title" style="margin-bottom:6px">Notre équipe</div>
+  <div class="sec-tag">L'équipe</div>
+  <div class="sec-title" style="margin-bottom:6px">Portés par CPID ONG.</div>
   <p style="font-size:13px;color:var(--text-muted);max-width:520px;margin:0 auto 36px;line-height:1.75">
-    Passionnés d'entrepreneuriat, nous avons créé Ariziki pour donner à chaque étudiant béninois les outils concrets pour lancer son business.
+    Une organisation dédiée à l'insertion professionnelle des jeunes béninois depuis plus de 10 ans.
   </p>
 
   <div class="equipe-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1000px;margin:0 auto 48px">
@@ -631,11 +760,12 @@ try {
 
 <!-- CTA -->
 <div class="cta-section">
-  <h2>Prêt(e) à lancer ton entreprise ?</h2>
-  <p>Rejoins <?= number_format($nbMembres) ?>+ apprenants · Paiement MoMo · Certification Université de Parakou</p>
+  <div class="cta-eyebrow">C'est maintenant</div>
+  <h2>Ton projet commence aujourd'hui.</h2>
+  <p>3 modules gratuits. Aucun engagement. Juste toi, tes idées, et une méthode qui marche sur le terrain béninois.</p>
   <div class="cta-btns">
-    <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary" style="font-size:13px;padding:13px 28px">Créer mon compte gratuitement</a>
-    <a href="#tarifs" class="cbtn-outline" style="color:var(--navy);border-color:var(--navy);font-size:13px;padding:12px 28px">Voir les formations</a>
+    <a href="<?= SITE_URL ?>/register.php" style="background:#fff;color:#1a1a18;font-size:13px;font-weight:700;padding:13px 28px;border-radius:10px;text-decoration:none">Démarrer gratuitement →</a>
+    <a href="<?= SITE_URL ?>/contact.php" style="background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.4);font-size:13px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none">Contacter l'équipe</a>
   </div>
 </div>
 
@@ -647,6 +777,8 @@ try {
         <div style="margin-bottom:14px">
           <img src="<?= SITE_URL ?>/assets/images/logo.png" alt="<?= SITE_NAME ?>" style="height:36px;width:auto">
         </div>
+        <p style="font-size:15px;color:#fff;font-weight:700;font-family:'Syne',sans-serif;margin-bottom:2px">Ariziki EntrepreneurshipLab</p>
+        <p style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:16px">Une initiative CPID ONG — Bénin</p>
         <p style="font-size:13px;color:rgba(255,255,255,.5);line-height:1.75;margin-bottom:16px">
           Lancez votre entreprise avant votre diplôme.<br>Certifié Université de Parakou, Bénin.
         </p>
@@ -659,11 +791,11 @@ try {
       <div>
         <h5 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:14px">Navigation</h5>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px">
-          <li><a href="<?= SITE_URL ?>/index.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Accueil</a></li>
-          <li><a href="<?= SITE_URL ?>/index.php#tarifs" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Formations</a></li>
-          <li><a href="<?= SITE_URL ?>/index.php#equipe" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Notre équipe</a></li>
-          <li><a href="<?= SITE_URL ?>/index.php#comment" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Comment ça marche</a></li>
-          <li><a href="<?= SITE_URL ?>/blog.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Blog</a></li>
+          <li><a href="<?= SITE_URL ?>/index.php#parcours" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Le Parcours</a></li>
+          <li><a href="<?= SITE_URL ?>/index.php#tarifs" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Tarifs</a></li>
+          <li><a href="<?= SITE_URL ?>/index.php#equipe" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">À propos</a></li>
+          <li><a href="<?= SITE_URL ?>/contact.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Contact</a></li>
+          <li><a href="<?= SITE_URL ?>/rgpd.php" style="font-size:13px;color:rgba(255,255,255,.55);text-decoration:none" onmouseover="this.style.color='#D85A30'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Mentions légales</a></li>
         </ul>
       </div>
       <div>
