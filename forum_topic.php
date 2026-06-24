@@ -4,11 +4,21 @@
 // ============================================================
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/security.php';
+
+sendSecurityHeaders();
+
+$pdo = getPDO();
 
 // AJAX réaction
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'react') {
     header('Content-Type: application/json');
     if (!estConnecte()) { echo json_encode(['error' => 'Non connecté']); exit; }
+    $token = $_POST['csrf_token'] ?? '';
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        echo json_encode(['error' => 'Jeton CSRF invalide.']);
+        exit;
+    }
     $topicId = (int)($_POST['topic_id'] ?? 0);
     $replyId = (int)($_POST['reply_id'] ?? 0) ?: null;
     $emoji   = trim($_POST['emoji'] ?? '👍');
@@ -36,11 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'react
     exit;
 }
 
-require_once __DIR__ . '/includes/security.php';
-
-sendSecurityHeaders();
-
-$pdo = getPDO();
 $id  = (int)($_GET['id'] ?? 0);
 
 if (!$id) redirect(SITE_URL . '/forum.php');
@@ -248,6 +253,7 @@ document.querySelectorAll('.reaction-btn').forEach(function(btn) {
     try {
       const fd = new FormData();
       fd.append('action', 'react');
+      fd.append('csrf_token', '<?= csrfToken() ?>');
       fd.append('topic_id', topicId);
       if (replyId) fd.append('reply_id', replyId);
       fd.append('emoji', emoji);
