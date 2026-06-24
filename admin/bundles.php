@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->prepare('INSERT INTO bundles (titre, description, prix, actif) VALUES (?,?,?,?)')
             ->execute([$titre, $description, $prix, $actif]);
         $bundleId = (int)$pdo->lastInsertId();
-        foreach ($courseIds as $cId) {
-            $pdo->prepare('INSERT IGNORE INTO bundle_courses (bundle_id, course_id) VALUES (?,?)')->execute([$bundleId, $cId]);
+        foreach ($courseIds as $i => $cId) {
+            $pdo->prepare('INSERT IGNORE INTO bundle_courses (bundle_id, course_id, ordre) VALUES (?,?,?)')->execute([$bundleId, $cId, $i]);
         }
         redirect(SITE_URL . '/admin/bundles.php', 'Bundle créé avec succès !', 'success');
     }
@@ -78,6 +78,7 @@ $currentPage = 'bundles.php';
             <td><strong><?= number_format($b['prix'],0,'.',',') ?> FCFA</strong></td>
             <td><span class="badge <?= $b['actif']?'badge-success':'badge-neutral' ?>"><?= $b['actif']?'Actif':'Inactif' ?></span></td>
             <td>
+              <a href="bundle_edit.php?id=<?= $b['id'] ?>" class="btn-outline btn-sm"><i class="ti ti-edit"></i></a>
               <a href="?delete=<?= $b['id'] ?>" class="btn-outline btn-sm" style="color:#dc2626"
                  onclick="return confirm('Supprimer ce bundle ?')"><i class="ti ti-trash"></i></a>
             </td>

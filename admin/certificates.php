@@ -11,13 +11,27 @@ reqAdmin();
 
 $pdo = getPDO();
 
-// Révoquer un certificat
+// Révoquer / réactiver un certificat
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['revoke'])) {
     verifierCSRF();
     $certId = (int)$_POST['cert_id'];
-    $pdo->prepare('DELETE FROM certificates WHERE id = ?')->execute([$certId]);
-    logAction('certificate_revoked', 'Certificat #' . $certId . ' révoqué');
+    try {
+        $pdo->prepare('UPDATE certificates SET revoque = 1, revoque_le = NOW() WHERE id = ?')->execute([$certId]);
+        logAction('certificate_revoked', 'Certificat #' . $certId . ' révoqué');
+    } catch (Exception $e) {
+        // Colonnes revoque/revoque_le absentes (migration 013 non appliquée) : repli ancien comportement
+        $pdo->prepare('DELETE FROM certificates WHERE id = ?')->execute([$certId]);
+    }
     redirect(SITE_URL . '/admin/certificates.php', 'Certificat révoqué.', 'success');
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unrevoke'])) {
+    verifierCSRF();
+    $certId = (int)$_POST['cert_id'];
+    try {
+        $pdo->prepare('UPDATE certificates SET revoque = 0, revoque_le = NULL WHERE id = ?')->execute([$certId]);
+        logAction('certificate_unrevoked', 'Certificat #' . $certId . ' réactivé');
+    } catch (Exception $e) {}
+    redirect(SITE_URL . '/admin/certificates.php', 'Certificat réactivé.', 'success');
 }
 
 // Filtres
@@ -46,10 +60,11 @@ $total = (int)$countStmt->fetchColumn();
 [$offset, $pages, $pageCourante] = paginer($total, 20);
 
 $stmt = $pdo->prepare(
-    "SELECT c.*, u.nom, u.prenom, u.email, co.titre AS cours_titre
+    "SELECT c.*, u.nom, u.prenom, u.email, co.titre AS cours_titre, b.titre AS bundle_titre
      FROM certificates c
      JOIN users u ON u.id = c.user_id
-     JOIN courses co ON co.id = c.course_id
+     LEFT JOIN courses co ON co.id = c.course_id
+     LEFT JOIN bundles b ON b.id = c.bundle_id
      $whereSQL
      ORDER BY c.delivre_le DESC
      LIMIT 20 OFFSET $offset"
@@ -99,38 +114,68 @@ $pageTitle = 'Certificats';
         <thead style="background:#f9fafb">
           <tr>
             <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--text-muted)">Étudiant</th>
-            <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--text-muted)">Cours</th>
+            <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--text-muted)">Cours / Bundle</th>
+            <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--text-muted)">Type</th>
             <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--text-muted)">Code unique</th>
             <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--text-muted)">Délivré le</th>
+            <th style="padding:12px 16px;text-align:center;font-size:12px;font-weight:600;color:var(--text-muted)">Statut</th>
             <th style="padding:12px 16px;text-align:center;font-size:12px;font-weight:600;color:var(--text-muted)">Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php if (empty($certs)): ?>
-            <tr><td colspan="5" style="padding:40px;text-align:center;color:var(--text-muted)">Aucun certificat.</td></tr>
+            <tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text-muted)">Aucun certificat.</td></tr>
           <?php else: ?>
-            <?php foreach ($certs as $cert): ?>
+            <?php foreach ($certs as $cert):
+              $estBundleRow  = !empty($cert['bundle_id']);
+              $estRevoqueRow = !empty($cert['revoque']);
+              $intituleRow   = $estBundleRow ? ($cert['bundle_titre'] ?? '') : ($cert['cours_titre'] ?? '');
+              $typeRow       = ($cert['type'] ?? 'completion') === 'connaissance' ? 'Connaissance' : 'Complétion';
+            ?>
               <tr style="border-top:1px solid var(--border,#e5e7eb)">
                 <td style="padding:12px 16px">
                   <div style="font-weight:500;font-size:13px"><?= h($cert['prenom'] . ' ' . $cert['nom']) ?></div>
                   <div style="font-size:11px;color:var(--text-muted)"><?= h($cert['email']) ?></div>
                 </td>
-                <td style="padding:12px 16px;font-size:13px"><?= h($cert['cours_titre']) ?></td>
+                <td style="padding:12px 16px;font-size:13px">
+                  <?= h($intituleRow) ?>
+                  <?php if ($estBundleRow): ?><span style="background:#FEF3C7;color:#D97706;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:700;margin-left:4px">Bundle</span><?php endif; ?>
+                </td>
+                <td style="padding:12px 16px;font-size:12px">
+                  <span class="badge <?= $typeRow === 'Connaissance' ? 'badge-success' : 'badge-neutral' ?>"><?= $typeRow ?></span>
+                </td>
                 <td style="padding:12px 16px;font-family:monospace;font-size:11px;color:var(--text-muted)"><?= h($cert['code_unique']) ?></td>
                 <td style="padding:12px 16px;font-size:12px;color:var(--text-muted)"><?= date('d/m/Y', strtotime($cert['delivre_le'])) ?></td>
+                <td style="padding:12px 16px;text-align:center">
+                  <?php if ($estRevoqueRow): ?>
+                    <span class="badge" style="background:#FEE2E2;color:#991B1B">Révoqué</span>
+                  <?php else: ?>
+                    <span class="badge badge-success">Actif</span>
+                  <?php endif; ?>
+                </td>
                 <td style="padding:12px 16px;text-align:center">
                   <div style="display:flex;gap:6px;justify-content:center">
                     <a href="<?= SITE_URL ?>/verify_certificate.php?code=<?= h($cert['code_unique']) ?>" target="_blank"
                        class="btn-outline" style="font-size:12px;padding:5px 10px">
                       <i class="ti ti-external-link"></i> Vérifier
                     </a>
-                    <form method="POST" onsubmit="return confirm('Révoquer ce certificat ? Cette action est irréversible.')">
-                      <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
-                      <input type="hidden" name="cert_id" value="<?= $cert['id'] ?>">
-                      <button type="submit" name="revoke" style="background:#FEE2E2;border:1px solid #FECACA;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px;color:#991B1B">
-                        <i class="ti ti-ban"></i> Révoquer
-                      </button>
-                    </form>
+                    <?php if ($estRevoqueRow): ?>
+                      <form method="POST" onsubmit="return confirm('Réactiver ce certificat ?')">
+                        <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+                        <input type="hidden" name="cert_id" value="<?= $cert['id'] ?>">
+                        <button type="submit" name="unrevoke" class="btn-outline btn-sm">
+                          <i class="ti ti-check"></i> Réactiver
+                        </button>
+                      </form>
+                    <?php else: ?>
+                      <form method="POST" onsubmit="return confirm('Révoquer ce certificat ?')">
+                        <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+                        <input type="hidden" name="cert_id" value="<?= $cert['id'] ?>">
+                        <button type="submit" name="revoke" class="btn-outline-danger btn-sm">
+                          <i class="ti ti-ban"></i> Révoquer
+                        </button>
+                      </form>
+                    <?php endif; ?>
                   </div>
                 </td>
               </tr>
@@ -144,7 +189,7 @@ $pageTitle = 'Certificats';
       <div style="display:flex;gap:6px;justify-content:center;margin-top:16px">
         <?php for ($p = 1; $p <= $pages; $p++): ?>
           <a href="?page=<?= $p ?><?= $filterCourse ? '&course_id='.$filterCourse : '' ?><?= $filterUser ? '&search='.urlencode($filterUser) : '' ?>"
-             style="padding:6px 12px;border-radius:6px;font-size:13px;text-decoration:none;<?= $p === $pageCourante ? 'background:var(--primary,#6C47D4);color:#fff' : 'background:#f3f4f6;color:var(--text)' ?>"><?= $p ?></a>
+             style="padding:6px 12px;border-radius:6px;font-size:13px;text-decoration:none;<?= $p === $pageCourante ? 'background:var(--primary);color:#fff' : 'background:#f3f4f6;color:var(--text)' ?>"><?= $p ?></a>
         <?php endfor; ?>
       </div>
     <?php endif; ?>

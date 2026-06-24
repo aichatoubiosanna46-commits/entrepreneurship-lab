@@ -8,26 +8,24 @@ $pdo    = getPDO();
 $userId = $_SESSION['user_id'];
 $code   = trim($_GET['code'] ?? '');
 $courseId = (int)($_GET['course'] ?? 0);
+$bundleId = (int)($_GET['bundle'] ?? 0);
+
+$selectSQL = "SELECT cert.*, c.titre as course_titre, c.slug as course_slug,
+                     b.titre as bundle_titre,
+                     u.prenom, u.nom
+              FROM certificates cert
+              LEFT JOIN courses c ON c.id = cert.course_id
+              LEFT JOIN bundles b ON b.id = cert.bundle_id
+              JOIN users u   ON u.id = cert.user_id";
 
 if ($code) {
-    $cert = $pdo->prepare(
-        'SELECT cert.*, c.titre as course_titre, c.slug as course_slug,
-                u.prenom, u.nom
-         FROM certificates cert
-         JOIN courses c ON c.id = cert.course_id
-         JOIN users u   ON u.id = cert.user_id
-         WHERE cert.code_unique = ?'
-    );
+    $cert = $pdo->prepare($selectSQL . ' WHERE cert.code_unique = ?');
     $cert->execute([$code]);
+} elseif ($bundleId) {
+    $cert = $pdo->prepare($selectSQL . ' WHERE cert.bundle_id = ? AND cert.user_id = ?');
+    $cert->execute([$bundleId, $userId]);
 } elseif ($courseId) {
-    $cert = $pdo->prepare(
-        'SELECT cert.*, c.titre as course_titre, c.slug as course_slug,
-                u.prenom, u.nom
-         FROM certificates cert
-         JOIN courses c ON c.id = cert.course_id
-         JOIN users u   ON u.id = cert.user_id
-         WHERE cert.course_id = ? AND cert.user_id = ?'
-    );
+    $cert = $pdo->prepare($selectSQL . ' WHERE cert.course_id = ? AND cert.user_id = ?');
     $cert->execute([$courseId, $userId]);
 } else {
     header('Location: ' . SITE_URL . '/dashboard.php'); exit;
@@ -36,6 +34,11 @@ $cert = $cert->fetch();
 if (!$cert) {
     redirect(SITE_URL . '/dashboard.php', 'Certificat introuvable.', 'error');
 }
+
+$estBundle  = !empty($cert['bundle_id']);
+$estRevoque = !empty($cert['revoque']);
+$typeLabel  = ($cert['type'] ?? 'completion') === 'connaissance' ? 'Certificat de connaissance' : 'Certificat de complétion';
+$intitule   = $estBundle ? ($cert['bundle_titre'] ?? '') : ($cert['course_titre'] ?? '');
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -111,6 +114,27 @@ if (!$cert) {
     <?php endif; ?>
   </div>
 
+  <?php if ($estRevoque): ?>
+  <div class="certificate" id="certificat" style="border-color:#dc2626">
+    <div class="cert-corner tl" style="border-color:#dc2626"></div>
+    <div class="cert-corner tr" style="border-color:#dc2626"></div>
+    <div class="cert-corner bl" style="border-color:#dc2626"></div>
+    <div class="cert-corner br" style="border-color:#dc2626"></div>
+
+    <div class="cert-logo" style="color:#dc2626"><?= SITE_NAME ?></div>
+    <div class="cert-subtitle" style="color:#dc2626">Certificat révoqué</div>
+    <div class="cert-divider" style="background:#dc2626"></div>
+
+    <div class="cert-title" style="color:#dc2626"><i class="ti ti-ban"></i> Certificat révoqué</div>
+    <p style="font-size:14px;color:#6b7280;margin:16px 0">
+      Ce certificat délivré à <strong><?= h($cert['prenom'] . ' ' . $cert['nom']) ?></strong>
+      pour « <?= h($intitule) ?> » a été révoqué
+      <?php if (!empty($cert['revoque_le'])): ?>le <?= date('d/m/Y', strtotime($cert['revoque_le'])) ?><?php endif; ?>
+      et n'est plus valide.
+    </p>
+    <div class="cert-code">Code : <?= h($cert['code_unique']) ?></div>
+  </div>
+  <?php else: ?>
   <div class="certificate" id="certificat">
     <div class="cert-corner tl"></div>
     <div class="cert-corner tr"></div>
@@ -118,15 +142,15 @@ if (!$cert) {
     <div class="cert-corner br"></div>
 
     <div class="cert-logo"><?= SITE_NAME ?></div>
-    <div class="cert-subtitle">Certificat de complétion</div>
+    <div class="cert-subtitle"><?= h($typeLabel) ?><?= $estBundle ? ' — Parcours multi-cours' : '' ?></div>
     <div class="cert-divider"></div>
 
     <div class="cert-title">Certificat</div>
     <div class="cert-label">Décerné à</div>
     <div class="cert-name"><?= h($cert['prenom'] . ' ' . $cert['nom']) ?></div>
 
-    <div class="cert-course-label">Pour avoir complété avec succès la formation</div>
-    <div class="cert-course">« <?= h($cert['course_titre']) ?> »</div>
+    <div class="cert-course-label">Pour avoir complété avec succès <?= $estBundle ? 'le parcours' : 'la formation' ?></div>
+    <div class="cert-course">« <?= h($intitule) ?> »</div>
 
     <div class="cert-divider"></div>
 
@@ -135,6 +159,7 @@ if (!$cert) {
     </div>
     <div class="cert-code">Code de vérification : <?= h($cert['code_unique']) ?></div>
   </div>
+  <?php endif; ?>
 </div>
 
 <?php if ($certificate ?? null): ?>

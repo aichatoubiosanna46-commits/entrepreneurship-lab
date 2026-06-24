@@ -219,12 +219,26 @@ function genererCertificat(int $userId, int $courseId): bool {
     // Vérifier qu'il n'existe pas déjà
     $check = $pdo->prepare('SELECT id FROM certificates WHERE user_id = ? AND course_id = ?');
     $check->execute([$userId, $courseId]);
-    if ($check->fetch()) return true;
+    if ($check->fetch()) {
+        verifierCertificatBundle($userId, $courseId);
+        return true;
+    }
+
+    // Détermine le type de certificat : "connaissance" si le score moyen aux
+    // quiz du cours dépasse le seuil défini (sinon "completion" par défaut).
+    $type = determinerTypeCertificat($userId, $courseId);
 
     $code = strtoupper(bin2hex(random_bytes(12)));
-    $pdo->prepare(
-        'INSERT INTO certificates (user_id, course_id, code_unique) VALUES (?, ?, ?)'
-    )->execute([$userId, $courseId, $code]);
+    try {
+        $pdo->prepare(
+            'INSERT INTO certificates (user_id, course_id, code_unique, type) VALUES (?, ?, ?, ?)'
+        )->execute([$userId, $courseId, $code, $type]);
+    } catch (Exception $e) {
+        // Colonne "type" absente (migration 013 non appliquée) : repli sans type
+        $pdo->prepare(
+            'INSERT INTO certificates (user_id, course_id, code_unique) VALUES (?, ?, ?)'
+        )->execute([$userId, $courseId, $code]);
+    }
 
     // Notifier l'utilisateur
     $course = $pdo->prepare('SELECT titre FROM courses WHERE id = ?');
@@ -233,7 +247,91 @@ function genererCertificat(int $userId, int $courseId): bool {
     if ($c) {
         notifierUtilisateur($userId, 'Certificat obtenu ! 🎓', 'Félicitations ! Vous avez complété « '.$c['titre'].' ». Votre certificat est disponible.', 'success', SITE_URL . '/certificate.php?course=' . $courseId);
     }
+
+    // Vérifier si un certificat de bundle doit être délivré
+    verifierCertificatBundle($userId, $courseId);
+
     return true;
+}
+
+// ------------------------------------------------------------
+// Détermine si le certificat doit être de type "connaissance" (score moyen
+// des quiz du cours >= seuil_connaissance, défaut 70%) ou "completion".
+// ------------------------------------------------------------
+function determinerTypeCertificat(int $userId, int $courseId): string {
+    $pdo = getPDO();
+    try {
+        $seuilStmt = $pdo->prepare('SELECT seuil_connaissance FROM courses WHERE id = ?');
+        $seuilStmt->execute([$courseId]);
+        $seuil = (int)($seuilStmt->fetchColumn() ?: 70);
+
+        $avgStmt = $pdo->prepare(
+            'SELECT AVG(qr.score) FROM quiz_results qr
+             JOIN quizzes q ON q.id = qr.quiz_id
+             JOIN sequences s ON s.id = q.sequence_id
+             JOIN modules m ON m.id = s.module_id
+             WHERE qr.user_id = ? AND m.course_id = ?'
+        );
+        $avgStmt->execute([$userId, $courseId]);
+        $avg = $avgStmt->fetchColumn();
+
+        if ($avg !== null && (float)$avg >= $seuil) {
+            return 'connaissance';
+        }
+    } catch (Exception $e) { /* colonnes/tables absentes : repli completion */ }
+    return 'completion';
+}
+
+// ------------------------------------------------------------
+// Après l'obtention d'un certificat de cours, vérifie si l'utilisateur a
+// complété tous les cours d'un bundle contenant ce cours, et délivre dans
+// ce cas un certificat de bundle (course_id NULL, bundle_id renseigné).
+// ------------------------------------------------------------
+function verifierCertificatBundle(int $userId, int $courseId): void {
+    $pdo = getPDO();
+    try {
+        $bundlesStmt = $pdo->prepare(
+            'SELECT DISTINCT bc.bundle_id FROM bundle_courses bc WHERE bc.course_id = ?'
+        );
+        $bundlesStmt->execute([$courseId]);
+        $bundleIds = $bundlesStmt->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($bundleIds as $bundleId) {
+            // Déjà délivré ?
+            $already = $pdo->prepare('SELECT id FROM certificates WHERE user_id = ? AND bundle_id = ?');
+            $already->execute([$userId, $bundleId]);
+            if ($already->fetch()) continue;
+
+            // Tous les cours du bundle ont-ils un certificat pour cet utilisateur ?
+            $coursesStmt = $pdo->prepare('SELECT course_id FROM bundle_courses WHERE bundle_id = ?');
+            $coursesStmt->execute([$bundleId]);
+            $bundleCourseIds = $coursesStmt->fetchAll(PDO::FETCH_COLUMN);
+            if (empty($bundleCourseIds)) continue;
+
+            $allDone = true;
+            foreach ($bundleCourseIds as $bcId) {
+                $certCheck = $pdo->prepare('SELECT id FROM certificates WHERE user_id = ? AND course_id = ?');
+                $certCheck->execute([$userId, $bcId]);
+                if (!$certCheck->fetch()) { $allDone = false; break; }
+            }
+
+            if ($allDone) {
+                $code = strtoupper(bin2hex(random_bytes(12)));
+                $pdo->prepare(
+                    'INSERT INTO certificates (user_id, bundle_id, code_unique, type) VALUES (?, ?, ?, ?)'
+                )->execute([$userId, $bundleId, $code, 'completion']);
+
+                $bTitre = $pdo->prepare('SELECT titre FROM bundles WHERE id = ?');
+                $bTitre->execute([$bundleId]);
+                $titre = $bTitre->fetchColumn();
+                if ($titre) {
+                    notifierUtilisateur($userId, 'Certificat de parcours obtenu ! 🏆',
+                        'Vous avez complété tous les cours du pack « '.$titre.' ». Votre certificat de parcours est disponible.',
+                        'success', SITE_URL . '/certificate.php?bundle=' . $bundleId);
+                }
+            }
+        }
+    } catch (Exception $e) { /* tables bundle absentes ou migration non appliquée : on ignore */ }
 }
 
 // ------------------------------------------------------------

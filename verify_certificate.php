@@ -14,16 +14,22 @@ $code = strtoupper(trim($_GET['code'] ?? ''));
 $cert = null;
 if ($code) {
     $stmt = $pdo->prepare(
-        'SELECT c.*, u.nom, u.prenom, co.titre AS cours_titre
+        'SELECT c.*, u.nom, u.prenom, co.titre AS cours_titre, b.titre AS bundle_titre
          FROM certificates c
          JOIN users u ON u.id = c.user_id
-         JOIN courses co ON co.id = c.course_id
+         LEFT JOIN courses co ON co.id = c.course_id
+         LEFT JOIN bundles b ON b.id = c.bundle_id
          WHERE c.code_unique = ?
          LIMIT 1'
     );
     $stmt->execute([$code]);
     $cert = $stmt->fetch();
 }
+
+$estBundleVerif  = $cert && !empty($cert['bundle_id']);
+$estRevoqueVerif = $cert && !empty($cert['revoque']);
+$intituleVerif   = $cert ? ($estBundleVerif ? ($cert['bundle_titre'] ?? '') : ($cert['cours_titre'] ?? '')) : '';
+$typeLabelVerif  = $cert && (($cert['type'] ?? 'completion') === 'connaissance') ? 'Certificat de connaissance' : 'Certificat de complétion';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -56,14 +62,32 @@ if ($code) {
       </button>
     </form>
 
-    <?php if ($code && $cert): ?>
+    <?php if ($code && $cert && $estRevoqueVerif): ?>
+      <!-- Certificat révoqué -->
+      <div style="border:2px solid #dc2626;border-radius:12px;padding:28px;background:#FEE2E2">
+        <div style="width:64px;height:64px;background:#dc2626;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;color:#fff">
+          <i class="ti ti-ban"></i>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:8px">
+          Certificat révoqué
+        </div>
+        <div style="font-size:14px;color:#991B1B">
+          Ce certificat délivré à <strong><?= h($cert['prenom'] . ' ' . $cert['nom']) ?></strong>
+          pour « <?= h($intituleVerif) ?> » a été révoqué et n'est plus valide.
+        </div>
+        <div style="font-size:11px;color:#9ca3af;margin-top:8px;font-family:monospace">
+          Code : <?= h($cert['code_unique']) ?>
+        </div>
+      </div>
+
+    <?php elseif ($code && $cert): ?>
       <!-- Certificat valide -->
       <div style="border:2px solid #97C459;border-radius:12px;padding:28px;background:#EAF3DE">
         <div style="width:64px;height:64px;background:#97C459;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;color:#fff">
           <i class="ti ti-certificate"></i>
         </div>
         <div style="font-size:14px;font-weight:600;color:#27500A;margin-bottom:4px">
-          Certificat valide et authentique ✓
+          Certificat valide et authentique ✓ <small style="font-weight:400">(<?= h($typeLabelVerif) ?>)</small>
         </div>
         <div style="width:60px;height:2px;background:#97C459;margin:12px auto"></div>
 
@@ -71,10 +95,10 @@ if ($code) {
           <?= h($cert['prenom'] . ' ' . $cert['nom']) ?>
         </div>
         <div style="font-size:15px;color:#444;margin-bottom:8px">
-          a complété avec succès
+          a complété avec succès <?= $estBundleVerif ? 'le parcours' : '' ?>
         </div>
         <div style="font-size:17px;font-weight:600;color:#6C47D4;margin-bottom:12px">
-          « <?= h($cert['cours_titre']) ?> »
+          « <?= h($intituleVerif) ?> »
         </div>
         <div style="font-size:13px;color:#6b7280">
           Délivré le <?= date('d/m/Y', strtotime($cert['delivre_le'])) ?>
