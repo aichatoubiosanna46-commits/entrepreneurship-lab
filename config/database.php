@@ -19,6 +19,30 @@ define('SECRET_KEY', 'changez-cette-cle-en-production-32chars');
 // Clé API Claude (IA)
 define('ANTHROPIC_API_KEY', 'sk-ant-votre-cle-ici');
 
+// FedaPay
+define('FEDAPAY_PUBLIC_KEY',     'pk_sandbox_votre-cle-publique');   // pk_live_xxx en production
+define('FEDAPAY_SECRET_KEY',     'sk_sandbox_votre-cle-secrete');    // sk_live_xxx en production
+define('FEDAPAY_WEBHOOK_SECRET', 'votre-secret-webhook-fedapay');    // depuis le dashboard FedaPay
+define('FEDAPAY_ENV',            'sandbox');                         // 'sandbox' ou 'live'
+// URL API FedaPay (change automatiquement selon l'environnement)
+define('FEDAPAY_API_URL', FEDAPAY_ENV === 'live'
+    ? 'https://api.fedapay.com/v1'
+    : 'https://sandbox-api.fedapay.com/v1'
+);
+
+// Email (override avec DB config)
+define('SMTP_HOST', 'smtp.gmail.com');
+define('SMTP_PORT', 587);
+define('SMTP_USER', '');
+define('SMTP_PASS', '');
+define('SMTP_FROM', 'noreply@ariziki.org');
+define('SMTP_FROM_NAME', 'Ariziki EntrepreneurshipLab');
+
+// Sécurité
+define('MAX_LOGIN_ATTEMPTS', 5);
+define('LOGIN_LOCKOUT_MINUTES', 15);
+define('SESSION_SINGLE', true); // une seule session par compte
+
 function getPDO(): PDO {
     static $pdo = null;
     if ($pdo === null) {

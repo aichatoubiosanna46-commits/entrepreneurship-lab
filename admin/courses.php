@@ -21,7 +21,7 @@ $courses = $pdo->query(
 <title>Cours — Admin <?= SITE_NAME ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 </head>
 <body class="admin-layout">
 <?php include __DIR__ . '/partials/sidebar.php'; ?>
@@ -32,6 +32,9 @@ $courses = $pdo->query(
       <h1 class="admin-page-title">Cours</h1>
       <p class="admin-page-sub"><?= count($courses) ?> cours au total</p>
     </div>
+    <a href="<?= SITE_URL ?>/admin/course_import.php" class="btn-outline btn-sm">
+      <i class="ti ti-file-import"></i> Importer
+    </a>
     <a href="<?= SITE_URL ?>/admin/course_add.php" class="btn-primary btn-sm">
       <i class="ti ti-plus"></i> Nouveau cours
     </a>
@@ -55,7 +58,7 @@ $courses = $pdo->query(
               <?php if ($c['miniature']): ?>
                 <img src="<?= SITE_URL ?>/assets/uploads/<?= h($c['miniature']) ?>" style="width:40px;height:40px;border-radius:6px;object-fit:cover">
               <?php else: ?>
-                <div style="width:40px;height:40px;border-radius:6px;background:#FAEEDA;display:flex;align-items:center;justify-content:center;color:#BA7517">
+                <div style="width:40px;height:40px;border-radius:6px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#6C47D4">
                   <i class="ti ti-school"></i>
                 </div>
               <?php endif; ?>
@@ -71,9 +74,10 @@ $courses = $pdo->query(
           <td>
             <?php
             $tarifMap = [
-              'decouverte'    => ['💡','Découverte','#EAF3DE','#27500A'],
+              'decouverte'    => ['🆓','Découverte',   '#EAF3DE','#27500A'],
+              'essentiel'     => ['⭐','Essentiel',    '#EDE9FE','#4C1D95'],
               'business_plan' => ['📊','Business Plan','#FEF3C7','#92400E'],
-              'lancement'     => ['🚀','Lancement','#D1FAE5','#065F46'],
+              'lancement'     => ['🚀','Lancement',    '#D1FAE5','#065F46'],
             ];
             [$tEm,$tNom,$tBg,$tCol] = $tarifMap[$c['tarif'] ?? 'decouverte'] ?? ['📚','—','#f4f4f4','#666'];
             ?>
@@ -114,6 +118,15 @@ $courses = $pdo->query(
               </a>
               <a href="<?= SITE_URL ?>/admin/course_edit.php?id=<?= $c['id'] ?>" class="btn-icon" title="Modifier">
                 <i class="ti ti-edit"></i>
+              </a>
+              <a href="<?= SITE_URL ?>/admin/course_export.php?course_id=<?= $c['id'] ?>"
+                 class="btn-icon" title="Exporter en JSON">
+                <i class="ti ti-file-export"></i>
+              </a>
+              <a href="<?= SITE_URL ?>/admin/course_duplicate.php?course_id=<?= $c['id'] ?>"
+                 class="btn-icon" title="Dupliquer"
+                 onclick="return confirm('Dupliquer ce cours ?')">
+                <i class="ti ti-copy"></i>
               </a>
               <a href="<?= SITE_URL ?>/admin/course_delete.php?id=<?= $c['id'] ?>&csrf=<?= csrfToken() ?>"
                  class="btn-icon btn-icon-danger"

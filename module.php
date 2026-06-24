@@ -4,19 +4,94 @@ require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 
 $pdo  = getPDO();
+
+// Vérifier expiration d'accès
+if (estConnecte()) {
+    try {
+        $slug = $_GET['slug'] ?? '';
+        $expStmt = $pdo->prepare(
+            'SELECT e.expires_at FROM enrollments e
+             JOIN courses c ON c.id = e.course_id
+             WHERE e.user_id = ? AND c.slug = ? AND e.statut = "actif" LIMIT 1'
+        );
+        $expStmt->execute([$_SESSION['user_id'], $slug]);
+        $expRow = $expStmt->fetch();
+        if ($expRow && !empty($expRow['expires_at']) && strtotime($expRow['expires_at']) < time()) {
+            redirect(SITE_URL . '/payment.php', 'Votre accès à cette formation a expiré. Renouvelez votre abonnement.', 'error');
+        }
+    } catch (Exception $e) {}
+}
 $slug = trim($_GET['slug'] ?? '');
 if (!$slug) { header('Location: ' . SITE_URL . '/index.php'); exit; }
 
 // Récupérer le cours
 $stmt = $pdo->prepare(
-    'SELECT m.*, c.nom as categorie, c.icone as cat_icone, c.couleur as cat_couleur
+    'SELECT m.*, c.nom as categorie, c.icone as cat_icone, c.couleur as cat_couleur, m.prerequis_course_id, m.redirect_completion, m.completion_rule
      FROM courses m
      JOIN categories c ON c.id = m.category_id
      WHERE m.slug = ? AND m.actif = 1'
 );
 $stmt->execute([$slug]);
 $course = $stmt->fetch();
-if (!$course) { http_response_code(404); include __DIR__ . '/404.php'; exit; }
+if (!$course) { http_response_code(404); echo '<p style="font-family:sans-serif;text-align:center;padding:60px">Formation introuvable. <a href="'.SITE_URL.'/search.php">Retour aux formations</a></p>'; exit; }
+
+// Vérifier restriction par tag
+if ($userId && !empty($course['tag_requis_id'] ?? null)) {
+    $tagCheck = $pdo->prepare(
+        'SELECT id FROM user_tags WHERE user_id=? AND tag_id=?'
+    );
+    $tagCheck->execute([$userId, $course['tag_requis_id']]);
+    if (!$tagCheck->fetch()) {
+        http_response_code(403);
+        echo '<div style="font-family:sans-serif;text-align:center;padding:80px">
+            <h2>Accès restreint</h2>
+            <p>Vous n'avez pas les droits nécessaires pour accéder à cette formation.</p>
+            <a href="' . SITE_URL . '/catalogue.php">Retour au catalogue</a>
+        </div>';
+        exit;
+    }
+}
+
+// Vérifier prérequis entre cours
+if ($userId && !empty($course['prerequis_course_id'])) {
+    $prereqPct = progressionCours($userId, $course['prerequis_course_id']);
+    if ($prereqPct < 100) {
+        $prereqCourse = $pdo->prepare('SELECT titre, slug FROM courses WHERE id=?');
+        $prereqCourse->execute([$course['prerequis_course_id']]);
+        $prereqCourse = $prereqCourse->fetch();
+        ?>
+        <!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+        <title>Prérequis requis — <?= SITE_NAME ?></title>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+        <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
+        </head><body>
+        <?php include __DIR__ . '/includes/header.php'; ?>
+        <div style="max-width:500px;margin:80px auto;padding:0 24px;text-align:center">
+          <div style="background:#fff;border-radius:20px;padding:40px;border:1px solid #e5e7eb;box-shadow:0 4px 24px rgba(0,0,0,.06)">
+            <div style="font-size:48px;margin-bottom:16px">🔒</div>
+            <h2 style="font-size:20px;font-weight:800;color:#1C1917;margin-bottom:10px">Cours prérequis non complété</h2>
+            <p style="font-size:14px;color:#6b7280;margin-bottom:20px;line-height:1.7">
+              Pour accéder à <strong><?= h($course['titre']) ?></strong>, tu dois d'abord compléter le cours prérequis :
+            </p>
+            <div style="background:#FEF3C7;border-radius:12px;padding:16px;margin-bottom:20px">
+              <div style="font-size:15px;font-weight:700;color:#1C1917"><?= h($prereqCourse['titre'] ?? '') ?></div>
+              <div style="font-size:13px;color:#D97706;margin-top:4px">Progression actuelle : <?= $prereqPct ?>%</div>
+              <div style="height:6px;background:#e5e7eb;border-radius:3px;margin-top:8px;overflow:hidden">
+                <div style="height:100%;width:<?= $prereqPct ?>%;background:#F59E0B;border-radius:3px"></div>
+              </div>
+            </div>
+            <a href="<?= SITE_URL ?>/module.php?slug=<?= h($prereqCourse['slug'] ?? '') ?>"
+               style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#F59E0B;color:#1C1917;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none">
+              <i class="ti ti-arrow-right"></i> Continuer le prérequis
+            </a>
+          </div>
+        </div>
+        <?php include __DIR__ . '/includes/footer.php'; ?>
+        </body></html>
+        <?php exit;
+    }
+}
 
 // Vérifier inscription
 $inscrit   = false;
@@ -33,9 +108,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
     if (!$inscrit) {
        // APRÈS
+$utm_source   = $_COOKIE['utm_source']   ?? ($_GET['utm_source']   ?? null);
+$utm_medium   = $_COOKIE['utm_medium']   ?? ($_GET['utm_medium']   ?? null);
+$utm_campaign = $_COOKIE['utm_campaign'] ?? ($_GET['utm_campaign'] ?? null);
 $pdo->prepare(
-    'INSERT IGNORE INTO enrollments (user_id, course_id, statut) VALUES (?, ?, "actif")'
-)->execute([$userId, $course['id']]);
+    'INSERT IGNORE INTO enrollments (user_id, course_id, statut, utm_source, utm_medium, utm_campaign) VALUES (?, ?, "actif", ?, ?, ?)'
+)->execute([$userId, $course['id'], $utm_source, $utm_medium, $utm_campaign]);
+// Déclencher automation inscription cours
+triggerAutomation('course_enrolled', $userId, $course['id']);
 redirect(SITE_URL . '/module.php?slug=' . urlencode($slug), 'Inscription réussie ! Bonne formation 🎉', 'success');
 
     }
@@ -137,7 +217,7 @@ $pageTitle = $course['titre'];
 .btn-enroll {
   width: 100%; padding: 14px; font-size: 15px; font-weight: 700;
   border: none; border-radius: 10px; cursor: pointer;
-  background: var(--amber, #BA7517); color: #fff;
+  background: var(--amber, #6C47D4); color: #fff;
   display: flex; align-items: center; justify-content: center; gap: 8px;
   text-decoration: none; transition: .2s;
 }
@@ -155,7 +235,7 @@ $pageTitle = $course['titre'];
   height: 8px; background: #e5e7eb; border-radius: 99px; overflow: hidden;
 }
 .course-progress-fill {
-  height: 100%; background: linear-gradient(90deg, #534AB7, #BA7517);
+  height: 100%; background: linear-gradient(90deg, #534AB7, #6C47D4);
   border-radius: 99px; transition: width .4s;
 }
 
@@ -163,51 +243,64 @@ $pageTitle = $course['titre'];
 .course-body { max-width: 1100px; margin: 0 auto; padding: 40px 24px; display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
 .course-main { min-width: 0; }
 
-/* ── Accordéon modules ── */
-.modules-list { display: flex; flex-direction: column; gap: 12px; }
-.module-item { border: 1px solid var(--border, #e5e7eb); border-radius: 12px; overflow: hidden; }
-.module-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 16px 20px; cursor: pointer;
-  background: var(--surface, #fff);
-  transition: background .15s;
-  user-select: none;
+/* ── Sections modules en cartes ── */
+.modules-sections { display: flex; flex-direction: column; gap: 36px; }
+
+.module-section-title {
+  font-size: 20px; font-weight: 700; color: #1a1a2e;
+  padding-bottom: 10px; border-bottom: 3px solid #1a1a2e;
+  margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
 }
-.module-header:hover { background: var(--surface-alt, #f9fafb); }
-.module-num {
-  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+.module-section-title .mod-count {
+  font-size: 12px; font-weight: 500; color: #6b7280;
+  background: #f3f4f6; border-radius: 20px; padding: 2px 10px;
+}
+
+/* Grille de cartes */
+.seq-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+.seq-card {
+  position: relative;
+  background: #f8f9fa; border: 1px solid #e9ecef;
+  border-radius: 12px; padding: 20px 16px 16px;
+  text-decoration: none; color: #111;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 12px;
+  transition: box-shadow .2s, transform .15s;
+  cursor: pointer;
+}
+.seq-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,.1); transform: translateY(-2px); }
+.seq-card.done   { background: #f0fdf4; border-color: #86efac; }
+.seq-card.locked { opacity: .65; }
+
+/* Badge statut coin haut droite */
+.seq-badge {
+  position: absolute; top: 10px; right: 10px;
+  width: 26px; height: 26px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; font-weight: 700;
-  background: var(--primary-light, #f0effc); color: var(--primary, #534AB7);
 }
-.module-header-info { flex: 1; min-width: 0; }
-.module-header-title { font-size: 14px; font-weight: 600; color: var(--text, #111); }
-.module-header-meta { font-size: 12px; color: var(--text-muted, #6b7280); margin-top: 2px; }
-.module-chevron { color: var(--text-muted); transition: transform .2s; font-size: 18px; }
-.module-item.open .module-chevron { transform: rotate(180deg); }
+.seq-badge.done   { background: #16a34a; color: #fff; }
+.seq-badge.todo   { background: #e5e7eb; color: #9ca3af; }
+.seq-badge.locked { background: #e5e7eb; color: #9ca3af; }
 
-.module-sequences { display: none; border-top: 1px solid var(--border, #e5e7eb); }
-.module-item.open .module-sequences { display: block; }
-
-.seq-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 20px 12px 32px;
-  border-bottom: 1px solid var(--border, #e5e7eb);
-  text-decoration: none; color: var(--text, #111);
-  transition: background .15s;
-}
-.seq-item:last-child { border-bottom: none; }
-.seq-item:hover { background: var(--surface-alt, #f9fafb); }
-.seq-check {
-  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+/* Icone centrale */
+.seq-icon-circle {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: #e8f4f8; border: 2px dashed #c7e2ec;
   display: flex; align-items: center; justify-content: center;
-  border: 2px solid var(--border, #e5e7eb);
-  font-size: 11px;
+  font-size: 30px; flex-shrink: 0;
 }
-.seq-check.done { background: #16a34a; border-color: #16a34a; color: #fff; }
-.seq-check.locked { background: var(--surface-alt, #f9fafb); color: var(--text-muted); }
-.seq-title { font-size: 13px; flex: 1; }
-.seq-duration { font-size: 11px; color: var(--text-muted); }
+.seq-icon-circle.done-circle { background: #dcfce7; border-color: #86efac; }
+
+.seq-card-title {
+  font-size: 12px; font-weight: 500; color: #374151;
+  line-height: 1.4; word-break: break-word;
+}
+.seq-card-meta { font-size: 11px; color: #9ca3af; }
 
 /* ── Section objectifs ── */
 .course-section-title {
@@ -257,7 +350,7 @@ $pageTitle = $course['titre'];
           <?= ['debutant'=>'Débutant','intermediaire'=>'Intermédiaire','avance'=>'Avancé'][$course['niveau']] ?? 'Tous niveaux' ?>
         </span>
         <?php if ($course['certificat']): ?>
-          <span><i class="ti ti-certificate" style="color:#BA7517"></i> Certificat inclus</span>
+          <span><i class="ti ti-certificate" style="color:#6C47D4"></i> Certificat inclus</span>
         <?php endif; ?>
       </div>
     </div>
@@ -340,7 +433,7 @@ $pageTitle = $course['titre'];
           </li>
           <?php if ($course['certificat']): ?>
           <li style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
-            <i class="ti ti-certificate" style="color:#BA7517"></i> Certificat de complétion
+            <i class="ti ti-certificate" style="color:#6C47D4"></i> Certificat de complétion
           </li>
           <?php endif; ?>
           <li style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px">
@@ -366,72 +459,94 @@ $pageTitle = $course['titre'];
     </div>
     <?php endif; ?>
 
-    <!-- Contenu du cours — Accordéon -->
+    <!-- Contenu du cours — Cartes par module -->
     <div style="margin-bottom:32px">
-      <h2 class="course-section-title">
-        <i class="ti ti-layout-list" style="color:var(--primary)"></i>
-        Contenu du cours
-        <span style="font-size:13px;font-weight:400;color:var(--text-muted)">
-          — <?= count($modules) ?> module<?= count($modules)!=1?'s':'' ?>,
-          <?= $nbTotal ?> séquence<?= $nbTotal!=1?'s':'' ?>
-        </span>
-      </h2>
+
 
       <?php if (empty($modules)): ?>
         <p style="color:var(--text-muted);font-size:14px">Le contenu sera disponible prochainement.</p>
       <?php else: ?>
-      <div class="modules-list">
+
+      
+<?php
+// Aperçu gratuit de la première séquence (invité)
+$firstSeqId = null;
+if (!$inscrit && !empty($modulesAvecSeq)) {
+    foreach ($modulesAvecSeq as $ma) {
+        if (!empty($ma['sequences'])) {
+            $firstSeqId = $ma['sequences'][0]['id'];
+            break;
+        }
+    }
+}
+?>
+<?php if (!$inscrit && $firstSeqId && $course['type'] === 'gratuit'): ?>
+<div style="background:#EDE9FE;border:1px solid #c4b5fd;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
+  <i class="ti ti-eye" style="font-size:20px;color:#7c3aed"></i>
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:700;color:#4c1d95">Aperçu gratuit disponible</div>
+    <div style="font-size:12px;color:#6b7280">Découvrez la première séquence sans créer de compte</div>
+  </div>
+  <a href="<?= SITE_URL ?>/sequence.php?id=<?= $firstSeqId ?>&preview=1"
+     style="padding:8px 14px;background:#7c3aed;color:#fff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none">
+    Voir l'aperçu
+  </a>
+</div>
+<?php endif; ?>
+
+      <!-- Cards des modules -->
+      <div class="seq-cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));margin-bottom:40px">
         <?php foreach ($modulesAvecSeq as $idx => $ma): ?>
-        <?php $mod = $ma['module']; $seqs = $ma['sequences']; $completees = $ma['completees']; ?>
-        <div class="module-item <?= $idx === 0 ? 'open' : '' ?>" id="mod-<?= $mod['id'] ?>">
-          <div class="module-header" onclick="toggleModule(<?= $mod['id'] ?>)">
-            <div class="module-num"><?= $idx + 1 ?></div>
-            <div class="module-header-info">
-              <div class="module-header-title"><?= h($mod['titre']) ?></div>
-              <div class="module-header-meta">
-                <?= count($seqs) ?> séquence<?= count($seqs)!=1?'s':'' ?>
-                <?php if ($mod['duree_min']): ?>
-                  · <?= $mod['duree_min'] ?> min
-                <?php endif; ?>
-                <?php if ($userId && count($seqs) > 0): ?>
-                  · <span style="color:#16a34a"><?= count($completees) ?>/<?= count($seqs) ?> complétée<?= count($completees)!=1?'s':'' ?></span>
-                <?php endif; ?>
-              </div>
+        <?php
+          $mod = $ma['module'];
+          $seqs = $ma['sequences'];
+          $completees = $ma['completees'];
+          $nbSeqs = count($seqs);
+          $nbDone = count($completees);
+          $pctMod = $nbSeqs > 0 ? round($nbDone/$nbSeqs*100) : 0;
+          $allDone = $nbSeqs > 0 && $nbDone === $nbSeqs;
+          // Lien vers première séquence non complétée ou première séquence
+          $firstSeq = null;
+          foreach ($seqs as $s) {
+            if (!in_array($s['id'], $completees)) { $firstSeq = $s; break; }
+          }
+          if (!$firstSeq && !empty($seqs)) $firstSeq = $seqs[0];
+          $href = $inscrit && $firstSeq ? SITE_URL.'/sequence.php?id='.$firstSeq['id'] : ($inscrit ? '#' : SITE_URL.'/register.php');
+        ?>
+        <a href="<?= $href ?>" class="seq-card <?= $allDone ? 'done' : '' ?>" style="min-height:180px">
+          <!-- Badge statut -->
+          <div class="seq-badge <?= $allDone ? 'done' : 'todo' ?>">
+            <i class="ti <?= $allDone ? 'ti-check' : 'ti-circle-check' ?>" style="font-size:14px"></i>
+          </div>
+
+          <!-- Icone module -->
+          <div class="seq-icon-circle <?= $allDone ? 'done-circle' : '' ?>">
+            <i class="ti ti-layout-list" style="color:#6C47D4;font-size:28px"></i>
+          </div>
+
+          <!-- Titre -->
+          <div class="seq-card-title" style="font-weight:600">
+            Module <?= $idx+1 ?><br>
+            <span style="font-weight:400;font-size:11px;color:#6b7280"><?= h($mod['titre']) ?></span>
+          </div>
+
+          <!-- Progression -->
+          <?php if ($nbSeqs > 0): ?>
+          <div style="width:100%;padding:0 4px">
+            <div style="height:4px;background:#e5e7eb;border-radius:99px;overflow:hidden">
+              <div style="height:100%;width:<?= $pctMod ?>%;background:<?= $allDone ? '#16a34a' : '#6C47D4' ?>;border-radius:99px"></div>
             </div>
-            <i class="ti ti-chevron-down module-chevron"></i>
+            <div style="font-size:10px;color:#9ca3af;text-align:center;margin-top:4px">
+              <?= $nbDone ?>/<?= $nbSeqs ?> séquence<?= $nbSeqs>1?'s':'' ?>
+            </div>
           </div>
-          <div class="module-sequences">
-            <?php if (empty($seqs)): ?>
-              <div style="padding:16px 20px;font-size:13px;color:var(--text-muted)">
-                Aucune séquence pour ce module.
-              </div>
-            <?php else: ?>
-              <?php foreach ($seqs as $s): ?>
-              <?php $done = in_array($s['id'], $completees); ?>
-              <?php $href = $inscrit
-                ? SITE_URL . '/sequence.php?id=' . $s['id']
-                : SITE_URL . '/register.php'; ?>
-              <a href="<?= $href ?>" class="seq-item">
-                <div class="seq-check <?= $done ? 'done' : ($inscrit ? '' : 'locked') ?>">
-                  <?php if ($done): ?>
-                    <i class="ti ti-check"></i>
-                  <?php elseif (!$inscrit): ?>
-                    <i class="ti ti-lock" style="font-size:10px"></i>
-                  <?php else: ?>
-                    <i class="ti ti-player-play" style="font-size:10px;color:var(--primary)"></i>
-                  <?php endif; ?>
-                </div>
-                <span class="seq-title"><?= h($s['titre']) ?></span>
-                <?php if ($s['duree_min'] ?? 0): ?>
-                  <span class="seq-duration"><i class="ti ti-clock"></i> <?= $s['duree_min'] ?> min</span>
-                <?php endif; ?>
-              </a>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          </div>
-        </div>
+          <?php endif; ?>
+        </a>
         <?php endforeach; ?>
       </div>
+
+
+
       <?php endif; ?>
     </div>
 
@@ -445,12 +560,6 @@ $pageTitle = $course['titre'];
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
 
-<script>
-function toggleModule(id) {
-  const item = document.getElementById('mod-' + id);
-  item.classList.toggle('open');
-}
-</script>
 <script src="<?= SITE_URL ?>/assets/js/main.js"></script>
 </body>
 </html>

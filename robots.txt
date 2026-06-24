@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /config/
+Disallow: /api/
+Disallow: /migrations/
+
+Sitemap: SITE_URL_PLACEHOLDER/sitemap.php

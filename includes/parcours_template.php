@@ -24,7 +24,7 @@ $progMoyen  = $nbCours > 0 ? (int)round(array_sum(array_column($cours,'progressi
 :root {
   --accent: <?= $accentCss ?>;
   --navy:   #0F1D35;
-  --gold-dk:#BA7517;
+  --gold-dk:#6C47D4;
   --bg-page:#F4F2ED;
 }
 

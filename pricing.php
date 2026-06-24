@@ -101,7 +101,7 @@ $tarifs = [
   --navy:      #0F1D35;
   --navy-mid:  #1a2d4a;
   --gold:      #F5C518;
-  --gold-dk:   #BA7517;
+  --gold-dk:   #6C47D4;
   --bg-page:   #F4F2ED;
 }
 
@@ -110,10 +110,10 @@ $tarifs = [
 
 /* ── Topbar ── */
 .p-topbar { background:var(--navy); height:58px; display:flex; align-items:center; justify-content:space-between; padding:0 28px; }
-.p-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:#FAEEDA; font-size:15px; font-weight:500; }
+.p-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:#EDE9FE; font-size:15px; font-weight:500; }
 .p-logo .lm { width:34px; height:34px; background:var(--gold-dk); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; font-size:16px; }
 .p-user { font-size:12px; color:rgba(255,255,255,.55); }
-.p-user strong { color:#FAEEDA; }
+.p-user strong { color:#EDE9FE; }
 
 /* ── Hero ── */
 .p-hero { background:var(--navy); padding:48px 24px 88px; text-align:center; position:relative; overflow:hidden; }
@@ -194,7 +194,7 @@ $tarifs = [
 
 /* ── Skip ── */
 .p-skip { text-align:center; font-size:12px; color:var(--text-muted); padding:0 0 40px; }
-.p-skip a { color:var(--amber,#BA7517); text-decoration:underline; }
+.p-skip a { color:var(--amber,#6C47D4); text-decoration:underline; }
 </style>
 </head>
 <body class="pricing-page">

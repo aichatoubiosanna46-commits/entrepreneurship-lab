@@ -26,7 +26,7 @@ if ($ref) {
 <body>
 <?php include __DIR__ . '/includes/header.php'; ?>
 <div style="max-width:560px;margin:80px auto;padding:0 20px;text-align:center">
-  <div style="width:80px;height:80px;border-radius:50%;background:#fffbf0;border:4px solid #BA7517;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px;color:#BA7517">
+  <div style="width:80px;height:80px;border-radius:50%;background:#f5f3ff;border:4px solid #6C47D4;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px;color:#6C47D4">
     <i class="ti ti-clock"></i>
   </div>
   <h1 style="font-size:26px;font-weight:800;margin:0 0 12px">Demande envoyée !</h1>

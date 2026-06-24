@@ -1,5 +1,7 @@
 <?php
-// payment.php — Choix et paiement d'un abonnement
+// ============================================================
+//  payment.php — Paiement via FedaPay (widget JS + API)
+// ============================================================
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 reqConnecte();
@@ -8,41 +10,185 @@ $pdo    = getPDO();
 $userId = $_SESSION['user_id'];
 $user   = utilisateurCourant();
 
-// Abonnement actif
 $sub = $pdo->prepare('SELECT * FROM subscriptions WHERE user_id = ? AND statut = "actif" ORDER BY created_at DESC LIMIT 1');
 $sub->execute([$userId]);
 $activeSub = $sub->fetch();
 
 $plans = [
-    'decouverte'    => ['nom' => 'Découverte', 'prix' => 0,      'couleur' => '#3B6D11', 'desc' => 'Accès aux formations gratuites', 'features' => ['Formations gratuites','Accès limité','Support email']],
-    'business_plan' => ['nom' => 'Business Plan','prix' => 15000, 'couleur' => '#534AB7', 'desc' => 'Accès complet aux formations', 'features' => ['Toutes les formations','Ressources PDF','Certificats','Support prioritaire']],
-    'lancement'     => ['nom' => 'Lancement',  'prix' => 25000, 'couleur' => '#BA7517', 'desc' => 'Accès VIP + accompagnement', 'features' => ['Tout Business Plan','Bibliothèque complète','Coaching mensuel','Accès anticipé']],
+    'decouverte'    => [
+        'nom'      => 'Découverte',
+        'prix'     => 0,
+        'emoji'    => '💡',
+        'couleur'  => '#16a34a',
+        'bg'       => '#ECFDF5',
+        'desc'     => 'Pour valider ton idée et découvrir l\'entrepreneuriat',
+        'features' => ['Formations gratuites','Accès illimité','Support email','Accès à la communauté'],
+    ],
+    'essentiel'     => [
+        'nom'      => 'Essentiel',
+        'prix'     => 5000,
+        'emoji'    => '⭐',
+        'couleur'  => '#D97706',
+        'bg'       => '#FFFBEB',
+        'desc'     => 'Formations essentielles pour démarrer ton business',
+        'features' => ['Formations Essentiel','Ressources PDF de base','Certificats de complétion','Support prioritaire'],
+    ],
+    'business_plan' => [
+        'nom'      => 'Business Plan',
+        'prix'     => 15000,
+        'emoji'    => '📊',
+        'couleur'  => '#F59E0B',
+        'bg'       => '#FEF3C7',
+        'desc'     => 'Accès complet aux formations avancées + coaching',
+        'features' => ['Tout Essentiel inclus','Toutes les formations','Bibliothèque ressources complète','Coaching groupe mensuel'],
+        'popular'  => true,
+    ],
+    'lancement'     => [
+        'nom'      => 'Lancement',
+        'prix'     => 25000,
+        'emoji'    => '🚀',
+        'couleur'  => '#EF4444',
+        'bg'       => '#FEF2F2',
+        'desc'     => 'Accompagnement VIP pour lancer ton activité',
+        'features' => ['Tout Business Plan inclus','Bibliothèque complète','Coaching 1-1 mensuel','Accès anticipé nouveautés'],
+    ],
 ];
 
-$msg = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// ── PLAN GRATUIT ─────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['tarif'] ?? '') === 'decouverte') {
     verifierCSRF();
-    $tarif     = $_POST['tarif'] ?? '';
-    $methode   = $_POST['methode'] ?? '';
-    $telephone = trim($_POST['telephone'] ?? '');
-    $reference = trim($_POST['reference'] ?? '');
-
-    if (!array_key_exists($tarif, $plans)) {
-        $msg = 'Offre invalide.';
-    } elseif ($tarif === 'decouverte') {
-        // Gratuit — activer immédiatement
-        $pdo->prepare('INSERT INTO subscriptions (user_id, tarif, statut, paye) VALUES (?, "decouverte", "actif", 1)')->execute([$userId]);
-        redirect(SITE_URL . '/dashboard.php', 'Abonnement Découverte activé !', 'success');
-    } else {
-        $ref = 'PAY-' . strtoupper(bin2hex(random_bytes(6)));
-        $pdo->prepare(
-            'INSERT INTO payments (user_id, course_id, reference, montant, methode, statut)
-             VALUES (?, 0, ?, ?, ?, "en_attente")'
-        )->execute([$userId, $ref, $plans[$tarif]['prix'], $methode ?: 'mtn_momo']);
-        $payId = $pdo->lastInsertId();
-        $pdo->prepare('INSERT INTO subscriptions (user_id, tarif, statut, paye) VALUES (?, ?, "actif", 0)')->execute([$userId, $tarif]);
-        redirect(SITE_URL . '/payment_confirm.php?ref=' . urlencode($ref), '', '');
+    $exist = $pdo->prepare('SELECT id FROM subscriptions WHERE user_id = ? AND plan = "decouverte"');
+    $exist->execute([$userId]);
+    if (!$exist->fetch()) {
+        $pdo->prepare('INSERT INTO subscriptions (user_id, plan, statut, paye) VALUES (?, "decouverte", "actif", 1)')->execute([$userId]);
     }
+    redirect(SITE_URL . '/dashboard.php', 'Abonnement Découverte activé !', 'success');
+}
+
+// ── VÉRIFICATION CODE PROMO (AJAX) ───────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'check_promo') {
+    verifierCSRF();
+    header('Content-Type: application/json');
+    $code  = strtoupper(trim($_POST['code'] ?? ''));
+    $tarif = $_POST['tarif'] ?? '';
+    $prix  = isset($plans[$tarif]) ? $plans[$tarif]['prix'] : 0;
+
+    if (!$code || !$prix) { echo json_encode(['error' => 'Code invalide']); exit; }
+
+    $stmt = $pdo->prepare(
+        'SELECT * FROM promo_codes WHERE code = ? AND actif = 1
+         AND (usage_max IS NULL OR usage_count < usage_max)
+         AND (date_fin IS NULL OR date_fin >= CURDATE())
+         AND (course_id IS NULL OR course_id = (SELECT id FROM courses WHERE slug = ? LIMIT 1))
+         LIMIT 1'
+    );
+    $stmt->execute([$code, $tarif]);
+    $promo = $stmt->fetch();
+
+    if (!$promo) { echo json_encode(['error' => 'Code invalide ou expiré']); exit; }
+
+    $remise    = $promo['type'] === 'pourcentage'
+        ? round($prix * $promo['valeur'] / 100)
+        : min($promo['valeur'], $prix);
+    $prixFinal = max(0, $prix - $remise);
+
+    echo json_encode([
+        'success'    => true,
+        'remise'     => $remise,
+        'prix_final' => $prixFinal,
+        'message'    => 'Code appliqué : -' . ($promo['type']==='pourcentage' ? $promo['valeur'].'%' : number_format($remise,0,',',' ').' FCFA'),
+    ]);
+    exit;
+}
+
+// ── CRÉATION TRANSACTION FEDAPAY (AJAX) ──────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'create_transaction') {
+    verifierCSRF();
+    header('Content-Type: application/json');
+
+    $tarif = $_POST['tarif'] ?? '';
+    if (!isset($plans[$tarif]) || $plans[$tarif]['prix'] === 0) {
+        echo json_encode(['error' => 'Offre invalide']); exit;
+    }
+
+    $plan     = $plans[$tarif];
+    // Appliquer remise si code promo valide
+    $montant  = $plan['prix'];
+    $promoCode = strtoupper(trim($_POST['promo_code'] ?? ''));
+    if ($promoCode) {
+        $ps = $pdo->prepare('SELECT * FROM promo_codes WHERE code=? AND actif=1 AND (usage_max IS NULL OR usage_count<usage_max) AND (date_fin IS NULL OR date_fin>=CURDATE()) LIMIT 1');
+        $ps->execute([$promoCode]);
+        $promo = $ps->fetch();
+        if ($promo) {
+            $remise  = $promo['type']==='pourcentage' ? round($montant*$promo['valeur']/100) : min($promo['valeur'],$montant);
+            $montant = max(0, $montant - $remise);
+            // Incrémenter usage
+            $pdo->prepare('UPDATE promo_codes SET usage_count=usage_count+1 WHERE id=?')->execute([$promo['id']]);
+        }
+    }
+
+    $ref      = 'ARI-' . strtoupper(bin2hex(random_bytes(6)));
+    $callback = SITE_URL . '/payment_success.php?ref=' . urlencode($ref);
+
+    $payload = json_encode([
+        'description'  => 'Ariziki EntrepreneurshipLab — ' . $plan['nom'],
+        'amount'       => $montant,
+        'currency'     => ['iso' => 'XOF'],
+        'callback_url' => $callback,
+        'customer'     => [
+            'firstname' => $user['prenom'],
+            'lastname'  => $user['nom'],
+            'email'     => $user['email'],
+        ],
+        'metadata' => ['user_id' => $userId, 'plan' => $tarif, 'ref' => $ref],
+    ]);
+
+    $ch = curl_init(FEDAPAY_API_URL . '/transactions');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_HTTPHEADER     => [
+            'Authorization: Bearer ' . FEDAPAY_SECRET_KEY,
+            'Content-Type: application/json',
+        ],
+        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_SSL_VERIFYPEER => true,
+    ]);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr  = curl_error($ch);
+    curl_close($ch);
+
+    if ($curlErr || ($httpCode !== 200 && $httpCode !== 201)) {
+        echo json_encode(['error' => 'Erreur de connexion au service de paiement.']); exit;
+    }
+
+    $data  = json_decode($response, true);
+    $txnId = $data['v1/transaction']['id'] ?? null;
+    if (!$txnId) { echo json_encode(['error' => 'Réponse FedaPay invalide']); exit; }
+
+    $ch2 = curl_init(FEDAPAY_API_URL . '/transactions/' . $txnId . '/token');
+    curl_setopt_array($ch2, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => '{}',
+        CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . FEDAPAY_SECRET_KEY, 'Content-Type: application/json'],
+        CURLOPT_TIMEOUT        => 15,
+        CURLOPT_SSL_VERIFYPEER => true,
+    ]);
+    $tokenResp = curl_exec($ch2);
+    curl_close($ch2);
+    $tokenData = json_decode($tokenResp, true);
+    $token     = $tokenData['token'] ?? null;
+    if (!$token) { echo json_encode(['error' => 'Impossible d\'obtenir le token']); exit; }
+
+    $pdo->prepare(
+        'INSERT INTO payments (user_id, plan, montant, reference, operateur, statut, promo_code) VALUES (?, ?, ?, ?, "autre", "en_attente", ?)'
+    )->execute([$userId, $tarif, $montant, $ref, $promoCode ?: null]);
+
+    echo json_encode(['token' => $token, 'txn_id' => $txnId, 'ref' => $ref, 'amount' => $montant, 'plan_nom' => $plan['nom']]);
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -50,142 +196,287 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Abonnements — <?= SITE_NAME ?></title>
+<title>Choisir mon parcours — <?= SITE_NAME ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/home.css">
+<script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
 <style>
-.pricing-wrap { max-width: 1000px; margin: 50px auto; padding: 0 24px 80px; }
-.pricing-wrap h1 { text-align:center; font-size:32px; font-weight:800; margin-bottom:8px; }
-.pricing-wrap .sub { text-align:center; color:var(--text-muted,#6b7280); margin-bottom:48px; }
-.plans-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-bottom:48px; }
-.plan-card { border:2px solid var(--border,#e5e7eb); border-radius:16px; padding:28px 24px; text-align:center; position:relative; background:#fff; transition:.2s; }
-.plan-card.popular { border-color:#534AB7; }
-.plan-badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:#534AB7; color:#fff; font-size:11px; font-weight:700; padding:3px 12px; border-radius:20px; white-space:nowrap; }
-.plan-name { font-size:18px; font-weight:700; margin-bottom:4px; }
-.plan-price { font-size:32px; font-weight:800; margin:16px 0 4px; }
-.plan-price small { font-size:14px; font-weight:400; color:var(--text-muted,#6b7280); }
-.plan-desc { font-size:13px; color:var(--text-muted,#6b7280); margin-bottom:20px; }
-.plan-features { list-style:none; padding:0; margin:0 0 24px; text-align:left; }
-.plan-features li { font-size:13px; padding:6px 0; border-bottom:1px solid var(--border,#e5e7eb); display:flex; align-items:center; gap:8px; }
+.pay-page { background:#FFFBEB; min-height:100vh; padding:0 0 80px; }
+.pay-hero { background:linear-gradient(135deg,#1C1917 0%,#292524 100%); padding:52px 24px 40px; text-align:center; }
+.pay-hero h1 { font-size:32px; font-weight:800; color:#fff; margin-bottom:8px; }
+.pay-hero h1 em { font-style:normal; color:#F59E0B; }
+.pay-hero p { font-size:14px; color:rgba(255,255,255,.6); margin-bottom:20px; }
+.pay-badges { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+.pay-badge-item { display:inline-flex; align-items:center; gap:6px; background:rgba(245,158,11,.15); border:1px solid rgba(245,158,11,.3); border-radius:20px; padding:5px 14px; font-size:11px; color:#F59E0B; font-weight:600; }
+.pay-wrap { max-width:1080px; margin:0 auto; padding:0 20px; }
+.plans-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin:-28px auto 32px; position:relative; z-index:10; }
+.plan-card { background:#fff; border:1.5px solid #e5e7eb; border-radius:18px; overflow:hidden; transition:transform .2s,box-shadow .2s; display:flex; flex-direction:column; box-shadow:0 4px 16px rgba(0,0,0,.06); }
+.plan-card:hover { transform:translateY(-5px); box-shadow:0 12px 32px rgba(0,0,0,.12); }
+.plan-card.popular { border-color:#F59E0B; box-shadow:0 8px 32px rgba(245,158,11,.2); }
+.plan-header { padding:24px 20px 18px; text-align:center; position:relative; }
+.plan-popular-badge { position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:linear-gradient(90deg,#F59E0B,#EF4444); color:#fff; font-size:10px; font-weight:800; padding:4px 16px; border-radius:0 0 10px 10px; white-space:nowrap; }
+.plan-emoji { font-size:36px; display:block; margin-bottom:10px; }
+.plan-name { font-size:16px; font-weight:800; margin-bottom:6px; }
+.plan-price { margin:10px 0 6px; }
+.plan-price .amount { font-size:34px; font-weight:800; color:#1C1917; line-height:1; }
+.plan-price .amount.free { color:#16a34a; font-size:26px; }
+.plan-price .currency { font-size:13px; color:#6b7280; font-weight:500; }
+.plan-desc { font-size:11px; color:#6b7280; line-height:1.6; }
+.plan-body { padding:0 20px 20px; flex:1; display:flex; flex-direction:column; }
+.plan-divider { height:1px; background:#f3f4f6; margin-bottom:14px; }
+.plan-features { list-style:none; padding:0; margin:0 0 20px; flex:1; }
+.plan-features li { display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#374151; padding:5px 0; border-bottom:1px solid #f9fafb; }
 .plan-features li:last-child { border:none; }
-.plan-features li i { color:#16a34a; flex-shrink:0; }
-.btn-plan { width:100%; padding:12px; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer; border:none; }
-.pay-form { background:#fff; border:1px solid var(--border,#e5e7eb); border-radius:16px; padding:32px; max-width:480px; margin:0 auto; }
-.pay-form h2 { font-size:20px; font-weight:700; margin:0 0 20px; }
-.field { margin-bottom:16px; }
-.field label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
-.field input, .field select { width:100%; padding:10px 12px; border:1px solid var(--border,#e5e7eb); border-radius:8px; font-size:14px; box-sizing:border-box; }
-.field input:focus, .field select:focus { outline:none; border-color:#534AB7; }
-@media(max-width:860px){ .plans-grid{grid-template-columns:1fr;} }
+.plan-features li i { font-size:14px; flex-shrink:0; margin-top:1px; }
+.btn-plan-free { display:block; width:100%; padding:12px; background:#16a34a; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; transition:background .15s; }
+.btn-plan-free:hover { background:#15803d; }
+.btn-plan-paid { display:block; width:100%; padding:12px; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; color:#fff; transition:opacity .15s,transform .1s; }
+.btn-plan-paid:hover { opacity:.9; transform:translateY(-1px); }
+.trust-bar { text-align:center; margin-top:16px; }
+.trust-bar span { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:#6b7280; background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:8px 16px; }
+.sub-active-banner { background:#ECFDF5; border:1px solid #86efac; border-radius:12px; padding:14px 20px; display:flex; align-items:center; gap:10px; font-size:14px; color:#15803d; margin-bottom:24px; }
+.overlay-pay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:1000; align-items:center; justify-content:center; }
+.overlay-pay.show { display:flex; }
+.overlay-card { background:#fff; border-radius:20px; padding:40px 32px; max-width:440px; width:90%; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.2); }
+.overlay-emoji { font-size:52px; display:block; margin-bottom:12px; }
+.overlay-card h3 { font-size:22px; font-weight:800; margin:0 0 6px; color:#1C1917; }
+.overlay-card p { font-size:13px; color:#6b7280; margin:0 0 16px; line-height:1.6; }
+.overlay-amount { font-size:38px; font-weight:800; background:linear-gradient(135deg,#F59E0B,#EF4444); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px; }
+.overlay-amount-original { font-size:14px; color:#9ca3af; text-decoration:line-through; margin-bottom:16px; display:none; }
+.promo-wrap { display:flex; gap:8px; margin-bottom:16px; }
+.promo-input { flex:1; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:13px; font-family:inherit; text-transform:uppercase; }
+.promo-input:focus { outline:none; border-color:#F59E0B; }
+.promo-btn { padding:10px 14px; background:#1C1917; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.promo-msg { font-size:12px; margin-bottom:12px; padding:8px 12px; border-radius:8px; display:none; }
+.promo-msg.ok { background:#ECFDF5; color:#15803d; display:block; }
+.promo-msg.ko { background:#fef2f2; color:#dc2626; display:block; }
+.btn-fp { display:block; width:100%; padding:14px; background:linear-gradient(135deg,#F59E0B,#EF4444); color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; margin-bottom:10px; transition:opacity .15s; }
+.btn-fp:hover { opacity:.9; }
+.btn-cancel-pay { display:block; width:100%; padding:11px; background:transparent; color:#6b7280; border:1.5px solid #e5e7eb; border-radius:12px; font-size:13px; cursor:pointer; }
+.spin { display:inline-block; width:18px; height:18px; border:3px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:8px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+@media(max-width:900px) { .plans-grid { grid-template-columns:1fr 1fr; } }
+@media(max-width:540px) { .plans-grid { grid-template-columns:1fr; } .pay-hero h1 { font-size:24px; } }
 </style>
 </head>
 <body>
 <?php include __DIR__ . '/includes/header.php'; ?>
-<div class="pricing-wrap">
-  <h1>Choisissez votre offre</h1>
-  <p class="sub">Débloquez l'accès aux formations et boostez votre entrepreneuriat</p>
 
-  <?php if ($activeSub): ?>
-  <div style="background:#EAF3DE;border:1px solid #97C459;border-radius:10px;padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:10px;font-size:14px;color:#27500A">
-    <i class="ti ti-check-circle" style="font-size:20px"></i>
-    Abonnement actif : <strong><?= $plans[$activeSub['tarif']]['nom'] ?? $activeSub['tarif'] ?></strong>
-    <?= $activeSub['paye'] ? '(payé)' : '(en attente de validation)' ?>
-  </div>
-  <?php endif; ?>
-
-  <div class="plans-grid">
-    <?php foreach ($plans as $key => $plan): ?>
-    <div class="plan-card <?= $key === 'business_plan' ? 'popular' : '' ?>">
-      <?php if ($key === 'business_plan'): ?>
-        <div class="plan-badge">⭐ Populaire</div>
-      <?php endif; ?>
-      <div class="plan-name" style="color:<?= $plan['couleur'] ?>"><?= $plan['nom'] ?></div>
-      <div class="plan-price">
-        <?php if ($plan['prix'] === 0): ?>
-          Gratuit
-        <?php else: ?>
-          <?= number_format($plan['prix'], 0, ',', ' ') ?><small> FCFA/mois</small>
-        <?php endif; ?>
-      </div>
-      <div class="plan-desc"><?= $plan['desc'] ?></div>
-      <ul class="plan-features">
-        <?php foreach ($plan['features'] as $f): ?>
-        <li><i class="ti ti-check"></i> <?= h($f) ?></li>
-        <?php endforeach; ?>
-      </ul>
-      <button type="button" onclick="choisirPlan('<?= $key ?>')"
-        class="btn-plan" style="background:<?= $plan['couleur'] ?>;color:#fff">
-        <?= $plan['prix'] === 0 ? 'Commencer gratuitement' : 'Choisir cette offre' ?>
-      </button>
+<div class="pay-page">
+  <div class="pay-hero">
+    <h1>Choisis ton <em>parcours</em></h1>
+    <p>Commence gratuitement · Paiement Mobile Money · Certification Université de Parakou</p>
+    <div class="pay-badges">
+      <span class="pay-badge-item"><i class="ti ti-device-mobile"></i> MTN MoMo · Moov Money</span>
+      <span class="pay-badge-item"><i class="ti ti-shield-check"></i> Paiement sécurisé SSL</span>
+      <span class="pay-badge-item"><i class="ti ti-infinity"></i> Accès à vie</span>
+      <span class="pay-badge-item"><i class="ti ti-certificate"></i> Certifié Univ. Parakou</span>
     </div>
-    <?php endforeach; ?>
   </div>
 
-  <!-- Formulaire paiement (masqué par défaut) -->
-  <div id="pay-form-wrap" style="display:none">
-    <div class="pay-form">
-      <h2><i class="ti ti-credit-card" style="color:#BA7517"></i> Finaliser le paiement</h2>
-      <form method="POST">
-        <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
-        <input type="hidden" name="tarif" id="pay-tarif" value="">
-        <div style="background:#f9fafb;border-radius:8px;padding:14px;margin-bottom:16px">
-          <div style="font-size:13px;color:var(--text-muted,#6b7280)">Offre sélectionnée</div>
-          <div id="pay-plan-name" style="font-size:18px;font-weight:700"></div>
-          <div id="pay-plan-price" style="font-size:24px;font-weight:800;color:#BA7517"></div>
+  <div class="pay-wrap">
+    <?php if ($activeSub): ?>
+    <div class="sub-active-banner" style="margin-top:40px">
+      <i class="ti ti-check-circle" style="font-size:22px;flex-shrink:0"></i>
+      <div>Abonnement actif : <strong><?= $plans[$activeSub['plan']]['nom'] ?? $activeSub['plan'] ?></strong>
+        <?= $activeSub['paye'] ? ' · Payé et validé ✓' : ' · En attente de validation' ?>
+      </div>
+    </div>
+    <?php endif; ?>
+
+    <div class="plans-grid" style="<?= $activeSub ? 'margin-top:20px' : '' ?>">
+      <?php foreach ($plans as $key => $plan): ?>
+      <div class="plan-card <?= !empty($plan['popular']) ? 'popular' : '' ?>">
+        <div class="plan-header" style="background:<?= $plan['bg'] ?>">
+          <?php if (!empty($plan['popular'])): ?>
+            <div class="plan-popular-badge">⭐ Le plus populaire</div>
+          <?php endif; ?>
+          <span class="plan-emoji"><?= $plan['emoji'] ?></span>
+          <div class="plan-name" style="color:<?= $plan['couleur'] ?>"><?= h($plan['nom']) ?></div>
+          <div class="plan-price">
+            <?php if ($plan['prix'] === 0): ?>
+              <span class="amount free">Gratuit</span>
+            <?php else: ?>
+              <span class="amount"><?= number_format($plan['prix'], 0, ',', ' ') ?></span>
+              <span class="currency"> FCFA</span>
+            <?php endif; ?>
+          </div>
+          <div class="plan-desc"><?= h($plan['desc']) ?></div>
         </div>
-        <div class="field">
-          <label>Moyen de paiement</label>
-          <select name="methode">
-            <option value="mtn_momo">MTN Mobile Money</option>
-            <option value="moov_money">Moov Money</option>
-          </select>
+        <div class="plan-body">
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <?php foreach ($plan['features'] as $f): ?>
+            <li><i class="ti ti-check" style="color:<?= $plan['couleur'] ?>"></i><?= h($f) ?></li>
+            <?php endforeach; ?>
+          </ul>
+          <?php if ($key === 'decouverte'): ?>
+            <form method="POST" style="margin:0">
+              <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+              <input type="hidden" name="tarif" value="decouverte">
+              <button type="submit" class="btn-plan-free">
+                <i class="ti ti-arrow-right"></i> Commencer gratuitement
+              </button>
+            </form>
+          <?php else: ?>
+            <button type="button" class="btn-plan-paid"
+                    style="background:linear-gradient(135deg,<?= $plan['couleur'] ?>,<?= $plan['couleur'] ?>dd)"
+                    onclick="ouvrirPaiement('<?= $key ?>','<?= h($plan['nom']) ?>',<?= $plan['prix'] ?>,'<?= $plan['emoji'] ?>')">
+              <i class="ti ti-credit-card"></i>
+              Choisir — <?= number_format($plan['prix'], 0, ',', ' ') ?> FCFA
+            </button>
+          <?php endif; ?>
         </div>
-        <div class="field">
-          <label>Votre numéro de téléphone</label>
-          <input type="tel" name="telephone" placeholder="Ex: 97000000" required>
-        </div>
-        <div style="background:#fffbf0;border:1px solid #BA7517;border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px">
-          <strong>Comment payer :</strong><br>
-          1. Effectuez le virement au <strong>+229 01 XX XX XX XX</strong><br>
-          2. Notez votre référence de transaction<br>
-          3. Soumettez le formulaire — votre accès sera activé sous 24h.
-        </div>
-        <div class="field">
-          <label>Référence de transaction (optionnel)</label>
-          <input type="text" name="reference" placeholder="Ex: TXN123456">
-        </div>
-        <button type="submit" class="btn-plan" style="background:#BA7517;color:#fff;width:100%;padding:14px">
-          <i class="ti ti-send"></i> Confirmer ma demande
-        </button>
-        <button type="button" onclick="document.getElementById('pay-form-wrap').style.display='none'"
-          style="width:100%;padding:10px;margin-top:10px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:13px">
-          Annuler
-        </button>
-      </form>
+      </div>
+      <?php endforeach; ?>
+    </div>
+
+    <div class="trust-bar">
+      <span><i class="ti ti-shield-lock" style="color:#16a34a"></i>
+        Paiement sécurisé via FedaPay · MTN Mobile Money · Moov Money · Visa · Mastercard
+      </span>
     </div>
   </div>
 </div>
-<?php include __DIR__ . '/includes/footer.php'; ?>
+
+<!-- Overlay avec champ code promo -->
+<div class="overlay-pay" id="overlay-pay">
+  <div class="overlay-card">
+    <span class="overlay-emoji" id="ol-emoji">💳</span>
+    <h3 id="ol-plan-name">Business Plan</h3>
+    <p>Paiement sécurisé via FedaPay — Mobile Money, Visa, Mastercard.</p>
+
+    <!-- Code promo -->
+    <div class="promo-wrap">
+      <input type="text" class="promo-input" id="promo-input" placeholder="CODE PROMO">
+      <button class="promo-btn" onclick="appliquerPromo()"><i class="ti ti-ticket"></i> Appliquer</button>
+    </div>
+    <div class="promo-msg" id="promo-msg"></div>
+
+    <div class="overlay-amount" id="ol-plan-price">15 000 FCFA</div>
+    <div class="overlay-amount-original" id="ol-prix-original"></div>
+
+    <button class="btn-fp" id="btn-pay-now" onclick="lancerPaiement()">
+      <i class="ti ti-credit-card"></i> Payer maintenant
+    </button>
+    <button class="btn-cancel-pay" onclick="fermerOverlay()">Annuler</button>
+    <p style="margin-top:14px;font-size:11px;color:#9ca3af">
+      <i class="ti ti-lock"></i> Données chiffrées SSL · Aucune info bancaire stockée
+    </p>
+  </div>
+</div>
+
 <script>
-const plans = <?= json_encode(array_map(fn($k,$p) => ['key'=>$k,'nom'=>$p['nom'],'prix'=>$p['prix']], array_keys($plans), $plans)) ?>;
-function choisirPlan(key) {
-  const plan = plans.find(p => p.key === key);
-  if (!plan) return;
-  document.getElementById('pay-tarif').value = key;
-  document.getElementById('pay-plan-name').textContent = plan.nom;
-  document.getElementById('pay-plan-price').textContent = plan.prix === 0 ? 'Gratuit' : plan.prix.toLocaleString('fr') + ' FCFA/mois';
-  if (key === 'decouverte') {
-    document.querySelector('[name=methode]').closest('.field').style.display = 'none';
-    document.querySelector('[name=telephone]').closest('.field').style.display = 'none';
-  } else {
-    document.querySelector('[name=methode]').closest('.field').style.display = '';
-    document.querySelector('[name=telephone]').closest('.field').style.display = '';
-  }
-  document.getElementById('pay-form-wrap').style.display = 'block';
-  document.getElementById('pay-form-wrap').scrollIntoView({behavior:'smooth'});
+let currentTarif    = '';
+let currentNom      = '';
+let currentPrix     = 0;
+let currentPrixFinal = 0;
+let currentPromo    = '';
+const csrfToken     = '<?= csrfToken() ?>';
+const fedapayPK     = '<?= FEDAPAY_PUBLIC_KEY ?>';
+
+function ouvrirPaiement(tarif, nom, prix, emoji) {
+    currentTarif     = tarif;
+    currentNom       = nom;
+    currentPrix      = prix;
+    currentPrixFinal = prix;
+    currentPromo     = '';
+    document.getElementById('ol-emoji').textContent      = emoji || '💳';
+    document.getElementById('ol-plan-name').textContent   = nom;
+    document.getElementById('ol-plan-price').textContent  = prix.toLocaleString('fr') + ' FCFA';
+    document.getElementById('ol-prix-original').style.display = 'none';
+    document.getElementById('promo-input').value = '';
+    document.getElementById('promo-msg').className = 'promo-msg';
+    document.getElementById('promo-msg').textContent = '';
+    document.getElementById('overlay-pay').classList.add('show');
 }
+
+function fermerOverlay() {
+    document.getElementById('overlay-pay').classList.remove('show');
+}
+
+async function appliquerPromo() {
+    const code = document.getElementById('promo-input').value.trim();
+    const msg  = document.getElementById('promo-msg');
+    if (!code) { msg.className='promo-msg ko'; msg.textContent='Entrez un code promo.'; return; }
+
+    const fd = new FormData();
+    fd.append('csrf_token', csrfToken);
+    fd.append('action', 'check_promo');
+    fd.append('code', code);
+    fd.append('tarif', currentTarif);
+
+    try {
+        const res  = await fetch('payment.php', {method:'POST', body:fd});
+        const data = await res.json();
+        if (data.error) {
+            msg.className = 'promo-msg ko';
+            msg.textContent = data.error;
+            currentPromo    = '';
+            currentPrixFinal = currentPrix;
+            document.getElementById('ol-plan-price').textContent = currentPrix.toLocaleString('fr') + ' FCFA';
+            document.getElementById('ol-prix-original').style.display = 'none';
+        } else {
+            msg.className = 'promo-msg ok';
+            msg.textContent = '✓ ' + data.message;
+            currentPromo    = code;
+            currentPrixFinal = data.prix_final;
+            document.getElementById('ol-plan-price').textContent = data.prix_final.toLocaleString('fr') + ' FCFA';
+            document.getElementById('ol-prix-original').textContent = currentPrix.toLocaleString('fr') + ' FCFA';
+            document.getElementById('ol-prix-original').style.display = 'block';
+        }
+    } catch(e) {
+        msg.className = 'promo-msg ko';
+        msg.textContent = 'Erreur réseau.';
+    }
+}
+
+async function lancerPaiement() {
+    const btn = document.getElementById('btn-pay-now');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Préparation…';
+
+    const fd = new FormData();
+    fd.append('csrf_token', csrfToken);
+    fd.append('action', 'create_transaction');
+    fd.append('tarif', currentTarif);
+    if (currentPromo) fd.append('promo_code', currentPromo);
+
+    try {
+        const res  = await fetch('payment.php', {method:'POST', body:fd});
+        const data = await res.json();
+        if (data.error) {
+            alert('Erreur : ' + data.error);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="ti ti-credit-card"></i> Payer maintenant';
+            return;
+        }
+        fermerOverlay();
+        FedaPay.init({
+            public_key: fedapayPK,
+            transaction: { token: data.token },
+            onComplete: function(resp) {
+                if (resp.reason === FedaPay.DIALOG_DISMISSED) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="ti ti-credit-card"></i> Payer maintenant';
+                    return;
+                }
+                window.location.href = 'payment_success.php?ref=' + encodeURIComponent(data.ref) + '&txn_id=' + resp.transaction.id;
+            }
+        }).open();
+    } catch(e) {
+        alert('Erreur réseau. Veuillez réessayer.');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-credit-card"></i> Payer maintenant';
+    }
+}
+
+document.getElementById('overlay-pay').addEventListener('click', function(e) {
+    if (e.target === this) fermerOverlay();
+});
 </script>
+
+<?php include __DIR__ . '/includes/footer.php'; ?>
 </body>
 </html>

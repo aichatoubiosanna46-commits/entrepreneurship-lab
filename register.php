@@ -16,48 +16,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifierCSRF();
 
     $vals = [
-        'nom'      => trim($_POST['nom']      ?? ''),
-        'prenom'   => trim($_POST['prenom']   ?? ''),
-        'email'    => trim($_POST['email']    ?? ''),
-        'password' => $_POST['password']      ?? '',
-        'confirm'  => $_POST['confirm']       ?? '',
-        'telephone'=> trim($_POST['telephone']?? ''),
-        'ville'    => trim($_POST['ville']    ?? ''),
+        'nom'      => trim($_POST['nom']       ?? ''),
+        'prenom'   => trim($_POST['prenom']    ?? ''),
+        'email'    => trim($_POST['email']     ?? ''),
+        'password' => $_POST['password']       ?? '',
+        'confirm'  => $_POST['confirm']        ?? '',
+        'telephone'=> trim($_POST['telephone'] ?? ''),
+        'ville'    => trim($_POST['ville']     ?? ''),
     ];
 
-    if (!$vals['nom'])     $erreurs[] = 'Le nom est requis.';
-    if (!$vals['prenom'])  $erreurs[] = 'Le prénom est requis.';
+    if (!$vals['nom'])    $erreurs[] = 'Le nom est requis.';
+    if (!$vals['prenom']) $erreurs[] = 'Le prénom est requis.';
     if (!filter_var($vals['email'], FILTER_VALIDATE_EMAIL)) $erreurs[] = 'Email invalide.';
-    if (strlen($vals['password']) < 8)  $erreurs[] = 'Le mot de passe doit faire au moins 8 caractères.';
+    if (strlen($vals['password']) < 8) $erreurs[] = 'Le mot de passe doit faire au moins 8 caractères.';
     if ($vals['password'] !== $vals['confirm']) $erreurs[] = 'Les mots de passe ne correspondent pas.';
 
     if (empty($erreurs)) {
-        $pdo = getPDO();
+        $pdo  = getPDO();
         $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
         $stmt->execute([$vals['email']]);
-        if ($stmt->fetch()) {
-            $erreurs[] = 'Cette adresse e-mail est déjà utilisée.';
-        }
+        if ($stmt->fetch()) $erreurs[] = 'Cette adresse e-mail est déjà utilisée.';
     }
 
     if (empty($erreurs)) {
         $pdo  = getPDO();
         $hash = password_hash($vals['password'], PASSWORD_BCRYPT, ['cost' => 12]);
         $stmt = $pdo->prepare(
-            'INSERT INTO users (nom, prenom, email, password, telephone, ville)
-             VALUES (?, ?, ?, ?, ?, ?)'
+            'INSERT INTO users (nom, prenom, email, password, telephone, ville) VALUES (?, ?, ?, ?, ?, ?)'
         );
-        $stmt->execute([
-            $vals['nom'], $vals['prenom'], $vals['email'],
-            $hash, $vals['telephone'], $vals['ville']
-        ]);
+        $stmt->execute([$vals['nom'], $vals['prenom'], $vals['email'], $hash, $vals['telephone'], $vals['ville']]);
         $userId = $pdo->lastInsertId();
 
-        // Connexion automatique après inscription
         $user = $pdo->prepare('SELECT * FROM users WHERE id = ?');
         $user->execute([$userId]);
         connecterUtilisateur($user->fetch());
-        redirect(SITE_URL . '/pricing.php', 'Bienvenue, ' . $vals['prenom'] . ' ! Ton compte est créé. Choisis maintenant ton parcours.', 'success');
+    triggerAutomation('user_registered', $userId, 0);
+        emailBienvenue($vals['email'], $vals['prenom']);
+        redirect(SITE_URL . '/payment.php', 'Bienvenue, ' . $vals['prenom'] . ' ! Ton compte est créé. Choisis maintenant ton parcours.', 'success');
     }
 }
 ?>
@@ -67,33 +62,244 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Créer un compte — <?= SITE_NAME ?></title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; background: #FFFBEB; }
+
+.auth-container { display: flex; min-height: 100vh; }
+
+/* ── Panneau gauche : image ── */
+.auth-brand {
+  width: 48%;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.auth-brand-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+}
+.auth-brand-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    155deg,
+    rgba(28,25,23,.85) 0%,
+    rgba(28,25,23,.5) 45%,
+    rgba(239,68,68,.3) 100%
+  );
+}
+.auth-brand-content {
+  position: relative; z-index: 2;
+  padding: 44px 40px;
+  height: 100%;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+}
+.auth-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.auth-logo-mark {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; font-weight: 800; color: #fff; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(245,158,11,.4);
+}
+.auth-logo-name { font-size: 17px; font-weight: 700; color: #FEF3C7; }
+
+.auth-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 28px 0; }
+.auth-hero h1 {
+  font-size: 34px; font-weight: 800; color: #fff;
+  line-height: 1.2; margin-bottom: 14px;
+}
+.auth-hero h1 em { font-style: normal; color: #F59E0B; }
+.auth-hero p {
+  font-size: 14px; color: rgba(255,255,255,.7);
+  line-height: 1.75; max-width: 360px; margin-bottom: 28px;
+}
+.auth-checklist { display: flex; flex-direction: column; gap: 11px; }
+.auth-check {
+  display: flex; align-items: center; gap: 11px;
+  font-size: 13px; color: rgba(255,255,255,.85);
+}
+.auth-check-ico {
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  background: rgba(245,158,11,.2); border: 1px solid rgba(245,158,11,.3);
+  display: flex; align-items: center; justify-content: center;
+}
+.auth-check-ico i { font-size: 15px; color: #F59E0B; }
+
+.auth-stats-bar {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+.auth-stat-item { text-align: center; }
+.auth-stat-item strong { display: block; font-size: 20px; font-weight: 800; color: #F59E0B; }
+.auth-stat-item span  { font-size: 11px; color: rgba(255,255,255,.5); }
+
+/* ── Panneau droit : formulaire ── */
+.auth-form-panel {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 32px;
+  background: #fff;
+  overflow-y: auto;
+}
+.auth-form-box { width: 100%; max-width: 420px; }
+.auth-form-title { font-size: 24px; font-weight: 800; color: #1C1917; margin-bottom: 5px; }
+.auth-form-sub { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+.auth-form-sub a { color: #F59E0B; font-weight: 600; text-decoration: none; }
+.auth-form-sub a:hover { text-decoration: underline; }
+
+/* Form */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.form-group label { font-size: 13px; font-weight: 600; color: #1C1917; }
+.form-group input {
+  padding: 10px 14px; border: 1.5px solid #e5e7eb;
+  border-radius: 9px; font-size: 13px;
+  font-family: inherit; color: #1C1917;
+  background: #fff; width: 100%;
+  transition: border-color .2s, box-shadow .2s;
+}
+.form-group input:focus {
+  outline: none; border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245,158,11,.12);
+}
+.input-icon-wrap { position: relative; }
+.input-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: #9ca3af; font-size: 15px; pointer-events: none;
+}
+.input-icon-wrap input { padding-left: 36px; padding-right: 38px; }
+.input-toggle-pw {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: #9ca3af; padding: 4px; display: flex; align-items: center;
+}
+.input-toggle-pw:hover { color: #F59E0B; }
+
+/* Alert */
+.alert {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 13px 16px; border-radius: 10px;
+  font-size: 13px; margin-bottom: 16px;
+}
+.alert i { font-size: 18px; flex-shrink: 0; }
+.alert-error { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+
+/* Button */
+.btn-submit {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 13px; margin-top: 6px;
+  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 800; cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 3px 10px rgba(245,158,11,.3);
+  transition: opacity .15s, transform .1s;
+}
+.btn-submit:hover { opacity: .92; transform: translateY(-1px); }
+
+.auth-cgu {
+  font-size: 11px; color: #9ca3af;
+  text-align: center; margin-top: 12px; line-height: 1.6;
+}
+.auth-cgu a { color: #F59E0B; text-decoration: none; }
+
+@media (max-width: 860px) {
+  .auth-brand { display: none; }
+  .auth-form-panel {
+    padding: 32px 20px;
+    background-image: url('https://images.unsplash.com/photo-1531482615713-2afd69097998?w=900&q=85&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .auth-form-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(28,25,23,.75);
+    z-index: 0;
+  }
+  .auth-form-box {
+    position: relative;
+    z-index: 1;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 32px 28px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.25);
+    border: 1px solid rgba(255,255,255,.3);
+  }
+}
+@media (max-width: 480px) {
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
 </head>
-<body class="auth-page">
+<body>
 
 <div class="auth-container">
 
+  <!-- ── Panneau gauche : image ── -->
   <div class="auth-brand">
-    <a href="<?= SITE_URL ?>" class="auth-logo">
-      <div class="logo-mark" style="width:48px;height:48px;font-size:20px">E</div>
-      <span class="logo-name" style="font-size:20px;color:#FAEEDA"><?= SITE_NAME ?></span>
-    </a>
-    <h1 class="auth-brand-title">Lance ton<br>aventure.</h1>
-    <p class="auth-brand-sub">Inscription gratuite. Accès immédiat à tous les cours gratuits. Payez seulement ce que vous voulez approfondir.</p>
-    <ul class="auth-perks">
-      <li><i class="ti ti-check" aria-hidden="true"></i> Cours gratuits illimités</li>
-      <li><i class="ti ti-check" aria-hidden="true"></i> Assistant IA intégré</li>
-      <li><i class="ti ti-check" aria-hidden="true"></i> Certificat à l'obtention</li>
-      <li><i class="ti ti-check" aria-hidden="true"></i> Communauté d'entrepreneurs</li>
-    </ul>
+    <img
+      class="auth-brand-img"
+      src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=900&q=85&auto=format&fit=crop"
+      alt="Formation entrepreneuriat"
+      loading="eager"
+    >
+    <div class="auth-brand-overlay"></div>
+
+    <div class="auth-brand-content">
+      <a href="<?= SITE_URL ?>" class="auth-logo">
+        <div class="auth-logo-mark">E</div>
+        <span class="auth-logo-name"><?= SITE_NAME ?></span>
+      </a>
+
+      <div class="auth-hero">
+        <h1>Lance ton<br><em>aventure.</em></h1>
+        <p>
+          Inscription gratuite. Accès immédiat aux cours gratuits.
+          Paie uniquement ce que tu veux approfondir.
+        </p>
+        <div class="auth-checklist">
+          <div class="auth-check">
+            <div class="auth-check-ico"><i class="ti ti-school" aria-hidden="true"></i></div>
+            <span>Cours gratuits illimités dès l'inscription</span>
+          </div>
+          <div class="auth-check">
+            <div class="auth-check-ico"><i class="ti ti-certificate" aria-hidden="true"></i></div>
+            <span>Certificat Université de Parakou à l'obtention</span>
+          </div>
+          <div class="auth-check">
+            <div class="auth-check-ico"><i class="ti ti-headset" aria-hidden="true"></i></div>
+            <span>Coaching 1:1 avec un mentor dédié</span>
+          </div>
+          <div class="auth-check">
+            <div class="auth-check-ico"><i class="ti ti-device-mobile" aria-hidden="true"></i></div>
+            <span>Paiement Mobile Money (MTN, Moov)</span>
+          </div>
+        </div>
+      </div>
+
+     
+    </div>
   </div>
 
+  <!-- ── Panneau droit : formulaire ── -->
   <div class="auth-form-panel">
     <div class="auth-form-box">
-      <h2 class="auth-form-title">Créer mon compte</h2>
-      <p class="auth-form-sub">Déjà inscrit ? <a href="<?= SITE_URL ?>/login.php">Se connecter</a></p>
+
+      <h2 class="auth-form-title">Créer mon compte </h2>
+      <p class="auth-form-sub">
+        Déjà inscrit ? <a href="<?= SITE_URL ?>/login.php">Se connecter</a>
+      </p>
 
       <?php if (!empty($erreurs)): ?>
         <div class="alert alert-error">
@@ -111,12 +317,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-row">
           <div class="form-group">
-            <label for="nom">Nom</label>
-            <input type="text" id="nom" name="nom" value="<?= h($vals['nom'] ?? '') ?>" placeholder="DIALLO" required>
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" name="prenom"
+                   value="<?= h($vals['prenom'] ?? '') ?>"
+                   placeholder="Fatou" required>
           </div>
           <div class="form-group">
-            <label for="prenom">Prénom</label>
-            <input type="text" id="prenom" name="prenom" value="<?= h($vals['prenom'] ?? '') ?>" placeholder="Fatou" required>
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" name="nom"
+                   value="<?= h($vals['nom'] ?? '') ?>"
+                   placeholder="DIALLO" required>
           </div>
         </div>
 
@@ -124,18 +334,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label for="email">Adresse e-mail</label>
           <div class="input-icon-wrap">
             <i class="ti ti-mail input-icon" aria-hidden="true"></i>
-            <input type="email" id="email" name="email" value="<?= h($vals['email'] ?? '') ?>" placeholder="votre@email.com" required>
+            <input type="email" id="email" name="email"
+                   value="<?= h($vals['email'] ?? '') ?>"
+                   placeholder="votre@email.com" required>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="telephone">Téléphone</label>
-            <input type="tel" id="telephone" name="telephone" value="<?= h($vals['telephone'] ?? '') ?>" placeholder="+229 97 00 00 00">
+            <input type="tel" id="telephone" name="telephone"
+                   value="<?= h($vals['telephone'] ?? '') ?>"
+                   placeholder="+229 97 00 00 00">
           </div>
           <div class="form-group">
             <label for="ville">Ville</label>
-            <input type="text" id="ville" name="ville" value="<?= h($vals['ville'] ?? '') ?>" placeholder="Cotonou">
+            <input type="text" id="ville" name="ville"
+                   value="<?= h($vals['ville'] ?? '') ?>"
+                   placeholder="Cotonou">
           </div>
         </div>
 
@@ -144,8 +360,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="password">Mot de passe</label>
             <div class="input-icon-wrap">
               <i class="ti ti-lock input-icon" aria-hidden="true"></i>
-              <input type="password" id="password" name="password" placeholder="Min. 8 caractères" required>
-              <button type="button" class="input-toggle-pw" onclick="togglePw(this)" aria-label="Afficher">
+              <input type="password" id="password" name="password"
+                     placeholder="Min. 8 caractères" required>
+              <button type="button" class="input-toggle-pw" onclick="togglePw(this)">
                 <i class="ti ti-eye"></i>
               </button>
             </div>
@@ -154,19 +371,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="confirm">Confirmation</label>
             <div class="input-icon-wrap">
               <i class="ti ti-lock input-icon" aria-hidden="true"></i>
-              <input type="password" id="confirm" name="confirm" placeholder="Répéter" required>
+              <input type="password" id="confirm" name="confirm"
+                     placeholder="Répéter" required>
             </div>
           </div>
         </div>
 
-        <button type="submit" class="btn-primary btn-full" style="margin-top:8px">
-          <i class="ti ti-user-plus" aria-hidden="true"></i> Créer mon compte gratuitement
+        <button type="submit" class="btn-submit">
+          <i class="ti ti-user-plus" aria-hidden="true"></i>
+          Créer mon compte gratuitement
         </button>
 
-        <p style="font-size:12px;color:var(--text-muted);margin-top:12px;text-align:center">
-          En m'inscrivant j'accepte les conditions d'utilisation.
+        <p class="auth-cgu">
+          En m'inscrivant j'accepte les
+          <a href="<?= SITE_URL ?>/rgpd.php">conditions d'utilisation</a>
+          et la politique de confidentialité.
         </p>
       </form>
+
     </div>
   </div>
 
@@ -175,7 +397,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <script>
 function togglePw(btn) {
   const input = btn.closest('.input-icon-wrap').querySelector('input');
-  input.type = input.type === 'password' ? 'text' : 'password';
+  input.type  = input.type === 'password' ? 'text' : 'password';
   btn.querySelector('i').className = input.type === 'password' ? 'ti ti-eye' : 'ti ti-eye-off';
 }
 </script>

@@ -48,21 +48,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $slugBase = slugUnique($pdo, 'courses', 'slug', slug($titre));
         $stmt = $pdo->prepare(
             'INSERT INTO courses
-             (category_id, titre, sous_titre, slug, description, miniature, video_intro,
-              niveau, langue, type, tarif, prix, duree_heures, certificat, quiz_final, note_min_certificat,
-              actif, statut, date_publication, ordre, created_by)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,?)'
+             (category_id, titre, slug, description, miniature, video_intro,
+              niveau, type, tarif, prix, duree_heures, certificat,
+              actif, statut, ordre, created_by)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,?)'
         );
         $stmt->execute([
-            $category_id, $titre, $sous_titre ?: null, $slugBase, $description,
+            $category_id, $titre, $slugBase, $description ?: null,
             $miniature, $video_intro ?: null,
-            $niveau, $langue,
-            $type, $tarif,
+            $niveau, $type, $tarif,
             $type === 'gratuit' ? 0 : $prix,
             $duree_heures ?: null,
-            $certificat, $quiz_final, $note_min,
-            $actif, $statut,
-            $date_publication ?: null,
+            $certificat, $actif, $statut,
             $_SESSION['admin_id']
         ]);
         $newId = $pdo->lastInsertId();
@@ -82,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Ajouter un cours — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 <style>
 /* ── Layout ── */
 .ca-grid          { display:grid; grid-template-columns:1fr 360px; gap:24px; align-items:start; }
@@ -339,9 +336,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               Parcours (tarif) <span style="color:red">*</span>
             </label>
             <select id="tarif" name="tarif" onchange="onTarifChange(this.value)">
-              <option value="decouverte"    <?= (($_POST['tarif']??'decouverte')==='decouverte')    ?'selected':'' ?>>💡 Découverte — Gratuit</option>
-              <option value="business_plan" <?= (($_POST['tarif']??'')==='business_plan')?'selected':'' ?>>📊 Business Plan — 5 000 FCFA</option>
-              <option value="lancement"     <?= (($_POST['tarif']??'')==='lancement')    ?'selected':'' ?>>🚀 Lancement — 8 000 FCFA</option>
+              <option value="decouverte"    <?= (($_POST['tarif']??'decouverte')==='decouverte')    ?'selected':'' ?>>🆓 Découverte — Gratuit</option>
+              <option value="essentiel"     <?= (($_POST['tarif']??'')==='essentiel')    ?'selected':'' ?>>⭐ Essentiel — 5 000 FCFA</option>
+              <option value="business_plan" <?= (($_POST['tarif']??'')==='business_plan')?'selected':'' ?>>📊 Business Plan — 15 000 FCFA</option>
+              <option value="lancement"     <?= (($_POST['tarif']??'')==='lancement')    ?'selected':'' ?>>🚀 Lancement — 25 000 FCFA</option>
             </select>
             <small style="color:var(--text-muted);font-size:11px">
               Ce cours sera visible uniquement pour les utilisateurs ayant ce parcours.
@@ -387,6 +385,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <!-- ── Bouton ── -->
+        
+        <!-- SEO -->
+        <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:4px">
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">🔍 Référencement (SEO)</div>
+          <div class="form-group">
+            <label>Titre SEO <small style="font-weight:400;color:var(--text-muted)">(60 car. max recommandé)</small></label>
+            <input type="text" name="seo_title" value="<?= h($course['seo_title'] ?? $course['titre'] ?? '') ?>" placeholder="Titre optimisé pour Google" maxlength="70">
+          </div>
+          <div class="form-group">
+            <label>Meta description <small style="font-weight:400;color:var(--text-muted)">(155 car. max recommandé)</small></label>
+            <textarea name="seo_description" rows="2" placeholder="Description courte affichée dans les résultats Google..." maxlength="200"><?= h($course['seo_description'] ?? '') ?></textarea>
+          </div>
+          <div class="form-group">
+            <label>Mots-clés SEO <small style="font-weight:400;color:var(--text-muted)">(séparés par des virgules)</small></label>
+            <input type="text" name="seo_keywords" value="<?= h($course['seo_keywords'] ?? '') ?>" placeholder="entrepreneuriat bénin, business plan, formation">
+          </div>
+        </div>
+
         <button type="submit" class="btn-submit">
           <i class="ti ti-device-floppy"></i> Enregistrer le cours
         </button>
@@ -410,9 +426,10 @@ function togglePrix(val) {
 
 // ── Info tarif
 const tarifData = {
-  decouverte:    { label:'💡 Découverte',    color:'#EAF3DE', border:'#97C459', text:'#27500A', hint:'Visible par tous sans paiement. Contenu d\'introduction.', type:'gratuit' },
-  business_plan: { label:'📊 Business Plan', color:'#FEF3C7', border:'#F5C518', text:'#92400E', hint:'Réservé aux utilisateurs ayant souscrit au plan 5 000 FCFA.', type:'payant' },
-  lancement:     { label:'🚀 Lancement',     color:'#D1FAE5', border:'#10b981', text:'#065F46', hint:'Réservé aux utilisateurs du plan complet 8 000 FCFA.', type:'payant' },
+  decouverte:    { label:'🆓 Découverte',    color:'#EAF3DE', border:'#97C459', text:'#27500A', hint:'Visible par tous sans paiement. Accès 100% gratuit.', type:'gratuit' },
+  essentiel:     { label:'⭐ Essentiel',     color:'#EDE9FE', border:'#8B5CF6', text:'#4C1D95', hint:'Réservé aux abonnés Essentiel — 5 000 FCFA/mois.', type:'payant' },
+  business_plan: { label:'📊 Business Plan', color:'#FEF3C7', border:'#F5C518', text:'#92400E', hint:'Réservé aux abonnés Business Plan — 15 000 FCFA/mois.', type:'payant' },
+  lancement:     { label:'🚀 Lancement',     color:'#D1FAE5', border:'#10b981', text:'#065F46', hint:'Réservé aux abonnés Lancement — 25 000 FCFA/mois.', type:'payant' },
 };
 
 function onTarifChange(val) {

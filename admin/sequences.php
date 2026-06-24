@@ -24,7 +24,7 @@ $sequences = $sequences->fetchAll();
 <title>Séquences — <?= h($module['titre']) ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 </head>
 <body class="admin-layout">
 <?php include __DIR__ . '/partials/sidebar.php'; ?>
@@ -83,7 +83,7 @@ $sequences = $sequences->fetchAll();
                 <span title="Texte" style="font-size:18px;color:#534AB7"><i class="ti ti-text-size"></i></span>
               <?php endif; ?>
               <?php if ($s['video_url']): ?>
-                <span title="Vidéo" style="font-size:18px;color:#BA7517"><i class="ti ti-video"></i></span>
+                <span title="Vidéo" style="font-size:18px;color:#6C47D4"><i class="ti ti-video"></i></span>
               <?php endif; ?>
               <?php if ($s['audio_url']): ?>
                 <span title="Audio" style="font-size:18px;color:#3B6D11"><i class="ti ti-music"></i></span>

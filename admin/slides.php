@@ -14,7 +14,7 @@ $slides = $pdo->query('SELECT * FROM slides ORDER BY ordre ASC, created_at DESC'
 <title>Slides — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 </head>
 <body class="admin-layout">
 <?php include __DIR__ . '/partials/sidebar.php'; ?>

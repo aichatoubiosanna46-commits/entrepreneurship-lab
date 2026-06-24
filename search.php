@@ -122,7 +122,7 @@ $categories = $pdo->query('SELECT * FROM categories WHERE actif = 1 ORDER BY nom
             <?php if ($c['type'] === 'gratuit'): ?>
               <span style="color:#16a34a;font-weight:600"><i class="ti ti-gift"></i> Gratuit</span>
             <?php else: ?>
-              <span style="color:#BA7517;font-weight:600"><?= fcfa((float)$c['prix']) ?></span>
+              <span style="color:#6C47D4;font-weight:600"><?= fcfa((float)$c['prix']) ?></span>
             <?php endif; ?>
           </div>
         </div>

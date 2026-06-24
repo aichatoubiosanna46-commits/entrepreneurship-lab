@@ -1,78 +1,110 @@
 <?php
-// admin/quiz_add.php — Créer un quiz avec questions/réponses
+// admin/quiz_add.php — Créer un quiz lié à une séquence
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 reqAdmin();
-$pdo = getPDO();
 
-// Toutes les séquences
+$pdo    = getPDO();
+$seqId  = (int)($_GET['sequence_id'] ?? 0);
+$erreur = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $titre       = trim($_POST['titre'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $seuil       = (int)($_POST['seuil_reussite'] ?? 60);
+    $actif       = isset($_POST['actif']) ? 1 : 0;
+    $seqIdPost   = (int)($_POST['sequence_id'] ?? 0);
+    $qtextes     = $_POST['q_texte']       ?? [];
+    $qtypes      = $_POST['q_type']        ?? [];
+    $qpoints     = $_POST['q_points']      ?? [];
+    $qexplics    = $_POST['q_explication'] ?? [];
+    $areponses   = $_POST['a_texte']       ?? [];
+    $acorrects   = $_POST['a_correct']     ?? [];
+    $afeedbacks  = $_POST['a_feedback']    ?? [];
+
+    if (!$titre) {
+        $erreur = 'Le titre est requis.';
+    } else {
+        $dureeMin   = (int)($_POST['duree_minutes'] ?? 0);
+        $tentMax    = (int)($_POST['tentatives_max'] ?? 0);
+        $aleatoire  = isset($_POST['ordre_aleatoire']) ? 1 : 0;
+        $pdo->prepare(
+            'INSERT INTO quizzes (sequence_id, module_id, titre, description, seuil_reussite, actif, duree_minutes, tentatives_max, ordre_aleatoire) VALUES (?,NULL,?,?,?,?,?,?,?)'
+        )->execute([$seqIdPost ?: null, $titre, $description, $seuil, $actif, $dureeMin ?: null, $tentMax ?: null, $aleatoire]);
+        $quizId = (int)$pdo->lastInsertId();
+
+        foreach ($qtextes as $qi => $qtext) {
+            $qtext = trim($qtext);
+            if (!$qtext) continue;
+            $pdo->prepare(
+                'INSERT INTO questions (quiz_id, question, type, ordre, points, explication) VALUES (?,?,?,?,?,?)'
+            )->execute([
+                $quizId, $qtext,
+                $qtypes[$qi] ?? 'choix_unique',
+                $qi,
+                (int)($qpoints[$qi] ?? 1),
+                trim($qexplics[$qi] ?? '')
+            ]);
+            $qId = (int)$pdo->lastInsertId();
+
+            $repTextes   = $areponses[$qi]  ?? [];
+            $repCorrects = $acorrects[$qi]  ?? [];
+            $repFeedback = $afeedbacks[$qi] ?? [];
+
+            foreach ($repTextes as $ai => $atext) {
+                $atext = trim($atext);
+                if (!$atext) continue;
+                $isCorrect = isset($repCorrects[$ai]) ? 1 : 0;
+                $pdo->prepare(
+                    'INSERT INTO answers (question_id, texte, est_correct, ordre, feedback) VALUES (?,?,?,?,?)'
+                )->execute([
+                    $qId, $atext, $isCorrect, $ai,
+                    trim($repFeedback[$ai] ?? '')
+                ]);
+            }
+        }
+
+        // Lier le quiz à la séquence automatiquement
+        if ($seqIdPost) {
+            $pdo->prepare('UPDATE sequences SET quiz_id = ? WHERE id = ?')
+                ->execute([$quizId, $seqIdPost]);
+        }
+
+        header('Location: ' . SITE_URL . '/admin/quizzes.php');
+        exit;
+    }
+}
+
+// Récupérer toutes les séquences avec leur module et cours
 $sequences = $pdo->query(
-    'SELECT s.id, s.titre, c.titre as course_titre, m.titre as module_titre
+    'SELECT s.id, s.titre as seq_titre,
+            m.titre as module_titre,
+            c.titre as cours_titre
      FROM sequences s
      JOIN modules m ON m.id = s.module_id
      JOIN courses c ON c.id = m.course_id
-     WHERE s.actif = 1 ORDER BY c.titre, m.ordre, s.ordre'
+     WHERE s.actif = 1
+     ORDER BY c.titre, m.ordre, s.ordre'
 )->fetchAll();
 
-$errors = [];
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    verifierCSRF();
-    $seqId    = (int)($_POST['sequence_id'] ?? 0);
-    $titre    = trim($_POST['titre'] ?? '');
-    $desc     = trim($_POST['description'] ?? '');
-    $scoreMin = max(0, min(100, (int)($_POST['score_min'] ?? 70)));
-
-    if (!$seqId) $errors[] = 'Sélectionnez une séquence.';
-    if (!$titre) $errors[] = 'Le titre est obligatoire.';
-
-    if (empty($errors)) {
-        $pdo->prepare(
-            'INSERT INTO quizzes (sequence_id, titre, description, score_min) VALUES (?, ?, ?, ?)'
-        )->execute([$seqId, $titre, $desc, $scoreMin]);
-        $quizId = $pdo->lastInsertId();
-
-        // Questions
-        $questions = $_POST['questions'] ?? [];
-        foreach ($questions as $qi => $qdata) {
-            $qtext = trim($qdata['question'] ?? '');
-            $qtype = $qdata['type'] ?? 'choix_unique';
-            $qpts  = max(1, (int)($qdata['points'] ?? 1));
-            if (!$qtext) continue;
-            $pdo->prepare(
-                'INSERT INTO questions (quiz_id, question, type, ordre, points) VALUES (?, ?, ?, ?, ?)'
-            )->execute([$quizId, $qtext, $qtype, $qi, $qpts]);
-            $qId = $pdo->lastInsertId();
-
-            // Réponses
-            $answers = $qdata['answers'] ?? [];
-            $corrects = (array)($qdata['correct'] ?? []);
-            foreach ($answers as $ai => $atexte) {
-                $atexte = trim($atexte);
-                if (!$atexte) continue;
-                $isCorrect = in_array((string)$ai, array_map('strval', $corrects)) ? 1 : 0;
-                $pdo->prepare(
-                    'INSERT INTO answers (question_id, texte, est_correct, ordre) VALUES (?, ?, ?, ?)'
-                )->execute([$qId, $atexte, $isCorrect, $ai]);
-            }
-        }
-        redirect(SITE_URL . '/admin/quizzes.php', 'Quiz créé avec succès !', 'success');
-    }
-}
+$currentPage  = 'quiz_add.php';
+$NB_QUESTIONS = 5;
+$NB_REPONSES  = 4;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Créer un quiz — Admin <?= SITE_NAME ?></title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Créer un quiz — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 <style>
-.question-block { background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:16px;position:relative; }
-.answer-row { display:flex;align-items:center;gap:8px;margin-bottom:8px; }
-.answer-row input[type=text] { flex:1;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px; }
-.btn-add-ans { background:none;border:1px dashed #e5e7eb;color:#534AB7;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600; }
+.q-block{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:16px}
+.q-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:#F59E0B;color:#1C1917;border-radius:50%;font-size:12px;font-weight:800;margin-right:8px}
+.ans-grid{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:8px;align-items:center;padding:8px;background:#fff;border:1px solid #f3f4f6;border-radius:8px;margin-bottom:6px}
+.fld{width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;box-sizing:border-box}
+.fld:focus{outline:none;border-color:#F59E0B}
 </style>
 </head>
 <body class="admin-layout">
@@ -80,106 +112,144 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="admin-content">
   <div class="admin-topbar">
     <div>
-      <h1 class="admin-page-title">Créer un quiz</h1>
-      <a href="<?= SITE_URL ?>/admin/quizzes.php" class="btn-link">← Retour aux quiz</a>
+      <div class="admin-page-title">Créer un quiz</div>
+      <div class="admin-page-sub">Le quiz sera lié à une séquence — l'apprenant le fait à la fin de la séquence</div>
     </div>
+    <a href="<?= SITE_URL ?>/admin/quizzes.php" class="btn-outline"><i class="ti ti-arrow-left"></i> Retour</a>
   </div>
-  <?= flash() ?>
-  <?php if ($errors): ?>
-  <div class="flash flash-error" style="margin-bottom:16px">
-    <?php foreach ($errors as $e): ?><div><?= h($e) ?></div><?php endforeach; ?>
-  </div>
+
+  <?php if ($erreur): ?>
+  <div class="alert alert-error"><i class="ti ti-alert-circle"></i> <?= h($erreur) ?></div>
   <?php endif; ?>
 
-  <form method="POST" class="admin-card" style="max-width:900px">
-    <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+  <form method="POST" action="">
 
-    <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-      <div class="form-field">
-        <label>Séquence associée *</label>
-        <select name="sequence_id" required>
-          <option value="">-- Choisir une séquence --</option>
-          <?php foreach ($sequences as $s): ?>
-          <option value="<?= $s['id'] ?>"><?= h($s['course_titre'].' › '.$s['module_titre'].' › '.$s['titre']) ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-      <div class="form-field">
+    <!-- Infos générales -->
+    <div class="admin-card" style="margin-bottom:20px">
+      <div class="admin-card-title"><i class="ti ti-help-circle" style="color:var(--primary)"></i> Informations du quiz</div>
+
+      <div class="form-group">
         <label>Titre du quiz *</label>
-        <input type="text" name="titre" placeholder="Ex: Quiz Module 1" required value="<?= h($_POST['titre']??'') ?>">
+        <input type="text" name="titre" class="fld" required placeholder="Ex: Quiz — Valider son idée">
       </div>
-      <div class="form-field">
+      <div class="form-group">
         <label>Description</label>
-        <input type="text" name="description" value="<?= h($_POST['description']??'') ?>">
+        <textarea name="description" class="fld" rows="2" placeholder="Instructions pour les étudiants..."></textarea>
       </div>
-      <div class="form-field">
-        <label>Score minimum pour réussir (%)</label>
-        <input type="number" name="score_min" min="0" max="100" value="<?= $_POST['score_min']??70 ?>">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Séquence associée</label>
+          <select name="sequence_id" class="fld">
+            <option value="">— Aucune séquence —</option>
+            <?php foreach ($sequences as $s): ?>
+            <option value="<?= $s['id'] ?>" <?= $s['id']==$seqId?'selected':'' ?>>
+              <?= h($s['cours_titre']) ?> → <?= h($s['module_titre']) ?> → <?= h($s['seq_titre']) ?>
+            </option>
+            <?php endforeach; ?>
+          </select>
+          <small style="color:var(--text-muted);font-size:11px">
+            Le bouton "Faire le quiz" apparaîtra à la fin de cette séquence
+          </small>
+        </div>
+        <div class="form-group">
+          <label>Seuil de réussite (%)</label>
+          <input type="number" name="seuil_reussite" value="60" min="0" max="100" class="fld">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Durée limite (minutes) <small style="font-weight:400;color:#6b7280">0 = illimitée</small></label>
+          <input type="number" name="duree_minutes" value="0" min="0" max="180" class="fld">
+        </div>
+        <div class="form-group">
+          <label>Tentatives max <small style="font-weight:400;color:#6b7280">0 = illimitées</small></label>
+          <input type="number" name="tentatives_max" value="0" min="0" max="99" class="fld">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" name="ordre_aleatoire" value="1"> Mélanger l'ordre des questions
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" name="actif" value="1" checked> Quiz actif
+        </label>
       </div>
     </div>
 
-    <h3 style="font-size:16px;font-weight:700;margin:20px 0 12px">Questions</h3>
-    <div id="questions-wrap"></div>
+    <!-- Questions -->
+    <div class="admin-card" style="margin-bottom:20px">
+      <div class="admin-card-title">
+        <i class="ti ti-list-numbers" style="color:var(--primary)"></i>
+        Questions
+        <small style="font-weight:400;color:var(--text-muted);margin-left:8px">— Laissez vides les questions non utilisées</small>
+      </div>
 
-    <button type="button" onclick="addQuestion()" class="btn-outline" style="margin-bottom:24px">
-      <i class="ti ti-plus"></i> Ajouter une question
+      <?php for ($qi = 0; $qi < $NB_QUESTIONS; $qi++): ?>
+      <div class="q-block">
+        <div style="font-size:14px;font-weight:700;color:#1C1917;margin-bottom:14px">
+          <span class="q-num"><?= $qi+1 ?></span> Question <?= $qi+1 ?>
+        </div>
+
+        <div class="form-group">
+          <label>Texte de la question</label>
+          <textarea name="q_texte[<?= $qi ?>]" class="fld" rows="2"
+            placeholder="Ex: Quelle est la première étape pour valider une idée ?"></textarea>
+        </div>
+
+        <div class="form-row" style="margin-bottom:14px">
+          <div class="form-group">
+            <label>Type</label>
+            <select name="q_type[<?= $qi ?>]" class="fld">
+              <option value="choix_unique">Choix unique</option>
+              <option value="choix_multiple">Choix multiple</option>
+              <option value="vrai_faux">Vrai / Faux</option>
+              <option value="texte_libre">Texte libre (correction manuelle)</option>
+              <option value="fill_blank">Complétion de texte (remplir le trou)</option>
+              <option value="correspondance">Correspondance (associer éléments)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Points</label>
+            <input type="number" name="q_points[<?= $qi ?>]" value="1" min="1" max="10" class="fld">
+          </div>
+        </div>
+
+        <div style="font-size:12px;font-weight:600;color:#6b7280;margin-bottom:8px">
+          RÉPONSES — cochez ✓ la/les bonne(s) réponse(s)
+        </div>
+
+        <?php for ($ai = 0; $ai < $NB_REPONSES; $ai++): ?>
+        <div class="ans-grid">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+            <span style="width:24px;height:24px;background:#f3f4f6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">
+              <?= chr(65+$ai) ?>
+            </span>
+            <input type="checkbox" name="a_correct[<?= $qi ?>][<?= $ai ?>]" value="1"
+              style="width:16px;height:16px;accent-color:#F59E0B;cursor:pointer" title="Bonne réponse">
+            <small style="font-size:9px;color:#9ca3af">Correct</small>
+          </div>
+          <input type="text" name="a_texte[<?= $qi ?>][<?= $ai ?>]"
+            placeholder="Réponse <?= chr(65+$ai) ?>..." class="fld">
+          <input type="text" name="a_feedback[<?= $qi ?>][<?= $ai ?>]"
+            placeholder="Feedback si choisie (optionnel)..." class="fld" style="font-size:11px;color:#6b7280">
+        </div>
+        <?php endfor; ?>
+
+        <div class="form-group" style="margin-top:12px">
+          <label>💡 Explication (affichée après validation)</label>
+          <textarea name="q_explication[<?= $qi ?>]" class="fld" rows="2"
+            placeholder="Pourquoi cette réponse est correcte..."></textarea>
+        </div>
+      </div>
+      <?php endfor; ?>
+    </div>
+
+    <button type="submit" class="btn-primary btn-full" style="padding:14px;font-size:15px">
+      <i class="ti ti-device-floppy"></i> Créer le quiz
     </button>
-
-    <div style="border-top:1px solid #e5e7eb;padding-top:16px">
-      <button type="submit" class="btn-primary"><i class="ti ti-check"></i> Créer le quiz</button>
-    </div>
   </form>
 </div>
-<script>
-let qCount = 0;
-function addQuestion() {
-  const qi = qCount++;
-  const wrap = document.getElementById('questions-wrap');
-  const div = document.createElement('div');
-  div.className = 'question-block';
-  div.id = 'q-' + qi;
-  div.innerHTML = `
-    <button type="button" onclick="this.closest('.question-block').remove()" style="position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;color:#dc2626;font-size:18px"><i class="ti ti-x"></i></button>
-    <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-bottom:12px;align-items:end">
-      <div>
-        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Question *</label>
-        <input type="text" name="questions[${qi}][question]" placeholder="Entrez votre question..." style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;box-sizing:border-box" required>
-      </div>
-      <div>
-        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Type</label>
-        <select name="questions[${qi}][type]" style="padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">
-          <option value="choix_unique">Choix unique</option>
-          <option value="choix_multiple">Choix multiple</option>
-          <option value="vrai_faux">Vrai / Faux</option>
-        </select>
-      </div>
-      <div>
-        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Points</label>
-        <input type="number" name="questions[${qi}][points]" value="1" min="1" style="width:60px;padding:8px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">
-      </div>
-    </div>
-    <div id="answers-${qi}">
-      ${makeAnswer(qi, 0)}
-      ${makeAnswer(qi, 1)}
-    </div>
-    <button type="button" class="btn-add-ans" onclick="addAnswer(${qi})"><i class="ti ti-plus"></i> Ajouter réponse</button>
-  `;
-  wrap.appendChild(div);
-}
-let ansCount = {};
-function makeAnswer(qi, ai) {
-  return `<div class="answer-row">
-    <input type="checkbox" name="questions[${qi}][correct][]" value="${ai}" title="Correcte ?">
-    <input type="text" name="questions[${qi}][answers][${ai}]" placeholder="Réponse ${ai+1}...">
-  </div>`;
-}
-function addAnswer(qi) {
-  if (!ansCount[qi]) ansCount[qi] = 2;
-  const ai = ansCount[qi]++;
-  const wrap = document.getElementById('answers-' + qi);
-  wrap.insertAdjacentHTML('beforeend', makeAnswer(qi, ai));
-}
-addQuestion();
-</script>
 </body>
 </html>

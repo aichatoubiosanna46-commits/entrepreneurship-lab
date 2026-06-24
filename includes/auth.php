@@ -89,17 +89,86 @@ function adminCourant(): ?array {
  * Connecte un utilisateur en session (clés préfixées user_)
  */
 function connecterUtilisateur(array $user): void {
+    // Générer un token de session unique (anti-partage de compte)
+    $sessionToken = bin2hex(random_bytes(16));
+    try {
+        $pdo = getPDO();
+        $pdo->prepare('UPDATE users SET session_token=?, last_seen=NOW() WHERE id=?')
+            ->execute([$sessionToken, $user['id']]);
+    } catch (Exception $e) {}
+    $_SESSION['session_token'] = $sessionToken;
     regenererSession();
     $_SESSION['user_id']    = $user['id'];
     $_SESSION['user_nom']   = $user['nom'] . ' ' . $user['prenom'];
     $_SESSION['user_email'] = $user['email'];
+
+    // Fingerprint session (IP + user-agent)
+    $ip        = $_SERVER['REMOTE_ADDR'] ?? '';
+    $ua        = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $fingerprint = hash('sha256', $ip . $ua . SECRET_KEY);
+    $_SESSION['user_fingerprint'] = $fingerprint;
+
+    // Token de session unique
+    $token = bin2hex(random_bytes(32));
+    $_SESSION['user_session_token'] = $token;
+
+    try {
+        $pdo = getPDO();
+        // Supprimer les anciennes sessions si SESSION_SINGLE activé
+        if (defined('SESSION_SINGLE') && SESSION_SINGLE) {
+            $pdo->prepare('DELETE FROM user_sessions WHERE user_id = ?')->execute([$user['id']]);
+        }
+        // Enregistrer la nouvelle session
+        $pdo->prepare(
+            'INSERT INTO user_sessions (user_id, token, fingerprint, ip, user_agent)
+             VALUES (?, ?, ?, ?, ?)'
+        )->execute([$user['id'], $token, $fingerprint, $ip, $ua]);
+        // Mettre à jour last_login
+        $pdo->prepare(
+            'UPDATE users SET last_login_at = NOW(), last_login_ip = ? WHERE id = ?'
+        )->execute([$ip, $user['id']]);
+    } catch (Exception $e) { /* silent */ }
 }
 
 /**
  * Vérifie si un utilisateur (front) est connecté
  */
 function estConnecte(): bool {
-    return isset($_SESSION['user_id']);
+    if (!isset($_SESSION['user_id'])) return false;
+    // Vérifier que le token de session correspond (anti-partage)
+    if (isset($_SESSION['session_token'])) {
+        try {
+            $pdo = getPDO();
+            $stmt = $pdo->prepare('SELECT session_token FROM users WHERE id=? AND actif=1');
+            $stmt->execute([$_SESSION['user_id']]);
+            $row = $stmt->fetch();
+            if ($row && $row['session_token'] && $row['session_token'] !== $_SESSION['session_token']) {
+                session_destroy();
+                return false;
+            }
+            // Mettre à jour last_seen toutes les 5 minutes
+            if (!isset($_SESSION['last_seen_update']) || time() - $_SESSION['last_seen_update'] > 300) {
+                $pdo->prepare('UPDATE users SET last_seen=NOW() WHERE id=?')->execute([$_SESSION['user_id']]);
+                $_SESSION['last_seen_update'] = time();
+            }
+        } catch (Exception $e) {}
+    }
+    if (!isset($_SESSION['user_id'])) return false;
+
+    // Vérifier fingerprint si présent
+    if (isset($_SESSION['user_fingerprint'])) {
+        $ip  = $_SERVER['REMOTE_ADDR'] ?? '';
+        $ua  = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $fp  = hash('sha256', $ip . $ua . SECRET_KEY);
+        if (!hash_equals($_SESSION['user_fingerprint'], $fp)) {
+            // Fingerprint invalide → déconnecter
+            session_unset();
+            session_destroy();
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -138,6 +207,32 @@ function utilisateurCourant(): ?array {
     $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ? AND actif = 1');
     $stmt->execute([$_SESSION['user_id']]);
     return $stmt->fetch() ?: null;
+}
+
+
+/**
+ * Vérifie si l'utilisateur est coach ou admin
+ */
+function estCoach(): bool {
+    if (estAdmin()) return true;
+    if (!estConnecte()) return false;
+    try {
+        $pdo  = getPDO();
+        $stmt = $pdo->prepare('SELECT role FROM users WHERE id=? AND actif=1');
+        $stmt->execute([$_SESSION['user_id']]);
+        $row = $stmt->fetch();
+        return in_array($row['role'] ?? '', ['coach', 'moderateur']);
+    } catch(Exception $e) { return false; }
+}
+
+/**
+ * Redirige si non coach
+ */
+function reqCoach(): void {
+    if (!estCoach() && !estAdmin()) {
+        header('Location: ' . SITE_URL . '/dashboard.php?error=acces_refuse');
+        exit;
+    }
 }
 
 // ============================================================

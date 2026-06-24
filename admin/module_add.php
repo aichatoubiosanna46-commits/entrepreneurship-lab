@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <!-- Quill Snow theme -->
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 <style>
 /* ── Layout ── */
 .ma-grid        { display:grid; grid-template-columns:1fr 320px; gap:24px; align-items:start; }
@@ -349,7 +349,7 @@ function updatePreview() {
     html += `<div class="sp-seq">Séquence ${i}</div>`;
   }
   if (nb > 6) html += `<div class="sp-seq" style="color:var(--primary)">+ ${nb - 6} autres…</div>`;
-  if (act > 0) html += `<div class="sp-seq" style="color:var(--amber,#BA7517)"><i class="ti ti-pencil-check"></i> ${act} activité${act>1?'s':''}</div>`;
+  if (act > 0) html += `<div class="sp-seq" style="color:var(--amber,#6C47D4)"><i class="ti ti-pencil-check"></i> ${act} activité${act>1?'s':''}</div>`;
   document.getElementById('preview-seqs').innerHTML = html;
 }
 

@@ -28,7 +28,7 @@
   </div>
 
   <div class="footer-bottom">
-    <span>© <?= date('Y') ?> <?= SITE_NAME ?> — Cotonou, Bénin</span>
+    <span>© <?= date('Y') ?> <?= SITE_NAME ?> Parakou, Bénin</span>
     <div style="display:flex;gap:12px">
       <a href="#"><i class="ti ti-brand-facebook" aria-hidden="true"></i></a>
       <a href="#"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i></a>

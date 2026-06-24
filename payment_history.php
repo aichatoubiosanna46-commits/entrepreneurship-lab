@@ -103,7 +103,7 @@ $planNames = ['decouverte'=>'Découverte','business_plan'=>'Business Plan','lanc
         </tr></thead>
         <tbody>
           <?php foreach ($payments as $p):
-            $statColors = ['valide'=>['#EAF3DE','#27500A'],'en_attente'=>['#fffbf0','#92400e'],'echoue'=>['#FAECE7','#993C1D']];
+            $statColors = ['valide'=>['#EAF3DE','#27500A'],'en_attente'=>['#f5f3ff','#92400e'],'echoue'=>['#FAECE7','#993C1D']];
             [$bg,$fg] = $statColors[$p['statut']] ?? ['#f9fafb','#6b7280'];
           ?>
           <tr style="border-top:1px solid #e5e7eb">

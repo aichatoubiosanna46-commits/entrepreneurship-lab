@@ -1,0 +1,35 @@
+-- ============================================================
+-- LOT 2 : Profil avancé, Sessions, SEO, XP, Défis, Deadline
+-- ============================================================
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS universite    VARCHAR(200) DEFAULT NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS filiere       VARCHAR(200) DEFAULT NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS promotion     VARCHAR(100) DEFAULT NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS bio           TEXT DEFAULT NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS xp_total      INT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_seen     TIMESTAMP NULL DEFAULT NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS session_token VARCHAR(64) DEFAULT NULL;
+
+ALTER TABLE sequences ADD COLUMN IF NOT EXISTS xp_reward INT UNSIGNED NOT NULL DEFAULT 10;
+ALTER TABLE sequences ADD COLUMN IF NOT EXISTS deadline  DATETIME DEFAULT NULL;
+
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS seo_title       VARCHAR(255) DEFAULT NULL;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS seo_description TEXT DEFAULT NULL;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS seo_keywords    VARCHAR(500) DEFAULT NULL;
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS duree_acces     INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = illimité';
+
+ALTER TABLE enrollments ADD COLUMN IF NOT EXISTS expires_at DATETIME DEFAULT NULL;
+
+CREATE TABLE IF NOT EXISTS challenges (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    titre       VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL,
+    semaine     DATE NOT NULL,
+    xp_reward   INT UNSIGNED NOT NULL DEFAULT 50,
+    actif       TINYINT(1) NOT NULL DEFAULT 1,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Index pour performances
+CREATE INDEX IF NOT EXISTS idx_users_xp ON users(xp_total DESC);
+CREATE INDEX IF NOT EXISTS idx_enrollments_expires ON enrollments(expires_at);

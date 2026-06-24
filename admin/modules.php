@@ -30,7 +30,7 @@ $modules = $modules->fetchAll();
 <title>Modules — <?= h($course['titre']) ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 </head>
 <body class="admin-layout">
 <?php include __DIR__ . '/partials/sidebar.php'; ?>
@@ -44,7 +44,7 @@ $modules = $modules->fetchAll();
         &nbsp;/&nbsp; <?= h($course['titre']) ?>
         &nbsp;·&nbsp; <?= count($modules) ?> module(s)
         <?php
-        $tarifLabels = ['decouverte'=>'💡 Découverte','business_plan'=>'📊 Business Plan','lancement'=>'🚀 Lancement'];
+        $tarifLabels = ['decouverte'=>'🆓 Découverte','essentiel'=>'⭐ Essentiel','business_plan'=>'📊 Business Plan','lancement'=>'🚀 Lancement'];
         $tLabel = $tarifLabels[$course['tarif'] ?? 'decouverte'] ?? '—';
         ?>
         &nbsp;·&nbsp; <strong style="color:var(--amber)"><?= $tLabel ?></strong>

@@ -52,15 +52,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($erreurs)) {
+        $embedCode = trim($_POST['embed_code'] ?? '');
+        $pdfUrl    = trim($_POST['pdf_url']    ?? '');
         $stmt = $pdo->prepare(
             'UPDATE sequences SET titre=?, description=?, contenu=?, video_url=?, audio_url=?,
-             image_seq=?, fichier_pdf=?, duree_min=?, ordre=?, actif=? WHERE id=?'
+             image_seq=?, fichier_pdf=?, duree_min=?, ordre=?, actif=?, embed_code=?, pdf_url=? WHERE id=?'
         );
         $stmt->execute([
             $titre, $desc ?: null, $contenu ?: null,
             $videoUrl ?: null, $audioUrl ?: null,
             $imageSeq, $fichierPdf,
-            $duree ?: null, $ordre, $actif, $id
+            $duree ?: null, $ordre, $actif,
+            $embedCode ?: null, $pdfUrl ?: null, $id
         ]);
         redirect(SITE_URL.'/admin/sequences.php?module_id='.$moduleId,
                  'Séquence mise à jour !', 'success');
@@ -76,7 +79,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <title>Modifier séquence — <?= h($seq['titre']) ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+<style>
+.ql-container { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; }
+.ql-toolbar { border-radius: 8px 8px 0 0; background: #f9fafb; }
+.ql-container { border-radius: 0 0 8px 8px; }
+.ql-editor { min-height: 300px; line-height: 1.7; }
+</style>
 </head>
 <body class="admin-layout">
 <?php include __DIR__ . '/partials/sidebar.php'; ?>
@@ -119,17 +130,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="text" id="description" name="description" value="<?= h($seq['description'] ?? '') ?>">
           </div>
           <div class="form-group">
-            <label for="contenu">Contenu</label>
-            <textarea id="contenu" name="contenu" rows="8"><?= h($seq['contenu'] ?? '') ?></textarea>
+            <label for="contenu">Contenu texte simple (optionnel)</label>
+            <textarea id="contenu" name="contenu" rows="4"><?= h($seq['contenu'] ?? '') ?></textarea>
           </div>
           <div class="form-group">
-            <label for="video_url"><i class="ti ti-video" style="color:#BA7517"></i> URL Vidéo</label>
+            <label>Contenu riche (eBook / leçon formatée)</label>
+            <div id="quill-editor" style="min-height:300px;background:#fff"></div>
+            <input type="hidden" name="contenu_riche" id="contenu_riche_hidden">
+            <textarea id="contenu_riche_raw" style="display:none"><?= $seq['contenu_riche'] ?? '' ?></textarea>
+          </div>
+          <div class="form-group">
+            <label for="video_url"><i class="ti ti-video" style="color:#6C47D4"></i> URL Vidéo</label>
             <input type="url" id="video_url" name="video_url" value="<?= h($seq['video_url'] ?? '') ?>">
           </div>
           <div class="form-group">
             <label for="audio_url"><i class="ti ti-music" style="color:#3B6D11"></i> URL Audio</label>
             <input type="url" id="audio_url" name="audio_url" value="<?= h($seq['audio_url'] ?? '') ?>">
           </div>
+
+          <div class="form-group" style="margin-top:16px">
+            <label for="embed_code"><i class="ti ti-code" style="color:#6C47D4"></i> Code embed / iframe</label>
+            <textarea id="embed_code" name="embed_code" rows="3" placeholder="<iframe src='...' width='100%' height='400'></iframe>"><?= h($seq['embed_code'] ?? '') ?></textarea>
+            <small style="color:var(--text-muted);font-size:11px">Coller le code embed de Genially, Google Forms, Typeform, Padlet, Miro...</small>
+          </div>
+          <div class="form-group">
+            <label for="pdf_url"><i class="ti ti-file-type-pdf" style="color:#dc2626"></i> URL PDF à afficher</label>
+            <input type="url" id="pdf_url" name="pdf_url" value="<?= h($seq['pdf_url'] ?? '') ?>" placeholder="https://...document.pdf">
+            <small style="color:var(--text-muted);font-size:11px">Le PDF sera affiché directement dans la séquence (lecture sans téléchargement obligatoire)</small>
+          </div>
+
         </div>
       </div>
 
@@ -170,12 +199,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
           </div>
           <div class="form-group">
+
+          <div class="form-group" style="margin-top:12px">
+            <label><i class="ti ti-lock" style="color:#6b7280"></i> Mot de passe d'accès <small style="font-weight:400;color:var(--text-muted)">(optionnel)</small></label>
+            <input type="text" name="mot_de_passe" value="<?= h($seq['mot_de_passe'] ?? '') ?>" placeholder="Laisser vide = pas de protection">
+            <small style="color:var(--text-muted);font-size:11px">L'étudiant devra saisir ce mot de passe pour accéder à la séquence</small>
+          </div>
+
             <label class="checkbox-label">
               <input type="checkbox" name="actif" value="1" <?= $seq['actif'] ? 'checked' : '' ?>>
               <span>Visible pour les apprenants</span>
             </label>
+            <label class="checkbox-label" style="margin-top:10px">
+              <input type="checkbox" name="est_optionnel" value="1" <?= ($seq['est_optionnel']??0) ? 'checked' : '' ?>>
+              <span>Activité optionnelle <small style="color:var(--text-muted);font-weight:400">(ne bloque pas la progression)</small></span>
+            </label>
           </div>
         </div>
+
+        
+        <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">⚙️ Paramètres avancés</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>XP récompense</label>
+              <input type="number" name="xp_reward" value="<?= h($sequence['xp_reward'] ?? 10) ?>" min="0" max="500">
+              <small style="color:var(--text-muted);font-size:11px">Points XP attribués à la complétion</small>
+            </div>
+            <div class="form-group">
+              <label>Date limite (deadline)</label>
+              <input type="datetime-local" name="deadline" value="<?= h($sequence['deadline'] ?? '') ?>">
+              <small style="color:var(--text-muted);font-size:11px">Optionnel — affiche un compte à rebours</small>
+            </div>
+          </div>
+        </div>
+
+        
+        <!-- Chapitres vidéo -->
+        <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:4px">
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">
+            🎬 Chapitres vidéo <small style="font-weight:400;color:var(--text-muted)">(optionnel)</small>
+          </div>
+          <?php
+          try {
+            $chapStmt = $pdo->prepare('SELECT * FROM video_chapters WHERE sequence_id = ? ORDER BY timecode ASC');
+            $chapStmt->execute([$sequence['id'] ?? 0]);
+            $existingChapters = $chapStmt->fetchAll();
+          } catch(Exception $e) { $existingChapters = []; }
+          ?>
+          <div id="chapters-wrap">
+            <?php foreach ($existingChapters as $ch): ?>
+            <div class="chapter-row" style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+              <input type="number" name="chapters_time[]" value="<?= $ch['timecode'] ?>" placeholder="Secondes" style="width:80px;padding:7px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px" min="0">
+              <input type="text" name="chapters_title[]" value="<?= h($ch['titre']) ?>" placeholder="Titre du chapitre" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px">
+              <input type="hidden" name="chapters_id[]" value="<?= $ch['id'] ?>">
+              <button type="button" onclick="this.parentElement.remove()" style="padding:6px;background:none;border:none;cursor:pointer;color:#dc2626"><i class="ti ti-x"></i></button>
+            </div>
+            <?php endforeach; ?>
+          </div>
+          <button type="button" onclick="addChapter()" class="btn-outline btn-sm" style="margin-top:6px">
+            <i class="ti ti-plus"></i> Ajouter un chapitre
+          </button>
+          <small style="display:block;margin-top:6px;color:var(--text-muted);font-size:11px">Entrez le timecode en secondes (ex: 120 = 2:00)</small>
+        </div>
+        <script>
+        function addChapter() {
+          const wrap = document.getElementById('chapters-wrap');
+          const div = document.createElement('div');
+          div.className = 'chapter-row';
+          div.style.cssText = 'display:flex;gap:8px;align-items:center;margin-bottom:8px';
+          div.innerHTML = '<input type="number" name="chapters_time[]" placeholder="Secondes" style="width:80px;padding:7px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px" min="0"><input type="text" name="chapters_title[]" placeholder="Titre du chapitre" style="flex:1;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px"><input type="hidden" name="chapters_id[]" value="0"><button type="button" onclick="this.parentElement.remove()" style="padding:6px;background:none;border:none;cursor:pointer;color:#dc2626"><i class="ti ti-x"></i></button>';
+          wrap.appendChild(div);
+        }
+        </script>
 
         <button type="submit" class="btn-primary btn-full">
           <i class="ti ti-device-floppy"></i> Enregistrer les modifications
@@ -198,5 +294,54 @@ function previewImg(input) {
 }
 </script>
 <script src="<?= SITE_URL ?>/assets/js/dashboard.js"></script>
+<script>
+const toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],
+  ['blockquote'],
+  [{ 'header': [1, 2, 3, false] }],
+  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+  [{ 'color': [] }, { 'background': [] }],
+  [{ 'align': [] }],
+  ['link', 'image'],
+  ['clean']
+];
+
+const quill = new Quill('#quill-editor', {
+  theme: 'snow',
+  modules: { toolbar: toolbarOptions },
+  placeholder: 'Contenu de la séquence...'
+});
+
+// Charger le contenu existant
+const existingContent = document.getElementById('contenu_riche_raw').value;
+if (existingContent) quill.root.innerHTML = existingContent;
+
+// Upload image
+quill.getModule('toolbar').addHandler('image', () => {
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', 'image/*');
+  input.click();
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await fetch('<?= SITE_URL ?>/admin/upload_image.php', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.location) {
+        const range = quill.getSelection();
+        quill.insertEmbed(range ? range.index : 0, 'image', data.location);
+      } else { alert('Erreur: ' + (data.error || 'Upload échoué')); }
+    } catch(e) { alert('Erreur réseau'); }
+  };
+});
+
+// Avant soumission - récupérer HTML
+document.querySelector('form').addEventListener('submit', function() {
+  document.getElementById('contenu_riche_hidden').value = quill.root.innerHTML;
+});
+</script>
 </body>
 </html>

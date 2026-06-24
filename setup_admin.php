@@ -7,9 +7,9 @@
 // ============================================================
 require_once __DIR__ . '/config/database.php';
 
-$email  = 'admin@entrepreneurship-lab.bj';
-$mdp    = 'Admin@2025';  // ← Changez ici avant d'exécuter
-$nom    = 'Admin';
+$email  = 'aichatoubiosanna46@gmail.com';
+$mdp    = 'Abanna';  // ← Changez ici avant d'exécuter
+$nom    = 'kpagninro';
 $prenom = 'Lab';
 $hash   = password_hash($mdp, PASSWORD_BCRYPT, ['cost' => 12]);
 

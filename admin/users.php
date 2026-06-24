@@ -19,8 +19,8 @@ $total = $pdo->prepare("SELECT COUNT(*) FROM users $where");
 $total->execute($params);
 [$offset, $pages, $page] = paginer((int)$total->fetchColumn(), 15);
 
-$stmt = $pdo->prepare("SELECT u.*, (SELECT COUNT(*) FROM inscriptions i WHERE i.user_id = u.id) as nb_cours
-    FROM users u $where ORDER BY u.created_at DESC LIMIT 15 OFFSET $offset");
+$stmt = $pdo->prepare("SELECT u.*, (SELECT COUNT(*) FROM enrollments e WHERE e.user_id = u.id) as nb_cours
+    FROM users u $where ORDER BY u.created_at DESC LIMIT 15 OFFSET " . (int)$offset);
 $stmt->execute($params);
 $users = $stmt->fetchAll();
 ?>
@@ -31,7 +31,7 @@ $users = $stmt->fetchAll();
 <title>Utilisateurs — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 </head>
 <body class="admin-layout">
 <?php include __DIR__ . '/partials/sidebar.php'; ?>

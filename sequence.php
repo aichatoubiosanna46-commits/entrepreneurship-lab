@@ -12,7 +12,7 @@ if (!$seqId) { header('Location: ' . SITE_URL . '/dashboard.php'); exit; }
 // Récupérer la séquence avec son module et cours
 $stmt = $pdo->prepare(
     'SELECT s.*, m.titre as module_titre, m.id as module_id, m.course_id,
-            c.titre as course_titre, c.slug as course_slug, c.certificat as has_certificat,
+            c.titre as course_titre, c.slug as course_slug, c.certificat as has_certificat, c.completion_rule, c.redirect_completion,
             cat.couleur as cat_couleur, cat.icone as cat_icone
      FROM sequences s
      JOIN modules m  ON m.id = s.module_id
@@ -24,9 +24,75 @@ $stmt->execute([$seqId]);
 $seq = $stmt->fetch();
 if (!$seq) { http_response_code(404); echo 'Leçon introuvable.'; exit; }
 
+// ============================================================
+// VERROU SÉQUENTIEL CÔTÉ SERVEUR
+// Vérifier que la séquence précédente est complétée
+// ============================================================
+if ($userId && $prevSeq) {
+    $prevDone = $pdo->prepare('SELECT id FROM progress WHERE user_id=? AND sequence_id=? AND terminee=1');
+    $prevDone->execute([$userId, $prevSeq['id']]);
+    if (!$prevDone->fetch() && !($prevSeq['est_optionnel'] ?? 0)) {
+        // Séquence précédente non complétée → redirection forcée
+        redirect(
+            SITE_URL . '/sequence.php?id=' . $prevSeq['id'],
+            'Tu dois compléter la leçon précédente avant d'accéder à celle-ci.',
+            'info'
+        );
+    }
+}
+
+<?php
+// Vérification mot de passe séquence
+if (!empty($seq['mot_de_passe'])) {
+    $sessionKey = 'seq_unlocked_' . $seq['id'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['seq_password'])) {
+        if ($_POST['seq_password'] === $seq['mot_de_passe']) {
+            $_SESSION[$sessionKey] = true;
+        } else {
+            $pwError = 'Mot de passe incorrect.';
+        }
+    }
+    if (empty($_SESSION[$sessionKey])):
+?>
+<div style="max-width:400px;margin:60px auto;background:#fff;border-radius:16px;padding:32px;border:1px solid #e5e7eb;text-align:center">
+  <i class="ti ti-lock" style="font-size:48px;color:#F59E0B;display:block;margin-bottom:16px"></i>
+  <h2 style="font-size:18px;font-weight:700;color:#1C1917;margin-bottom:8px">Séquence protégée</h2>
+  <p style="font-size:13px;color:#6b7280;margin-bottom:20px">Saisissez le mot de passe pour accéder à cette séquence.</p>
+  <?php if (isset($pwError)): ?>
+  <div style="background:#fef2f2;color:#dc2626;padding:10px;border-radius:8px;font-size:13px;margin-bottom:14px"><?= h($pwError) ?></div>
+  <?php endif; ?>
+  <form method="POST" style="display:flex;flex-direction:column;gap:12px">
+    <input type="password" name="seq_password" placeholder="Mot de passe..." required
+      style="padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;font-family:inherit;text-align:center">
+    <button type="submit" style="padding:12px;background:#F59E0B;color:#1C1917;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
+      Déverrouiller
+    </button>
+  </form>
+</div>
+<?php include __DIR__ . '/includes/footer.php'; ?>
+</body></html>
+<?php exit; endif; ?>
+<?php } ?>
+
+
 // Vérifier inscription
 if (!estInscrit($userId, $seq['course_id'])) {
-    redirect(SITE_URL . '/module.php?slug=' . urlencode($seq['course_slug']), 'Inscris-toi d\'abord au cours.', 'info');
+    
+    // ── ATTRIBUTION XP ──────────────────────────────────────
+    try {
+        $xpStmt = $pdo->prepare('SELECT xp_reward FROM sequences WHERE id = ?');
+        $xpStmt->execute([$sequence['id']]);
+        $xpReward = (int)($xpStmt->fetchColumn() ?: 10);
+        $pdo->prepare('UPDATE users SET xp_total = xp_total + ? WHERE id = ?')
+            ->execute([$xpReward, $_SESSION['user_id']]);
+        // Trigger automation course_completed si applicable
+        $progCheck = progressionCours($_SESSION['user_id'], $sequence['course_id'] ?? 0);
+        if ($progCheck === 100) {
+            triggerAutomation('course_completed', $_SESSION['user_id'], $sequence['course_id'] ?? 0);
+        }
+    } catch (Exception $e) {}
+
+redirect(SITE_URL . '/module.php?slug=' . urlencode($seq['course_slug']), 'Inscris-toi d\'abord au cours.', 'info');
 }
 
 // Séquences du module (navigation)
@@ -80,12 +146,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'marqu
          ON DUPLICATE KEY UPDATE terminee = 1'
     )->execute([$userId, $seqId]);
 
-    // Vérifier si le cours est 100% complété → générer certificat
-    $pct = progressionCours($userId, $seq['course_id']);
-    if ($pct === 100 && $seq['has_certificat']) {
+    // Déclencher automation sequence_completed
+    triggerAutomation('sequence_completed', $userId, $seqId);
+    addXP($userId, 'sequence', $seq['xp_reward'] ?? 10, 'Séquence complétée : ' . $seq['titre']);
+
+    // Vérifier complétion selon la règle configurée
+    $completionRule = $seq['completion_rule'] ?? 'toutes_sequences';
+    $coursComplete  = false;
+
+    if ($completionRule === 'toutes_sequences') {
+        $pct = progressionCours($userId, $seq['course_id']);
+        $coursComplete = ($pct >= 100);
+    } elseif ($completionRule === 'pourcentage_70') {
+        $pct = progressionCours($userId, $seq['course_id']);
+        $coursComplete = ($pct >= 70);
+    } elseif ($completionRule === 'pourcentage_50') {
+        $pct = progressionCours($userId, $seq['course_id']);
+        $coursComplete = ($pct >= 50);
+    } elseif ($completionRule === 'quiz_reussi') {
+        try {
+            $qCheck = $pdo->prepare(
+                'SELECT COUNT(*) FROM quizzes qz
+                 JOIN sequences s ON s.id = qz.sequence_id
+                 JOIN modules m ON m.id = s.module_id
+                 WHERE m.course_id = ? AND qz.actif = 1
+                 AND qz.id NOT IN (SELECT quiz_id FROM quiz_results WHERE user_id = ? AND reussi = 1)'
+            );
+            $qCheck->execute([$seq['course_id'], $userId]);
+            $coursComplete = ($qCheck->fetchColumn() == 0);
+        } catch(Exception $e) { $coursComplete = false; }
+    } elseif ($completionRule === 'assignment_accepte') {
+        try {
+            $aCheck = $pdo->prepare(
+                'SELECT COUNT(*) FROM assignments a
+                 JOIN sequences s ON s.id = a.sequence_id
+                 JOIN modules m ON m.id = s.module_id
+                 WHERE m.course_id = ?
+                 AND a.id NOT IN (SELECT assignment_id FROM assignment_submissions WHERE user_id = ? AND statut = "accepte")'
+            );
+            $aCheck->execute([$seq['course_id'], $userId]);
+            $coursComplete = ($aCheck->fetchColumn() == 0);
+        } catch(Exception $e) { $coursComplete = false; }
+    }
+
+    if ($coursComplete && ($seq['has_certificat'] ?? false)) {
         genererCertificat($userId, $seq['course_id']);
     }
 
+    // Redirection après complétion configurable
+    $redirectCompletion = $seq['redirect_completion'] ?? null;
+
+    if ($coursComplete && $redirectCompletion) {
+        redirect($redirectCompletion, 'Cours complété ! 🎉', 'success');
+    }
     $dest = $nextSeq
         ? SITE_URL . '/sequence.php?id=' . $nextSeq['id']
         : SITE_URL . '/module.php?slug=' . urlencode($seq['course_slug']);
@@ -131,7 +244,7 @@ $pct = progressionCours($userId, $seq['course_id']);
 }
 .seq-sidebar-course { font-size: 13px; font-weight: 600; color: var(--text,#111); margin-bottom: 6px; }
 .seq-prog-bar { height: 6px; background: #e5e7eb; border-radius: 99px; overflow: hidden; margin-bottom: 4px; }
-.seq-prog-fill { height: 100%; background: linear-gradient(90deg,#534AB7,#BA7517); border-radius: 99px; }
+.seq-prog-fill { height: 100%; background: linear-gradient(90deg,#534AB7,#6C47D4); border-radius: 99px; }
 .seq-prog-label { font-size: 11px; color: var(--text-muted,#6b7280); }
 .seq-nav-list { padding: 8px 0; }
 .seq-nav-item {
@@ -172,7 +285,7 @@ $pct = progressionCours($userId, $seq['course_id']);
 .seq-text-body h3 { font-size: 17px; font-weight: 600; margin: 20px 0 8px; }
 .seq-text-body ul, .seq-text-body ol { padding-left: 24px; margin: 12px 0; }
 .seq-text-body li { margin-bottom: 6px; }
-.seq-text-body blockquote { border-left: 4px solid var(--amber,#BA7517); padding: 10px 16px; background: #fffbf0; margin: 16px 0; border-radius: 0 8px 8px 0; }
+.seq-text-body blockquote { border-left: 4px solid var(--amber,#6C47D4); padding: 10px 16px; background: #f5f3ff; margin: 16px 0; border-radius: 0 8px 8px 0; }
 
 /* PDF */
 .pdf-embed { width: 100%; height: 500px; border: 1px solid var(--border,#e5e7eb); border-radius: 10px; margin-bottom: 24px; }
@@ -231,7 +344,7 @@ $pct = progressionCours($userId, $seq['course_id']);
 
 /* Quiz banner */
 .quiz-banner {
-  background: linear-gradient(135deg,#534AB7,#BA7517); color: #fff;
+  background: linear-gradient(135deg,#534AB7,#6C47D4); color: #fff;
   border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;
   display: flex; align-items: center; gap: 16px;
 }
@@ -249,10 +362,49 @@ $pct = progressionCours($userId, $seq['course_id']);
   .seq-sidebar { display: none; }
   .seq-content, .seq-actions, .comments-section { padding: 20px 16px; }
 }
+
+<style>
+/* Watermark vidéo */
+.video-container { position: relative; }
+.video-watermark {
+  position: absolute; top: 10px; right: 10px;
+  color: rgba(255,255,255,0.35); font-size: 12px;
+  font-weight: 600; pointer-events: none; z-index: 10;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  user-select: none;
+}
+/* Anti clic droit */
+.video-overlay {
+  position: absolute; inset: 0; z-index: 5;
+  background: transparent;
+}
+</style>
 </style>
 </head>
 <body>
 <?php include __DIR__ . '/includes/header.php'; ?>
+
+<?php if (!empty($sequence['deadline']) && strtotime($sequence['deadline']) > time()): ?>
+<div style="background:#FEF3C7;border:1px solid #fde68a;border-radius:10px;padding:12px 18px;margin:12px 24px;display:flex;align-items:center;gap:12px">
+  <i class="ti ti-clock" style="font-size:20px;color:#D97706;flex-shrink:0"></i>
+  <div>
+    <div style="font-size:12px;font-weight:700;color:#92400e">Date limite</div>
+    <div id="seq-countdown" style="font-size:14px;font-weight:800;color:#D97706"></div>
+  </div>
+</div>
+<script>
+(function(){
+  const d = new Date("<?= $sequence['deadline'] ?>");
+  function tick(){
+    const diff = d - new Date();
+    if(diff<=0){document.getElementById('seq-countdown').textContent='Délai expiré';return;}
+    const days=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+    document.getElementById('seq-countdown').textContent=(days>0?days+'j ':'')+String(h).padStart(2,'0')+'h '+String(m).padStart(2,'0')+'m '+String(s).padStart(2,'0')+'s';
+  }
+  tick(); setInterval(tick,1000);
+})();
+</script>
+<?php endif; ?>
 
 <div class="seq-layout">
   <!-- Sidebar navigation -->
@@ -262,7 +414,122 @@ $pct = progressionCours($userId, $seq['course_id']);
       <div class="seq-prog-bar"><div class="seq-prog-fill" style="width:<?= $pct ?>%"></div></div>
       <div class="seq-prog-label"><?= $pct ?>% complété</div>
     </div>
-    <div class="seq-nav-list">
+    
+      <?php if (!empty($seq['embed_code'])): ?>
+      <!-- Contenu embarqué (iframe) -->
+      <div style="margin-top:20px;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
+        <?= $seq['embed_code'] ?>
+      </div>
+      <?php endif; ?>
+
+      <?php if (!empty($seq['pdf_url'])): ?>
+      <!-- PDF en lecture directe -->
+      <div style="margin-top:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:14px;font-weight:600;color:#1C1917"><i class="ti ti-file-type-pdf" style="color:#dc2626"></i> Document PDF</div>
+          <a href="<?= h($seq['pdf_url']) ?>" target="_blank" download style="font-size:12px;color:#6b7280;text-decoration:none;padding:6px 12px;border:1px solid #e5e7eb;border-radius:6px">
+            <i class="ti ti-download"></i> Télécharger
+          </a>
+        </div>
+        <iframe src="<?= h($seq['pdf_url']) ?>#toolbar=0&navpanes=0" 
+                style="width:100%;height:600px;border:1px solid #e5e7eb;border-radius:8px"
+                oncontextmenu="return false">
+        </iframe>
+      </div>
+      <?php endif; ?>
+
+      
+<?php
+// Message félicitations si cours complété
+if ($userId) {
+    $pct_cours = progressionCours($userId, $course['id'] ?? 0);
+    if ($pct_cours >= 100): ?>
+<div style="background:linear-gradient(135deg,#FEF3C7,#FFFBEB);border:2px solid #F59E0B;border-radius:16px;padding:28px;margin:24px 0;text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">🎉</div>
+    <h3 style="font-size:20px;font-weight:800;color:#1C1917;margin-bottom:8px">Félicitations <?= h(explode(' ', $_SESSION['user_nom'] ?? '')[0]) ?> !</h3>
+    <p style="font-size:14px;color:#6b7280;margin-bottom:16px">Tu as complété l'intégralité de ce cours. Ton certificat est disponible !</p>
+    <a href="<?= SITE_URL ?>/certificate.php?course=<?= $course['id'] ?? 0 ?>"
+       style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#F59E0B;color:#1C1917;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none">
+        <i class="ti ti-certificate"></i> Télécharger mon certificat
+    </a>
+    <a href="<?= SITE_URL ?>/satisfaction.php?course_id=<?= $course['id'] ?? 0 ?>"
+       style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#fff;border:2px solid #F59E0B;color:#D97706;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;margin-top:10px">
+        <i class="ti ti-star"></i> Donner mon avis sur ce cours
+    </a>
+</div>
+<?php endif; } ?>
+
+      
+      <?php
+      // Commentaires horodatés
+      if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['video_comment']) && $userId) {
+          $timecode  = (int)($_POST['timecode'] ?? 0);
+          $comment   = trim($_POST['commentaire'] ?? '');
+          if ($comment) {
+              try {
+                  $pdo->prepare('INSERT INTO video_comments (sequence_id, user_id, timecode, commentaire) VALUES (?,?,?,?)')
+                      ->execute([$seq['id'], $userId, $timecode, $comment]);
+              } catch(Exception $e) {}
+          }
+      }
+      // Charger commentaires
+      try {
+          $videoComments = $pdo->prepare(
+              'SELECT vc.*, u.nom, u.prenom FROM video_comments vc
+               JOIN users u ON u.id=vc.user_id
+               WHERE vc.sequence_id=? ORDER BY vc.timecode ASC'
+          );
+          $videoComments->execute([$seq['id']]);
+          $videoComments = $videoComments->fetchAll();
+      } catch(Exception $e) { $videoComments = []; }
+      ?>
+      <?php if (!empty($seq['video_url']) && $userId): ?>
+      <div style="margin-top:20px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:14px;padding:20px">
+        <div style="font-size:13px;font-weight:700;color:#1C1917;margin-bottom:14px">
+          <i class="ti ti-message-circle" style="color:#F59E0B"></i> Commentaires sur la vidéo
+        </div>
+        <!-- Formulaire -->
+        <form method="POST" style="display:flex;gap:10px;margin-bottom:16px;align-items:flex-end">
+          <input type="hidden" name="video_comment" value="1">
+          <div style="flex:1">
+            <label style="font-size:11px;color:#9ca3af;font-weight:600;display:block;margin-bottom:4px">TIMECODE (secondes)</label>
+            <input type="number" name="timecode" min="0" value="0" id="videoTimecode"
+              style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-family:inherit">
+          </div>
+          <div style="flex:3">
+            <label style="font-size:11px;color:#9ca3af;font-weight:600;display:block;margin-bottom:4px">COMMENTAIRE</label>
+            <input type="text" name="commentaire" placeholder="Votre commentaire à ce moment de la vidéo..." required
+              style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-family:inherit;box-sizing:border-box">
+          </div>
+          <button type="submit" style="padding:8px 14px;background:#F59E0B;color:#1C1917;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
+            <i class="ti ti-send"></i> Poster
+          </button>
+        </form>
+        <!-- Liste commentaires -->
+        <?php if (empty($videoComments)): ?>
+        <p style="font-size:13px;color:#9ca3af;text-align:center;padding:12px">Soyez le premier à commenter cette vidéo !</p>
+        <?php else: ?>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <?php foreach ($videoComments as $vc): ?>
+          <?php $min=floor($vc['timecode']/60); $sec=$vc['timecode']%60; ?>
+          <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:#fff;border-radius:8px;border:1px solid #f3f4f6">
+            <button type="button" onclick="seekVideo(<?= $vc['timecode'] ?>)"
+              style="font-family:monospace;font-size:11px;font-weight:700;color:#F59E0B;background:#FEF3C7;padding:3px 8px;border-radius:4px;border:none;cursor:pointer;flex-shrink:0">
+              <?= sprintf('%d:%02d', $min, $sec) ?>
+            </button>
+            <div style="flex:1">
+              <span style="font-size:12px;font-weight:700;color:#1C1917"><?= h($vc['nom'].' '.$vc['prenom']) ?></span>
+              <span style="font-size:11px;color:#9ca3af;margin-left:8px"><?= date('d/m/Y', strtotime($vc['created_at'])) ?></span>
+              <p style="font-size:13px;color:#374151;margin:4px 0 0"><?= h($vc['commentaire']) ?></p>
+            </div>
+          </div>
+          <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+      </div>
+      <?php endif; ?>
+
+      <div class="seq-nav-list">
       <?php foreach ($siblings as $sib):
         $isCurrent = $sib['id'] == $seqId;
         $isDone = false;
@@ -302,32 +569,99 @@ $pct = progressionCours($userId, $seq['course_id']);
       <h1><?= h($seq['titre']) ?></h1>
 
       <?php if ($seq['video_url']): ?>
-      <div class="video-wrap">
+      <div class="video-wrap" style="position:relative">
         <?php
         $videoUrl = $seq['video_url'];
-        // Convertir YouTube watch → embed
+        $videoId = '';
+        $isYoutube = false;
+        $isVimeo = false;
+        // YouTube
         if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $videoUrl, $m)) {
-            $videoUrl = 'https://www.youtube.com/embed/' . $m[1] . '?rel=0';
+            $videoId = $m[1];
+            $isYoutube = true;
+            $videoUrl = 'https://www.youtube.com/embed/' . $m[1] . '?rel=0&enablejsapi=1';
         }
-        // Convertir Vimeo
+        // Vimeo
         if (preg_match('/vimeo\.com\/(\d+)/', $videoUrl, $m)) {
-            $videoUrl = 'https://player.vimeo.com/video/' . $m[1];
+            $isVimeo = true;
+            $videoUrl = 'https://player.vimeo.com/video/' . $m[1] . '?api=1';
         }
-        if (str_contains($videoUrl, 'youtube.com/embed') || str_contains($videoUrl, 'vimeo.com')) {
+        // Chapitres
+        try {
+            $chapStmt = getPDO()->prepare('SELECT * FROM video_chapters WHERE sequence_id = ? ORDER BY timecode ASC');
+            $chapStmt->execute([$seq['id']]);
+            $chapters = $chapStmt->fetchAll();
+        } catch(Exception $e) { $chapters = []; }
         ?>
-        <iframe src="<?= h($videoUrl) ?>" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-        <?php } else { ?>
-        <video src="<?= h($videoUrl) ?>" controls preload="metadata"></video>
-        <?php } ?>
+        <div class="video-container" oncontextmenu="return false">
+        <div class="video-overlay"></div>
+        <?php if(estConnecte()): ?>
+        <div class="video-watermark"><?= h($_SESSION['user_nom'] ?? '') ?></div>
+        <?php endif; ?>
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;background:#000">
+          <iframe id="videoPlayer"
+                  src="<?= h($videoUrl) ?>"
+                  style="position:absolute;top:0;left:0;width:100%;height:100%;border:0"
+                  allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture">
+          </iframe>
+        </div>
+
+        <?php if (!empty($chapters)): ?>
+        <!-- Chapitres vidéo -->
+        <div style="margin-top:16px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:16px">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af;margin-bottom:10px">
+            <i class="ti ti-list" style="color:#F59E0B"></i> Chapitres
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <?php foreach ($chapters as $ch): ?>
+            <?php
+              $min = floor($ch['timecode'] / 60);
+              $sec = $ch['timecode'] % 60;
+              $label = sprintf('%d:%02d', $min, $sec);
+            ?>
+            <button type="button"
+                    onclick="seekVideo(<?= $ch['timecode'] ?>)"
+                    style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;text-align:left;font-family:inherit;font-size:13px;transition:.15s"
+                    onmouseover="this.style.background='#FFFBEB';this.style.borderColor='#F59E0B'"
+                    onmouseout="this.style.background='#fff';this.style.borderColor='#e5e7eb'">
+              <span style="font-family:monospace;font-size:11px;font-weight:700;color:#F59E0B;background:#FEF3C7;padding:2px 8px;border-radius:4px;flex-shrink:0"><?= $label ?></span>
+              <span style="color:#374151"><?= h($ch['titre']) ?></span>
+              <i class="ti ti-player-play" style="margin-left:auto;color:#9ca3af;font-size:14px"></i>
+            </button>
+            <?php endforeach; ?>
+          </div>
+        </div>
+        <?php endif; ?>
+
+        <script>
+        function seekVideo(seconds) {
+          const iframe = document.getElementById('videoPlayer');
+          <?php if ($isYoutube): ?>
+          // YouTube postMessage API
+          iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'seekTo',args:[seconds,true]}), '*');
+          iframe.contentWindow.postMessage(JSON.stringify({event:'command',func:'playVideo',args:[]}), '*');
+          <?php else: ?>
+          // Recharger avec timecode
+          const src = iframe.src.split('?')[0];
+          iframe.src = src + '?t=' + seconds;
+          <?php endif; ?>
+        }
+        </script>
       </div>
       <?php endif; ?>
 
-      <?php if ($seq['contenu']): ?>
-      <div class="seq-text-body"><?= $seq['contenu'] ?></div>
+      <?php if (!empty($seq['contenu_riche'])): ?>
+      <div class="seq-text-body seq-rich-content" style="font-size:15px;line-height:1.8;color:#1C1917">
+        <?= $seq['contenu_riche'] ?>
+      </div>
+      <?php elseif (!empty($seq['contenu'])): ?>
+      <div class="seq-text-body" style="font-size:15px;line-height:1.8;color:#1C1917;white-space:pre-wrap">
+        <?= h($seq['contenu']) ?>
+      </div>
       <?php endif; ?>
 
       <?php if ($seq['fichier_pdf']): ?>
-      <h3 style="font-size:16px;margin-bottom:12px"><i class="ti ti-file-text" style="color:#BA7517"></i> Document PDF</h3>
+      <h3 style="font-size:16px;margin-bottom:12px"><i class="ti ti-file-text" style="color:#6C47D4"></i> Document PDF</h3>
       <embed class="pdf-embed" src="<?= SITE_URL ?>/assets/uploads/<?= h($seq['fichier_pdf']) ?>" type="application/pdf">
       <a href="<?= SITE_URL ?>/assets/uploads/<?= h($seq['fichier_pdf']) ?>" download class="btn-nav" style="margin-bottom:24px">
         <i class="ti ti-download"></i> Télécharger le PDF
@@ -380,10 +714,18 @@ $pct = progressionCours($userId, $seq['course_id']);
       <form method="POST" style="margin:0">
         <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
         <input type="hidden" name="action" value="marquer_terminee">
-        <button type="submit" class="btn-complete">
+        <button type="submit" class="btn-complete" onclick="handleComplete(event)">
           <i class="ti ti-check"></i> Marquer comme terminée
         </button>
       </form>
+      <script>
+      function handleComplete(e) {
+        <?php if ($nextSeq): ?>
+        // Lancer auto-avancement si séquence suivante
+        setTimeout(() => autoAdvance('<?= SITE_URL ?>/sequence.php?id=<?= $nextSeq['id'] ?>'), 100);
+        <?php endif; ?>
+      }
+      </script>
       <?php else: ?>
         <span class="btn-complete done-btn"><i class="ti ti-check"></i> Leçon terminée</span>
       <?php endif; ?>
@@ -440,5 +782,25 @@ $pct = progressionCours($userId, $seq['course_id']);
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
 <script src="<?= SITE_URL ?>/assets/js/main.js"></script>
+
+<script>
+// Auto-avancement après marquage comme complétée
+function autoAdvance(nextUrl) {
+  if (!nextUrl) return;
+  const banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1C1917;color:#fff;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.3)';
+  banner.innerHTML = '<i class="ti ti-arrow-right" style="color:#F59E0B;font-size:18px"></i> Passage automatique à la séquence suivante... <span id="countdown" style="color:#F59E0B;font-weight:800">5</span>';
+  document.body.appendChild(banner);
+  let n = 5;
+  const t = setInterval(() => {
+    n--;
+    const el = document.getElementById('countdown');
+    if (el) el.textContent = n;
+    if (n <= 0) { clearInterval(t); window.location.href = nextUrl; }
+  }, 1000);
+  banner.addEventListener('click', () => { clearInterval(t); banner.remove(); });
+}
+</script>
+
 </body>
 </html>

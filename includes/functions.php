@@ -257,3 +257,438 @@ function paginer(int $total, int $parPage = 12, string $param = 'page'): array {
     $offset       = ($pageCourante - 1) * $parPage;
     return [$offset, $pages, $pageCourante];
 }
+
+// ------------------------------------------------------------
+// Ajoute des points XP à un utilisateur
+// ------------------------------------------------------------
+function addXP(int $userId, string $source, int $points, string $desc = ''): void {
+    try {
+        $pdo = getPDO();
+        $pdo->prepare(
+            'INSERT INTO user_xp (user_id, source, points, description) VALUES (?, ?, ?, ?)'
+        )->execute([$userId, $source, $points, $desc]);
+        $pdo->prepare(
+            'UPDATE users SET xp_total = xp_total + ? WHERE id = ?'
+        )->execute([$points, $userId]);
+    } catch (Exception $e) { /* silent */ }
+}
+
+// ------------------------------------------------------------
+// Attribue un badge à un utilisateur (si pas déjà obtenu)
+// ------------------------------------------------------------
+function awardBadge(int $userId, int $badgeId): bool {
+    try {
+        $pdo = getPDO();
+        $check = $pdo->prepare('SELECT id FROM user_badges WHERE user_id = ? AND badge_id = ?');
+        $check->execute([$userId, $badgeId]);
+        if ($check->fetch()) return false; // déjà obtenu
+
+        $pdo->prepare(
+            'INSERT INTO user_badges (user_id, badge_id) VALUES (?, ?)'
+        )->execute([$userId, $badgeId]);
+
+        // XP bonus pour badge obtenu
+        addXP($userId, 'badge_obtenu', 50, 'Badge obtenu');
+
+        // Récupérer nom du badge pour notification
+        $b = $pdo->prepare('SELECT nom FROM badges WHERE id = ?');
+        $b->execute([$badgeId]);
+        $badge = $b->fetch();
+        if ($badge) {
+            sendNotification($userId, 'Badge obtenu !', 'Vous avez débloqué le badge « ' . $badge['nom'] . ' » !', 'success', SITE_URL . '/badges.php');
+        }
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+// ------------------------------------------------------------
+// Envoie une notification à un utilisateur (alias enrichi)
+// ------------------------------------------------------------
+function sendNotification(int $userId, string $titre, string $message, string $type = 'info', string $lien = ''): void {
+    notifierUtilisateur($userId, $titre, $message, $type, $lien);
+}
+
+// ------------------------------------------------------------
+// Vérifie et attribue automatiquement les badges éligibles
+// ------------------------------------------------------------
+function checkAndAwardBadges(int $userId): void {
+    try {
+        $pdo = getPDO();
+        $badges = $pdo->prepare(
+            'SELECT * FROM badges WHERE actif = 1 AND condition_type != "manuel"'
+        );
+        $badges->execute();
+
+        foreach ($badges->fetchAll() as $badge) {
+            switch ($badge['condition_type']) {
+                case 'xp_total':
+                    $xp = $pdo->prepare('SELECT xp_total FROM users WHERE id = ?');
+                    $xp->execute([$userId]);
+                    $total = (int)($xp->fetchColumn() ?? 0);
+                    if ($total >= (int)$badge['condition_valeur']) {
+                        awardBadge($userId, $badge['id']);
+                    }
+                    break;
+
+                case 'completion_cours':
+                    $courseId = (int)$badge['condition_course_id'];
+                    if ($courseId && progressionCours($userId, $courseId) >= 100) {
+                        awardBadge($userId, $badge['id']);
+                    }
+                    break;
+
+                case 'score_quiz':
+                    $minScore = (int)$badge['condition_valeur'];
+                    $hasScore = $pdo->prepare(
+                        'SELECT id FROM quiz_results WHERE user_id = ? AND score >= ? AND reussi = 1 LIMIT 1'
+                    );
+                    $hasScore->execute([$userId, $minScore]);
+                    if ($hasScore->fetch()) {
+                        awardBadge($userId, $badge['id']);
+                    }
+                    break;
+            }
+        }
+    } catch (Exception $e) { /* silent */ }
+}
+
+// ------------------------------------------------------------
+// Retourne le total XP d'un utilisateur
+// ------------------------------------------------------------
+function getUserXPTotal(int $userId): int {
+    try {
+        $pdo = getPDO();
+        $stmt = $pdo->prepare('SELECT xp_total FROM users WHERE id = ?');
+        $stmt->execute([$userId]);
+        return (int)($stmt->fetchColumn() ?? 0);
+    } catch (Exception $e) {
+        return 0;
+    }
+}
+
+// ------------------------------------------------------------
+// Retourne le classement global d'un utilisateur (par XP)
+// ------------------------------------------------------------
+function getUserRank(int $userId): int {
+    try {
+        $pdo = getPDO();
+        $stmt = $pdo->prepare(
+            'SELECT COUNT(*) + 1 FROM users WHERE xp_total > (SELECT xp_total FROM users WHERE id = ?)'
+        );
+        $stmt->execute([$userId]);
+        return (int)($stmt->fetchColumn() ?? 0);
+    } catch (Exception $e) {
+        return 0;
+    }
+}
+
+// ============================================================
+//  functions.php — Email de bienvenue
+// ============================================================
+function emailBienvenue(string $email, string $prenom): bool
+{
+    $siteName = defined('SITE_NAME') ? SITE_NAME : 'Entrepreneurship Lab';
+    $siteUrl  = defined('SITE_URL')  ? SITE_URL  : '#';
+
+    $sujet = "Bienvenue sur $siteName, $prenom ! 🎉";
+
+    $message = "
+    <!DOCTYPE html>
+    <html lang='fr'>
+    <head><meta charset='UTF-8'></head>
+    <body style='margin:0;padding:0;background:#FFFBEB;font-family:Plus Jakarta Sans,Arial,sans-serif;'>
+      <table width='100%' cellpadding='0' cellspacing='0'>
+        <tr><td align='center' style='padding:40px 16px;'>
+          <table width='520' cellpadding='0' cellspacing='0'
+                 style='background:#fff;border-radius:16px;overflow:hidden;
+                        box-shadow:0 4px 24px rgba(0,0,0,.08);'>
+
+            <!-- Header -->
+            <tr>
+              <td style='background:linear-gradient(135deg,#F59E0B,#EF4444);
+                         padding:32px 40px;text-align:center;'>
+                <div style='width:52px;height:52px;border-radius:14px;
+                            background:rgba(255,255,255,.2);
+                            display:inline-flex;align-items:center;justify-content:center;
+                            font-size:22px;font-weight:800;color:#fff;
+                            margin-bottom:12px;'>E</div>
+                <h1 style='margin:0;color:#fff;font-size:22px;font-weight:800;'>
+                  Bienvenue, $prenom !
+                </h1>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style='padding:36px 40px;'>
+                <p style='margin:0 0 16px;color:#1C1917;font-size:15px;line-height:1.7;'>
+                  Ton compte <strong>$siteName</strong> est prêt. 🚀<br>
+                  Tu peux dès maintenant accéder à tes cours et commencer ton parcours entrepreneurial.
+                </p>
+
+                <table cellpadding='0' cellspacing='0' style='margin:24px 0;'>
+                  <tr>
+                    <td style='background:#FEF3C7;border-radius:10px;padding:14px 20px;
+                               border-left:4px solid #F59E0B;'>
+                      <p style='margin:0;color:#92400E;font-size:13px;line-height:1.6;'>
+                        ✅ Cours gratuits illimités dès maintenant<br>
+                        🎓 Certificat Université de Parakou à l'obtention<br>
+                        💬 Coaching 1:1 avec un mentor dédié<br>
+                        📱 Paiement Mobile Money (MTN, Moov)
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <div style='text-align:center;margin:28px 0;'>
+                  <a href='$siteUrl/dashboard.php'
+                     style='display:inline-block;padding:13px 32px;
+                            background:linear-gradient(135deg,#F59E0B,#EF4444);
+                            color:#fff;text-decoration:none;border-radius:10px;
+                            font-weight:800;font-size:14px;
+                            box-shadow:0 3px 10px rgba(245,158,11,.3);'>
+                    Accéder à mon espace →
+                  </a>
+                </div>
+
+                <p style='margin:0;color:#6b7280;font-size:12px;line-height:1.6;'>
+                  Si tu n'es pas à l'origine de cette inscription, ignore simplement cet e-mail.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style='background:#f9fafb;padding:20px 40px;
+                         border-top:1px solid #f3f4f6;text-align:center;'>
+                <p style='margin:0;color:#9ca3af;font-size:11px;'>
+                  © " . date('Y') . " $siteName · Tous droits réservés
+                </p>
+              </td>
+            </tr>
+
+          </table>
+        </td></tr>
+      </table>
+    </body>
+    </html>";
+
+    $mailerFile = __DIR__ . '/../vendor/phpmailer/phpmailer/src/PHPMailer.php';
+    if (file_exists($mailerFile)) {
+        require_once $mailerFile;
+        require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/SMTP.php';
+        require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/Exception.php';
+        try {
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host       = SMTP_HOST;
+            $mail->SMTPAuth   = true;
+            $mail->Username   = SMTP_USER;
+            $mail->Password   = SMTP_PASS;
+            $mail->SMTPSecure = 'tls';
+            $mail->Port       = SMTP_PORT;
+            $mail->CharSet    = 'UTF-8';
+            $mail->setFrom(SMTP_FROM, SMTP_FROM_NAME);
+            $mail->addAddress($email, $prenom);
+            $mail->isHTML(true);
+            $mail->Subject = $sujet;
+            $mail->Body    = $message;
+            return $mail->send();
+        } catch (\Exception $e) {
+            error_log('emailBienvenue PHPMailer: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    $headers  = "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $headers .= "From: $siteName <no-reply@entrepreneurship-lab.com>\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+
+    return mail($email, $sujet, $message, $headers);
+}
+
+// ============================================================
+//  MOTEUR D'AUTOMATIONS
+// ============================================================
+function triggerAutomation(string $declencheur, int $userId, int $conditionId = 0): void {
+    try {
+        $pdo = getPDO();
+        $stmt = $pdo->prepare(
+            'SELECT * FROM automations WHERE declencheur = ? AND actif = 1
+             AND (condition_id IS NULL OR condition_id = ?)'
+        );
+        $stmt->execute([$declencheur, $conditionId]);
+        $automations = $stmt->fetchAll();
+
+        foreach ($automations as $auto) {
+            switch ($auto['action']) {
+                case 'enroll_course':
+                    $courseId = (int)$auto['action_value'];
+                    if ($courseId) {
+                        $chk = $pdo->prepare('SELECT id FROM enrollments WHERE user_id=? AND course_id=?');
+                        $chk->execute([$userId, $courseId]);
+                        if (!$chk->fetch()) {
+                            $pdo->prepare('INSERT INTO enrollments (user_id,course_id,statut) VALUES (?,?,"actif")')
+                                ->execute([$userId, $courseId]);
+                        }
+                    }
+                    break;
+                case 'add_tag':
+                    $tag = trim($auto['action_value']);
+                    if ($tag) {
+                        $tagStmt = $pdo->prepare('SELECT id FROM tags WHERE nom=?');
+                        $tagStmt->execute([$tag]);
+                        $tagRow = $tagStmt->fetch();
+                        if (!$tagRow) {
+                            $pdo->prepare('INSERT INTO tags (nom) VALUES (?)')->execute([$tag]);
+                            $tagId = $pdo->lastInsertId();
+                        } else {
+                            $tagId = $tagRow['id'];
+                        }
+                        $pdo->prepare('INSERT IGNORE INTO user_tags (user_id,tag_id) VALUES (?,?)')->execute([$userId, $tagId]);
+                    }
+                    break;
+                case 'notify':
+                    $pdo->prepare(
+                        'INSERT INTO user_notifications (user_id,titre,message,type) VALUES (?,?,?,"info")'
+                    )->execute([$userId, 'Félicitations !', $auto['action_value'] ?: 'Vous avez accompli une nouvelle étape !']);
+                    break;
+
+                case 'send_email':
+                    try {
+                        $userRow = $pdo->prepare('SELECT email, prenom FROM users WHERE id=?');
+                        $userRow->execute([$userId]);
+                        $userRow = $userRow->fetch();
+                        if ($userRow) {
+                            $emailBody = str_replace(
+                                ['{{prenom}}', '{{site}}'],
+                                [$userRow['prenom'], SITE_NAME],
+                                $auto['action_value'] ?: 'Bonjour {{prenom}} !'
+                            );
+                            // Utiliser PHPMailer si disponible, sinon mail() natif
+                            $mailerFile = __DIR__ . '/../vendor/phpmailer/phpmailer/src/PHPMailer.php';
+                            if (file_exists($mailerFile)) {
+                                require_once $mailerFile;
+                                require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/SMTP.php';
+                                require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/Exception.php';
+                                $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+                                $mail->isSMTP();
+                                $mail->Host       = SMTP_HOST;
+                                $mail->SMTPAuth   = true;
+                                $mail->Username   = SMTP_USER;
+                                $mail->Password   = SMTP_PASS;
+                                $mail->SMTPSecure = 'tls';
+                                $mail->Port       = SMTP_PORT;
+                                $mail->CharSet    = 'UTF-8';
+                                $mail->setFrom(SMTP_FROM, SMTP_FROM_NAME);
+                                $mail->addAddress($userRow['email'], $userRow['prenom']);
+                                $mail->isHTML(true);
+                                $mail->Subject = 'Message de ' . SITE_NAME;
+                                $mail->Body    = $emailBody;
+                                $mail->send();
+                            } else {
+                                $headers = "Content-Type: text/html; charset=UTF-8\r\nFrom: " . SITE_NAME . " <" . SMTP_FROM . ">\r\n";
+                                @mail($userRow['email'], 'Message de ' . SITE_NAME, $emailBody, $headers);
+                            }
+                        }
+                    } catch(Exception $e) { error_log('Automation send_email: ' . $e->getMessage()); }
+                    break;
+
+                case 'award_badge':
+                    // Attribuer un badge
+                    $badgeId = (int)$auto['action_value'];
+                    if ($badgeId) {
+                        awardBadge($userId, $badgeId);
+                    }
+                    break;
+
+                case 'add_xp':
+                    // Ajouter des points XP
+                    $xpPoints = (int)$auto['action_value'];
+                    if ($xpPoints > 0) {
+                        addXP($userId, 'automation', $xpPoints, 'Automation: ' . $auto['declencheur']);
+                    }
+                    break;
+
+                case 'remove_access':
+                    // Retirer l'accès à un cours
+                    $courseIdRemove = (int)$auto['action_value'];
+                    if ($courseIdRemove) {
+                        $pdo->prepare('UPDATE enrollments SET statut="inactif" WHERE user_id=? AND course_id=?')
+                            ->execute([$userId, $courseIdRemove]);
+                    }
+                    break;
+            }
+        }
+    } catch (Exception $e) {
+        error_log('Automation error: ' . $e->getMessage());
+    }
+}
+
+
+// ============================================================
+//  WHATSAPP NOTIFICATIONS
+// ============================================================
+function envoyerWhatsApp(string $telephone, string $message): bool {
+    try {
+        $pdo = getPDO();
+        $apiUrl   = $pdo->query("SELECT valeur FROM settings WHERE cle='whatsapp_api_url'")->fetchColumn();
+        $apiToken = $pdo->query("SELECT valeur FROM settings WHERE cle='whatsapp_api_token'")->fetchColumn();
+
+        if (!$apiUrl || !$apiToken) return false;
+
+        // Format numéro (supprimer +, espaces)
+        $tel = preg_replace('/[^0-9]/', '', $telephone);
+
+        $payload = json_encode([
+            'messaging_product' => 'whatsapp',
+            'to'      => $tel,
+            'type'    => 'text',
+            'text'    => ['body' => $message],
+        ]);
+
+        $ch = curl_init($apiUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $payload,
+            CURLOPT_HTTPHEADER     => [
+                'Authorization: Bearer ' . $apiToken,
+                'Content-Type: application/json',
+            ],
+            CURLOPT_TIMEOUT => 10,
+        ]);
+        $response = curl_exec($ch);
+        $code     = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        // Log
+        $pdo->prepare(
+            'INSERT INTO whatsapp_logs (user_id, telephone, message, statut) VALUES (NULL, ?, ?, ?)'
+        )->execute([$telephone, $message, ($code === 200 ? 'envoye' : 'echec')]);
+
+        return $code === 200;
+    } catch (Exception $e) {
+        error_log('WhatsApp error: ' . $e->getMessage());
+        return false;
+    }
+}
+
+function notifierWhatsAppInscription(string $telephone, string $prenom): void {
+    $msg = "Bonjour {$prenom} 👋\n\nBienvenue sur Ariziki EntrepreneurshipLab ! 🎓\n\nVotre compte a été créé avec succès. Connectez-vous pour commencer votre parcours entrepreneurial.\n\nBonne formation ! 🚀";
+    envoyerWhatsApp($telephone, $msg);
+}
+
+function notifierWhatsAppCertificat(string $telephone, string $prenom, string $coursTitre): void {
+    $msg = "Félicitations {$prenom} ! 🎉\n\nVous avez obtenu votre certificat pour la formation :\n📜 *{$coursTitre}*\n\nCertifié par l'Université de Parakou. Téléchargez votre certificat sur votre espace Ariziki.";
+    envoyerWhatsApp($telephone, $msg);
+}
+
+function notifierWhatsAppCoaching(string $telephone, string $prenom, string $dateHeure): void {
+    $msg = "Bonjour {$prenom} 👋\n\nVotre session coaching 1:1 est confirmée pour le :\n📅 *{$dateHeure}*\n\nVous recevrez le lien Zoom par email. À bientôt !";
+    envoyerWhatsApp($telephone, $msg);
+}
+

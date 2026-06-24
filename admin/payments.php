@@ -48,7 +48,7 @@ $stats = [
 <title>Paiements — Admin <?= SITE_NAME ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
 </head>
 <body class="admin-layout">
 <?php include __DIR__ . '/partials/sidebar.php'; ?>
@@ -64,7 +64,7 @@ $stats = [
       <div><p class="stat-label">Revenus validés</p><p class="stat-val"><?= number_format((float)$stats['total'],0,',',' ') ?> FCFA</p></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#fffbf0;color:#BA7517"><i class="ti ti-clock"></i></div>
+      <div class="stat-icon" style="background:#f5f3ff;color:#6C47D4"><i class="ti ti-clock"></i></div>
       <div><p class="stat-label">En attente</p><p class="stat-val"><?= $stats['attente'] ?></p></div>
     </div>
     <div class="stat-card">
@@ -78,7 +78,7 @@ $stats = [
       <thead><tr><th>Utilisateur</th><th>Référence</th><th>Montant</th><th>Méthode</th><th>Statut</th><th>Date</th><th>Action</th></tr></thead>
       <tbody>
         <?php foreach ($payments as $p):
-          $statColors = ['valide'=>['#EAF3DE','#27500A'],'en_attente'=>['#fffbf0','#92400e'],'echoue'=>['#FAECE7','#993C1D']];
+          $statColors = ['valide'=>['#EAF3DE','#27500A'],'en_attente'=>['#f5f3ff','#92400e'],'echoue'=>['#FAECE7','#993C1D']];
           [$bg,$fg] = $statColors[$p['statut']] ?? ['#f9fafb','#6b7280'];
         ?>
         <tr>
