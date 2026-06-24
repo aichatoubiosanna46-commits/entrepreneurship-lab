@@ -24,6 +24,20 @@ if (!$seq) { http_response_code(404); die('Séquence introuvable.'); }
 $moduleId = $moduleId ?: $seq['module_id'];
 $erreurs  = [];
 
+// Charger l'assignment existant (le cas échéant) + sa rubrique
+$assignment = null;
+$rubrique   = null;
+if ($seq['type_contenu'] === 'assignment') {
+    $aStmt = $pdo->prepare('SELECT * FROM assignments WHERE sequence_id = ? LIMIT 1');
+    $aStmt->execute([$id]);
+    $assignment = $aStmt->fetch();
+    if ($assignment) {
+        $rStmt = $pdo->prepare('SELECT * FROM rubriques WHERE assignment_id = ? LIMIT 1');
+        $rStmt->execute([$assignment['id']]);
+        $rubrique = $rStmt->fetch();
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifierCSRF();
 
@@ -66,6 +80,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $duree ?: null, $ordre, $actif,
             $embedCode ?: null, $pdfUrl ?: null, $id
         ]);
+
+        // Mise à jour / création de l'assignment lié (livrable)
+        if ($seq['type_contenu'] === 'assignment') {
+            $assignTitre = trim($_POST['assignment_titre'] ?? $titre) ?: $titre;
+            $assignType  = in_array($_POST['assignment_type'] ?? '', ['texte','fichier','video','audio']) ? $_POST['assignment_type'] : 'texte';
+            $noteMax     = (float)($_POST['note_max'] ?? 20);
+            $noteMin     = (float)($_POST['note_min'] ?? 10);
+            $consigne    = trim($_POST['assignment_consigne'] ?? $contenu);
+
+            if ($assignment) {
+                $pdo->prepare(
+                    'UPDATE assignments SET titre=?, consigne=?, type=?, note_min=?, note_max=? WHERE id=?'
+                )->execute([$assignTitre, $consigne, $assignType, $noteMin, $noteMax, $assignment['id']]);
+                $assignmentId = $assignment['id'];
+            } else {
+                $pdo->prepare(
+                    'INSERT INTO assignments (sequence_id, titre, consigne, type, note_min, note_max) VALUES (?,?,?,?,?,?)'
+                )->execute([$id, $assignTitre, $consigne, $assignType, $noteMin, $noteMax]);
+                $assignmentId = (int)$pdo->lastInsertId();
+            }
+
+            // Rubrique : reconstruire à partir des champs soumis
+            $criteresNom    = $_POST['criteres_nom'] ?? [];
+            $criteresPoints = $_POST['criteres_points'] ?? [];
+            $criteres = [];
+            foreach ($criteresNom as $i => $nomCritere) {
+                $nomCritere = trim($nomCritere);
+                $pts        = (float)($criteresPoints[$i] ?? 0);
+                if ($nomCritere !== '' && $pts > 0) {
+                    $criteres[] = ['nom' => $nomCritere, 'points' => $pts];
+                }
+            }
+            if (!empty($criteres)) {
+                if ($rubrique) {
+                    $pdo->prepare('UPDATE rubriques SET nom=?, titre=?, criteres=? WHERE id=?')
+                        ->execute([$assignTitre, $assignTitre, json_encode($criteres, JSON_UNESCAPED_UNICODE), $rubrique['id']]);
+                } else {
+                    $pdo->prepare('INSERT INTO rubriques (assignment_id, nom, titre, criteres) VALUES (?,?,?,?)')
+                        ->execute([$assignmentId, $assignTitre, $assignTitre, json_encode($criteres, JSON_UNESCAPED_UNICODE)]);
+                }
+            } elseif ($rubrique) {
+                // Plus aucun critère soumis : supprimer la rubrique existante
+                $pdo->prepare('DELETE FROM rubriques WHERE id=?')->execute([$rubrique['id']]);
+            }
+        }
+
         redirect(SITE_URL.'/admin/sequences.php?module_id='.$moduleId,
                  'Séquence mise à jour !', 'success');
     }
@@ -161,6 +221,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
         </div>
+
+        <?php if ($seq['type_contenu'] === 'assignment'): ?>
+        <div class="admin-card">
+          <h2 class="admin-card-title"><i class="ti ti-clipboard" style="color:#6b7280"></i> Livrable / Assignment</h2>
+          <div class="form-group">
+            <label>Titre du livrable</label>
+            <input type="text" name="assignment_titre" value="<?= h($assignment['titre'] ?? $seq['titre']) ?>">
+          </div>
+          <div class="form-group">
+            <label>Instructions du livrable *</label>
+            <textarea name="assignment_consigne" rows="5"><?= h($assignment['consigne'] ?? '') ?></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Note maximale</label>
+              <input type="number" name="note_max" value="<?= h($assignment['note_max'] ?? 20) ?>" min="1" max="100"
+                style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit">
+            </div>
+            <div class="form-group">
+              <label>Note minimale <small style="font-weight:400;color:#6b7280">(refus auto en dessous)</small></label>
+              <input type="number" name="note_min" value="<?= h($assignment['note_min'] ?? 10) ?>" min="0" max="100"
+                style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Type de rendu accepté</label>
+            <select name="assignment_type" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit">
+              <?php $atypes = ['texte'=>'Texte seulement','fichier'=>'Fichier (PDF, DOCX...)','video'=>'Vidéo','audio'=>'Audio (enregistrement micro)']; ?>
+              <?php foreach ($atypes as $val=>$lbl): ?>
+              <option value="<?= $val ?>" <?= ($assignment['type'] ?? 'texte')===$val?'selected':'' ?>><?= $lbl ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <!-- Grille de rubrique -->
+          <div class="form-group" style="margin-top:16px;border-top:1px solid #e5e7eb;padding-top:14px">
+            <label><i class="ti ti-table" style="color:#6C47D4"></i> Grille de rubrique <small style="font-weight:400;color:#6b7280">(optionnel)</small></label>
+            <?php
+            $existingCriteres = [];
+            if ($rubrique && !empty($rubrique['criteres'])) {
+                $existingCriteres = json_decode($rubrique['criteres'], true) ?: [];
+            }
+            ?>
+            <div id="rubrique-rows">
+              <?php if (!empty($existingCriteres)): foreach ($existingCriteres as $crit): ?>
+              <div class="rubrique-row" style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                <input type="text" name="criteres_nom[]" value="<?= h($crit['nom'] ?? '') ?>" placeholder="Nom du critère" style="flex:2;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">
+                <input type="number" name="criteres_points[]" value="<?= h($crit['points'] ?? '') ?>" placeholder="Points max" min="0" step="0.5" style="width:100px;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">
+                <button type="button" onclick="this.parentElement.remove()" style="padding:6px;background:none;border:none;cursor:pointer;color:#dc2626"><i class="ti ti-x"></i></button>
+              </div>
+              <?php endforeach; else: ?>
+              <div class="rubrique-row" style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                <input type="text" name="criteres_nom[]" placeholder="Nom du critère" style="flex:2;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">
+                <input type="number" name="criteres_points[]" placeholder="Points max" min="0" step="0.5" style="width:100px;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">
+                <button type="button" onclick="this.parentElement.remove()" style="padding:6px;background:none;border:none;cursor:pointer;color:#dc2626"><i class="ti ti-x"></i></button>
+              </div>
+              <?php endif; ?>
+            </div>
+            <button type="button" onclick="addRubriqueRowEdit()" class="btn-outline btn-sm" style="margin-top:4px">
+              <i class="ti ti-plus"></i> Ajouter un critère
+            </button>
+          </div>
+        </div>
+        <?php endif; ?>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:16px">
@@ -283,6 +407,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script>
+function addRubriqueRowEdit() {
+  const wrap = document.getElementById('rubrique-rows');
+  const div = document.createElement('div');
+  div.className = 'rubrique-row';
+  div.style.cssText = 'display:flex;gap:8px;align-items:center;margin-bottom:8px';
+  div.innerHTML = '<input type="text" name="criteres_nom[]" placeholder="Nom du critère" style="flex:2;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">'
+    + '<input type="number" name="criteres_points[]" placeholder="Points max" min="0" step="0.5" style="width:100px;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">'
+    + '<button type="button" onclick="this.parentElement.remove()" style="padding:6px;background:none;border:none;cursor:pointer;color:#dc2626"><i class="ti ti-x"></i></button>';
+  wrap.appendChild(div);
+}
 function previewImg(input) {
   if (!input.files[0]) return;
   const reader = new FileReader();

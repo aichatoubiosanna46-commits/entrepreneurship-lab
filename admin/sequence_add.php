@@ -24,6 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $actif       = isset($_POST['actif']) ? 1 : 0;
     $xpReward    = (int)($_POST['xp_reward'] ?? 10);
     $deadline    = $_POST['deadline'] ?: null;
+    $assignTitre = trim($_POST['assignment_titre'] ?? $titre);
+    $assignType  = in_array($_POST['assignment_type'] ?? '', ['texte','fichier','video','audio']) ? $_POST['assignment_type'] : 'texte';
+    $noteMax     = (float)($_POST['note_max'] ?? 20);
+    $noteMin     = (float)($_POST['note_min'] ?? 10);
+    $resoumission = isset($_POST['resoumission']) ? 1 : 0;
+    $criteresNom    = $_POST['criteres_nom'] ?? [];
+    $criteresPoints = $_POST['criteres_points'] ?? [];
 
     if (!$titre || !$moduleId) {
         $erreur = 'Titre et module sont requis.';
@@ -49,6 +56,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'INSERT INTO sequences (module_id, titre, slug, description, contenu, contenu_riche, video_url, audio_url, image_seq, fichier_pdf, type_contenu, duree_min, ordre, actif, xp_reward, deadline)
              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
         )->execute([$moduleId, $titre, $slug, $description, $contenu, $contenuRiche, $videoUrl ?: null, $audioUrl ?: null, $imageSeq, $fichierPdf, $type, $duree, $ordre, $actif, $xpReward, $deadline]);
+
+        $newSeqId = (int)$pdo->lastInsertId();
+
+        // Création du livrable (assignment) associé si type = assignment
+        if ($type === 'assignment' && $contenu) {
+            $pdo->prepare(
+                'INSERT INTO assignments (sequence_id, titre, consigne, type, note_min, note_max) VALUES (?,?,?,?,?,?)'
+            )->execute([$newSeqId, $assignTitre ?: $titre, $contenu, $assignType, $noteMin, $noteMax]);
+            $newAssignmentId = (int)$pdo->lastInsertId();
+
+            // Grille de rubrique (optionnelle)
+            $criteres = [];
+            foreach ($criteresNom as $i => $nomCritere) {
+                $nomCritere = trim($nomCritere);
+                $pts        = (float)($criteresPoints[$i] ?? 0);
+                if ($nomCritere !== '' && $pts > 0) {
+                    $criteres[] = ['nom' => $nomCritere, 'points' => $pts];
+                }
+            }
+            if (!empty($criteres)) {
+                $pdo->prepare(
+                    'INSERT INTO rubriques (assignment_id, nom, titre, criteres) VALUES (?,?,?,?)'
+                )->execute([$newAssignmentId, $assignTitre ?: $titre, $assignTitre ?: $titre, json_encode($criteres, JSON_UNESCAPED_UNICODE)]);
+            }
+        }
 
         redirect(SITE_URL . '/admin/sequences.php?module_id=' . $moduleId, 'Séquence créée !', 'success');
     }
@@ -196,11 +228,16 @@ $currentPage = 'sequence_add.php';
             </div>
           </div>
           <div class="form-group">
+            <label>Titre du livrable</label>
+            <input type="text" name="assignment_titre" placeholder="Laisser vide pour reprendre le titre de la séquence">
+          </div>
+          <div class="form-group">
             <label>Type de rendu accepté</label>
             <select name="assignment_type" style="width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit">
               <option value="texte">Texte seulement</option>
-              <option value="fichier">Fichier seulement (PDF, DOCX)</option>
-              <option value="les_deux">Texte + Fichier</option>
+              <option value="fichier">Fichier (PDF, DOCX...)</option>
+              <option value="video">Vidéo</option>
+              <option value="audio">Audio (enregistrement micro)</option>
             </select>
           </div>
           <div class="form-group">
@@ -208,6 +245,21 @@ $currentPage = 'sequence_add.php';
               <input type="checkbox" name="resoumission" value="1" checked>
               Autoriser la resoumission si refusé
             </label>
+          </div>
+
+          <!-- Grille de rubrique -->
+          <div class="form-group" style="margin-top:16px;border-top:1px solid #e5e7eb;padding-top:14px">
+            <label><i class="ti ti-table" style="color:#6C47D4"></i> Grille de rubrique (critères d'évaluation) <small style="font-weight:400;color:#6b7280">(optionnel)</small></label>
+            <div id="rubrique-rows">
+              <div class="rubrique-row" style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                <input type="text" name="criteres_nom[]" placeholder="Nom du critère (ex: Clarté)" style="flex:2;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">
+                <input type="number" name="criteres_points[]" placeholder="Points max" min="0" step="0.5" style="width:100px;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">
+                <button type="button" onclick="this.parentElement.remove()" style="padding:6px;background:none;border:none;cursor:pointer;color:#dc2626"><i class="ti ti-x"></i></button>
+              </div>
+            </div>
+            <button type="button" onclick="addRubriqueRow()" class="btn-outline btn-sm" style="margin-top:4px">
+              <i class="ti ti-plus"></i> Ajouter un critère
+            </button>
           </div>
         </div>
 
@@ -311,6 +363,17 @@ function switchType(type) {
   document.querySelectorAll('.type-panel').forEach(p => p.style.display = 'none');
   const panel = document.getElementById('panel-' + type);
   if (panel) panel.style.display = 'block';
+}
+
+function addRubriqueRow() {
+  const wrap = document.getElementById('rubrique-rows');
+  const div = document.createElement('div');
+  div.className = 'rubrique-row';
+  div.style.cssText = 'display:flex;gap:8px;align-items:center;margin-bottom:8px';
+  div.innerHTML = '<input type="text" name="criteres_nom[]" placeholder="Nom du critère" style="flex:2;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">'
+    + '<input type="number" name="criteres_points[]" placeholder="Points max" min="0" step="0.5" style="width:100px;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:13px">'
+    + '<button type="button" onclick="this.parentElement.remove()" style="padding:6px;background:none;border:none;cursor:pointer;color:#dc2626"><i class="ti ti-x"></i></button>';
+  wrap.appendChild(div);
 }
 </script>
 </body>

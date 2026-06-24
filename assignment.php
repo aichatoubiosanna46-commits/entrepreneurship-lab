@@ -38,6 +38,20 @@ $prevStmt = $pdo->prepare('SELECT * FROM assignment_submissions WHERE assignment
 $prevStmt->execute([$id, $userId]);
 $previous = $prevStmt->fetch();
 
+// Rubrique d'évaluation associée (lecture seule pour l'étudiant)
+$rubrique = null;
+try {
+    $rStmt = $pdo->prepare('SELECT * FROM rubriques WHERE assignment_id = ? LIMIT 1');
+    $rStmt->execute([$id]);
+    $rubrique = $rStmt->fetch();
+} catch (Exception $e) { $rubrique = null; }
+$rubriqueCriteres = [];
+$rubriqueTotal    = 0;
+if ($rubrique && !empty($rubrique['criteres'])) {
+    $rubriqueCriteres = json_decode($rubrique['criteres'], true) ?: [];
+    foreach ($rubriqueCriteres as $crit) { $rubriqueTotal += (float)($crit['points'] ?? 0); }
+}
+
 $erreur = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
