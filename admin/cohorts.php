@@ -115,7 +115,7 @@ $pageTitle = 'Cohortes';
           <?php else: ?>
             <?php foreach ($cohorts as $c): ?>
               <div style="border-bottom:1px solid var(--border,#e5e7eb);padding:10px 0;display:flex;justify-content:space-between;align-items:center">
-                <a href="?view=<?= $c['id'] ?>" style="text-decoration:none;color:<?= $viewId == $c['id'] ? 'var(--primary,#6C47D4)' : 'inherit' ?>">
+                <a href="?view=<?= $c['id'] ?>" style="text-decoration:none;color:<?= $viewId == $c['id'] ? 'var(--primary)' : 'inherit' ?>">
                   <div style="font-size:13px;font-weight:<?= $viewId == $c['id'] ? '600' : '400' ?>"><?= h($c['nom']) ?></div>
                   <div style="font-size:11px;color:var(--text-muted)"><?= $c['nb_membres'] ?> membre(s)</div>
                 </a>
@@ -123,7 +123,7 @@ $pageTitle = 'Cohortes';
                   <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="cohort_id" value="<?= $c['id'] ?>">
-                  <button type="submit" style="background:none;border:none;color:#dc2626;cursor:pointer"><i class="ti ti-trash" style="font-size:14px"></i></button>
+                  <button type="submit" class="btn-icon btn-icon-danger"><i class="ti ti-trash"></i></button>
                 </form>
               </div>
             <?php endforeach; ?>
@@ -175,7 +175,7 @@ $pageTitle = 'Cohortes';
                     <input type="hidden" name="action" value="remove_member">
                     <input type="hidden" name="cohort_id" value="<?= $viewCohort['id'] ?>">
                     <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
-                    <button type="submit" style="background:#FEE2E2;border:none;color:#991B1B;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px">
+                    <button type="submit" class="btn-outline-danger btn-sm">
                       <i class="ti ti-user-minus"></i> Retirer
                     </button>
                   </form>

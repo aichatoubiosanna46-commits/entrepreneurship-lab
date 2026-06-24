@@ -94,7 +94,7 @@ $currentPage = 'settings.php';
     <!-- WhatsApp -->
     <div class="admin-card" style="margin-bottom:20px">
       <div class="admin-card-title"><i class="ti ti-brand-whatsapp" style="color:#25D366"></i> WhatsApp Business API</div>
-      <div class="alert" style="background:#F0FDF4;border:1px solid #86efac;color:#15803d;display:flex;gap:8px;padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:16px">
+      <div class="alert alert-success" style="margin-bottom:16px">
         <i class="ti ti-info-circle" style="flex-shrink:0"></i>
         Compatible avec <strong>WhatsApp Business Cloud API</strong> (Meta) ou services tiers (Twilio, Vonage, etc.)
       </div>

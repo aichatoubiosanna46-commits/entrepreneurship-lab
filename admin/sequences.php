@@ -2,7 +2,7 @@
 // admin/sequences.php — Séquences d'un module
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqInstructeurOuAdmin();
+reqAdmin();
 
 $pdo      = getPDO();
 $moduleId = (int)($_GET['module_id'] ?? 0);
@@ -81,10 +81,10 @@ $sequences = $sequences->fetchAll();
           <td>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <?php if ($s['contenu']): ?>
-                <span title="Texte" style="font-size:18px;color:#534AB7"><i class="ti ti-text-size"></i></span>
+                <span title="Texte" style="font-size:18px;color:var(--primary-mid)"><i class="ti ti-text-size"></i></span>
               <?php endif; ?>
               <?php if ($s['video_url']): ?>
-                <span title="Vidéo" style="font-size:18px;color:#6C47D4"><i class="ti ti-video"></i></span>
+                <span title="Vidéo" style="font-size:18px;color:var(--primary-mid)"><i class="ti ti-video"></i></span>
               <?php endif; ?>
               <?php if ($s['audio_url']): ?>
                 <span title="Audio" style="font-size:18px;color:#3B6D11"><i class="ti ti-music"></i></span>

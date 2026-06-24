@@ -64,11 +64,11 @@ $stats = [
       <div><p class="stat-label">Revenus validés</p><p class="stat-val"><?= number_format((float)$stats['total'],0,',',' ') ?> FCFA</p></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#f5f3ff;color:#6C47D4"><i class="ti ti-clock"></i></div>
+      <div class="stat-icon" style="background:var(--amber-light);color:#92400e"><i class="ti ti-clock"></i></div>
       <div><p class="stat-label">En attente</p><p class="stat-val"><?= $stats['attente'] ?></p></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#EEEDFE;color:#534AB7"><i class="ti ti-check"></i></div>
+      <div class="stat-icon" style="background:var(--primary-light);color:var(--primary-mid)"><i class="ti ti-check"></i></div>
       <div><p class="stat-label">Validés</p><p class="stat-val"><?= $stats['valides'] ?></p></div>
     </div>
   </div>

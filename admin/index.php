@@ -60,7 +60,7 @@ $top_courses = $pdo->query(
   <!-- Métriques -->
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-icon" style="background:#EDE9FE;color:#6C47D4">
+      <div class="stat-icon" style="background:var(--primary-light);color:var(--primary-mid)">
         <i class="ti ti-users" aria-hidden="true"></i>
       </div>
       <div>
@@ -78,7 +78,7 @@ $top_courses = $pdo->query(
       </div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#EEEDFE;color:#534AB7">
+      <div class="stat-icon" style="background:var(--amber-light);color:#92400e">
         <i class="ti ti-clipboard-check" aria-hidden="true"></i>
       </div>
       <div>

@@ -115,7 +115,7 @@ $currentPage = 'messages.php';
           <div style="display:flex;gap:10px">
             <textarea name="contenu" rows="3" placeholder="Votre réponse..." required
               style="flex:1;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;resize:none"></textarea>
-            <button type="submit" style="padding:0 20px;background:#F59E0B;color:#1C1917;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">
+            <button type="submit" class="btn-primary" style="padding:0 20px">
               <i class="ti ti-send"></i>
             </button>
           </div>

@@ -94,7 +94,7 @@ $currentPage = 'course_import.php';
           <input type="file" name="json_file" accept=".json" required
                  style="width:100%;padding:10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;box-sizing:border-box">
         </div>
-        <div style="background:#FEF3C7;padding:12px 14px;border-radius:8px;font-size:12px;color:#92400E;margin-bottom:16px">
+        <div style="background:var(--amber-light);padding:12px 14px;border-radius:8px;font-size:12px;color:#92400E;margin-bottom:16px">
           <i class="ti ti-info-circle"></i> Le cours sera importé en mode brouillon (inactif). Vous pourrez l'activer après vérification.
         </div>
         <button type="submit" class="btn-primary btn-full"><i class="ti ti-upload"></i> Importer le cours</button>

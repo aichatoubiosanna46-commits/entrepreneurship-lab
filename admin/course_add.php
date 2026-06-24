@@ -2,7 +2,7 @@
 // admin/course_add.php — Création d'un cours (version complète)
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqInstructeurOuAdmin();
+reqAdmin();
 
 $pdo        = getPDO();
 $categories = $pdo->query('SELECT * FROM categories ORDER BY nom')->fetchAll();
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 #prix-group[hidden] { display:none; }
 
 /* ── Certificat box ── */
-.cert-box         { background:var(--primary-light,#f5f3ff); border:1px solid var(--primary,#534AB7);
+.cert-box         { background:var(--primary-light); border:1px solid var(--primary);
                     border-radius:10px; padding:16px; }
 .cert-box .form-group { margin-bottom:0; }
 
@@ -116,18 +116,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     padding:24px 16px; text-align:center; cursor:pointer; transition:.2s;
                     min-height:120px; display:flex; flex-direction:column;
                     align-items:center; justify-content:center; gap:6px; }
-.upload-zone:hover { border-color:var(--primary,#534AB7); background:var(--primary-light,#f5f3ff); }
+.upload-zone:hover { border-color:var(--primary); background:var(--primary-light); }
 #preview-img      { display:none; width:100%; border-radius:8px; margin-top:10px; object-fit:cover; max-height:160px; }
 
 /* ── Breadcrumb ── */
 .breadcrumb       { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted,#6b7280); margin-bottom:4px; }
-.breadcrumb a     { color:var(--primary,#534AB7); text-decoration:none; }
+.breadcrumb a     { color:var(--primary); text-decoration:none; }
 .breadcrumb a:hover { text-decoration:underline; }
 
 /* ── Submit btn ── */
 .btn-submit       { width:100%; padding:13px; font-size:15px; font-weight:600;
                     border:none; border-radius:10px; cursor:pointer;
-                    background:var(--primary,#534AB7); color:#fff;
+                    background:var(--primary); color:#fff;
                     display:flex; align-items:center; justify-content:center; gap:8px;
                     transition:.2s; }
 .btn-submit:hover { background:var(--primary-dark,#3d369a); }

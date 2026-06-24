@@ -124,7 +124,7 @@ $pageTitle = 'Tags étudiants';
                   <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="tag_id" value="<?= $t['id'] ?>">
-                  <button type="submit" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:14px"><i class="ti ti-x"></i></button>
+                  <button type="submit" class="btn-icon btn-icon-danger"><i class="ti ti-x"></i></button>
                 </form>
               </div>
             <?php endforeach; ?>
@@ -179,7 +179,7 @@ $pageTitle = 'Tags étudiants';
                       <input type="hidden" name="action" value="unassign">
                       <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
                       <input type="hidden" name="tag_id" value="<?= $selectedTag ?>">
-                      <button type="submit" style="background:#FEE2E2;border:none;color:#991B1B;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px">
+                      <button type="submit" class="btn-outline-danger btn-sm">
                         <i class="ti ti-x"></i> Retirer
                       </button>
                     </form>

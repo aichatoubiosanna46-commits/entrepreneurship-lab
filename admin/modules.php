@@ -2,7 +2,7 @@
 // admin/modules.php — Modules d'un cours
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqInstructeurOuAdmin();
+reqAdmin();
 
 $pdo      = getPDO();
 $courseId = (int)($_GET['course_id'] ?? 0);
@@ -106,7 +106,7 @@ $modules = $modules->fetchAll();
           </td>
           <td>
             <div style="display:flex;gap:6px">
-              <a href="<?= SITE_URL ?>/admin/sequences.php?module_id=<?= $m['id'] ?>" class="btn-icon" title="Séquences" style="color:#534AB7">
+              <a href="<?= SITE_URL ?>/admin/sequences.php?module_id=<?= $m['id'] ?>" class="btn-icon" title="Séquences">
                 <i class="ti ti-list-numbers"></i>
               </a>
               <a href="<?= SITE_URL ?>/admin/module_edit.php?id=<?= $m['id'] ?>&course_id=<?= $courseId ?>" class="btn-icon" title="Modifier">

@@ -9,7 +9,7 @@ define('DB_USER', 'root');         // à changer en production
 define('DB_PASS', '');             // à changer en production
 define('DB_CHARSET', 'utf8mb4');
 
-define('SITE_NAME', 'EntreprendreBJ');
+define('SITE_NAME', 'EntrepreneurshipLab');
 define('SITE_URL',  'http://localhost/entrepreneurship-lab');
 define('UPLOAD_DIR', __DIR__ . '/../assets/uploads/');
 
@@ -18,6 +18,12 @@ define('SECRET_KEY', 'changez-cette-cle-en-production-32chars');
 
 // Clé API Claude (IA)
 define('ANTHROPIC_API_KEY', 'sk-ant-votre-cle-ici');
+
+// ── Connexion Google OAuth2 (placeholders — à remplacer par les vraies
+//    valeurs depuis https://console.cloud.google.com/apis/credentials) ──
+define('GOOGLE_CLIENT_ID',     'VOTRE_GOOGLE_CLIENT_ID.apps.googleusercontent.com');
+define('GOOGLE_CLIENT_SECRET', 'VOTRE_GOOGLE_CLIENT_SECRET');
+define('GOOGLE_REDIRECT_URI',  SITE_URL . '/google_callback.php');
 
 // FedaPay
 define('FEDAPAY_PUBLIC_KEY',     'pk_sandbox_votre-cle-publique');   // pk_live_xxx en production

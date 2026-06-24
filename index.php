@@ -84,7 +84,8 @@ try {
 /* CAROUSEL */
 .elab-carousel { position: relative; overflow: hidden; background: var(--navy); height: 500px; width: 100%; }
 .carousel-track { display: flex; height: 100%; will-change: transform; transition: transform .65s cubic-bezier(.4,0,.2,1); }
-.carousel-slide { min-width: 100%; height: 100%; position: relative; flex-shrink: 0; overflow: hidden; }
+.carousel-slide { min-width: 100%; height: 100%; position: relative; flex-shrink: 0; overflow: hidden; background: var(--navy); }
+.carousel-slide.no-img { background: linear-gradient(135deg, var(--navy), var(--navy-mid)); }
 .carousel-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .carousel-overlay { position: absolute; inset: 0; background: linear-gradient(100deg, rgba(15,29,53,.85) 35%, rgba(15,29,53,.3) 100%); }
 .carousel-content { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 72px; }
@@ -284,7 +285,10 @@ try {
       <?php foreach ($slides as $i => $s): ?>
       <div class="carousel-slide <?= !$s['image'] ? 'no-img' : '' ?>">
         <?php if ($s['image']): ?>
-          <img src="<?= SITE_URL ?>/assets/uploads/<?= h($s['image']) ?>" alt="<?= h($s['titre']) ?>" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+          <img src="<?= SITE_URL ?>/assets/uploads/<?= h($s['image']) ?>" alt="<?= h($s['titre']) ?>"
+               loading="<?= $i === 0 ? 'eager' : 'lazy' ?>"
+               style="width:100%;height:100%;object-fit:cover;object-position:center"
+               onerror="this.style.display='none'">
         <?php endif; ?>
         <div class="carousel-overlay"></div>
         <div class="carousel-content">
@@ -306,6 +310,9 @@ try {
       <?php endforeach; ?>
     <?php else: ?>
       <div class="carousel-slide">
+        <!-- TODO(images): vérifier/remplacer par une photo représentant des entrepreneurs
+             africains/noirs (contexte béninois). Impossible de vérifier visuellement le
+             contenu de cette image Unsplash dans cet environnement (accès réseau bloqué). -->
         <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80&auto=format&fit=crop" alt="Entrepreneur africain au travail" loading="eager" style="width:100%;height:100%;object-fit:cover;object-position:center">
         <div class="carousel-overlay"></div>
         <div class="carousel-content">
@@ -321,6 +328,9 @@ try {
         </div>
       </div>
       <div class="carousel-slide">
+        <!-- TODO(images): vérifier/remplacer par une photo représentant des entrepreneurs
+             africains/noirs (contexte béninois). Impossible de vérifier visuellement le
+             contenu de cette image Unsplash dans cet environnement (accès réseau bloqué). -->
         <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1400&q=80&auto=format&fit=crop" alt="Business plan" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center">
         <div class="carousel-overlay"></div>
         <div class="carousel-content">
@@ -336,6 +346,9 @@ try {
         </div>
       </div>
       <div class="carousel-slide">
+        <!-- TODO(images): vérifier/remplacer par une photo représentant des entrepreneurs
+             africains/noirs (contexte béninois). Impossible de vérifier visuellement le
+             contenu de cette image Unsplash dans cet environnement (accès réseau bloqué). -->
         <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1400&q=80&auto=format&fit=crop" alt="Certification" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center top">
         <div class="carousel-overlay"></div>
         <div class="carousel-content">

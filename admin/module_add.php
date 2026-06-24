@@ -2,7 +2,7 @@
 // admin/module_add.php — Ajout d'un module à un cours
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqInstructeurOuAdmin();
+reqAdmin();
 
 $pdo      = getPDO();
 $courseId = (int)($_GET['course_id'] ?? $_POST['course_id'] ?? 0);
@@ -85,10 +85,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 .count-card     { border:2px solid var(--border,#e5e7eb); border-radius:10px;
                   padding:16px 12px; text-align:center; cursor:pointer;
                   transition:.18s; background:var(--surface,#fff); }
-.count-card:hover         { border-color:var(--primary,#534AB7); }
-.count-card.active        { border-color:var(--primary,#534AB7);
-                            background:var(--primary-light,#f5f3ff); }
-.count-card .cc-icon      { font-size:24px; color:var(--primary,#534AB7); margin-bottom:6px; }
+.count-card:hover         { border-color:var(--primary); }
+.count-card.active        { border-color:var(--primary);
+                            background:var(--primary-light); }
+.count-card .cc-icon      { font-size:24px; color:var(--primary); margin-bottom:6px; }
 .count-card .cc-label     { font-size:12px; color:var(--text-muted); margin-bottom:10px; }
 .count-card .cc-input     { width:64px; font-size:22px; font-weight:700;
                             text-align:center; border:none; background:transparent;
@@ -105,13 +105,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 /* ── Breadcrumb ── */
 .breadcrumb     { display:flex; align-items:center; gap:8px;
                   font-size:13px; color:var(--text-muted); margin-bottom:4px; }
-.breadcrumb a   { color:var(--primary,#534AB7); text-decoration:none; }
+.breadcrumb a   { color:var(--primary); text-decoration:none; }
 .breadcrumb a:hover { text-decoration:underline; }
 
 /* ── Submit ── */
 .btn-submit     { width:100%; padding:13px; font-size:15px; font-weight:600;
                   border:none; border-radius:10px; cursor:pointer;
-                  background:var(--primary,#534AB7); color:#fff;
+                  background:var(--primary); color:#fff;
                   display:flex; align-items:center; justify-content:center; gap:8px;
                   transition:.2s; }
 .btn-submit:hover { background:var(--primary-dark,#3d369a); }
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 .sp-course      { font-size:12px; font-weight:600; color:var(--text-muted);
                   text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
 .sp-module      { display:flex; align-items:center; gap:8px; font-size:13px;
-                  font-weight:600; color:var(--primary,#534AB7); margin-bottom:6px; }
+                  font-weight:600; color:var(--primary); margin-bottom:6px; }
 .sp-seq         { font-size:12px; color:var(--text-muted); padding-left:20px;
                   margin-bottom:2px; }
 .sp-seq::before { content:'└ '; }
@@ -350,7 +350,7 @@ function updatePreview() {
     html += `<div class="sp-seq">Séquence ${i}</div>`;
   }
   if (nb > 6) html += `<div class="sp-seq" style="color:var(--primary)">+ ${nb - 6} autres…</div>`;
-  if (act > 0) html += `<div class="sp-seq" style="color:var(--amber,#6C47D4)"><i class="ti ti-pencil-check"></i> ${act} activité${act>1?'s':''}</div>`;
+  if (act > 0) html += `<div class="sp-seq" style="color:var(--amber)"><i class="ti ti-pencil-check"></i> ${act} activité${act>1?'s':''}</div>`;
   document.getElementById('preview-seqs').innerHTML = html;
 }
 

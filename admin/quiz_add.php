@@ -2,7 +2,7 @@
 // admin/quiz_add.php — Créer un quiz lié à une séquence
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqInstructeurOuAdmin();
+reqAdmin();
 
 $pdo    = getPDO();
 $seqId  = (int)($_GET['sequence_id'] ?? $_POST['sequence_id'] ?? 0);

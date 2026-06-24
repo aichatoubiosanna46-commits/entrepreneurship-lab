@@ -2,7 +2,7 @@
 // admin/course_edit.php — Modifier un cours existant
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqInstructeurOuAdmin();
+reqAdmin();
 
 $pdo = getPDO();
 $id  = (int)($_GET['id'] ?? 0);

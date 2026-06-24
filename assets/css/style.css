@@ -385,22 +385,6 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .nav-mobile a:hover { color: #F59E0B; }
 
-/* Search */
-.nav-search {
-  display: flex; align-items: center; gap: 6px;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 24px; padding: 6px 14px;
-  flex: 1; max-width: 280px;
-}
-.nav-search-icon { color: rgba(255,255,255,.4); font-size: 15px; flex-shrink: 0; }
-.nav-search-input {
-  border: none; background: transparent;
-  font-size: 13px; width: 100%; outline: none;
-  color: #fff;
-}
-.nav-search-input::placeholder { color: rgba(255,255,255,.4); }
-
 /* ============================================================
    FOOTER — Sunrise Africa
    ============================================================ */
@@ -440,7 +424,7 @@ textarea { resize: vertical; min-height: 90px; }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 860px) {
-  .nav-links, .nav-search { display: none; }
+  .nav-links { display: none; }
   .nav-toggle { display: block; }
   .nav-actions .btn-outline { display: none; }
 }

@@ -8,12 +8,16 @@ function navItem(string $href, string $icon, string $label, string $current): st
     );
 }
 ?>
+<button class="admin-sidebar-toggle" aria-label="Menu" onclick="document.querySelector('.admin-sidebar').classList.toggle('open');document.querySelector('.admin-sidebar-overlay').classList.toggle('open')">
+  <i class="ti ti-menu-2"></i>
+</button>
+<div class="admin-sidebar-overlay" onclick="document.querySelector('.admin-sidebar').classList.remove('open');this.classList.remove('open')"></div>
 <aside class="admin-sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark" style="width:36px;height:36px;font-size:15px;flex-shrink:0">E</div>
     <div>
-      <div style="font-weight:500;font-size:14px;color:#EDE9FE"><?= SITE_NAME ?></div>
-      <div style="font-size:11px;color:#8B5CF6">Administration</div>
+      <div style="font-weight:500;font-size:14px;color:#D1FAE5"><?= SITE_NAME ?></div>
+      <div style="font-size:11px;color:#A7F3D0">Administration</div>
     </div>
   </div>
 

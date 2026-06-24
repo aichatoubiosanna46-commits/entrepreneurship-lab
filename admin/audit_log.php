@@ -156,7 +156,7 @@ $pageTitle = 'Journal d\'audit';
       <div style="display:flex;gap:6px;justify-content:center;margin-top:16px">
         <?php for ($p = 1; $p <= $pages; $p++): ?>
           <a href="?page=<?= $p ?><?= $filterAction ? '&action='.urlencode($filterAction) : '' ?><?= $filterUser ? '&user='.urlencode($filterUser) : '' ?><?= $filterDate ? '&date='.$filterDate : '' ?>"
-             style="padding:6px 12px;border-radius:6px;font-size:13px;text-decoration:none;<?= $p === $pageCourante ? 'background:var(--primary,#6C47D4);color:#fff' : 'background:#f3f4f6;color:var(--text)' ?>"><?= $p ?></a>
+             style="padding:6px 12px;border-radius:6px;font-size:13px;text-decoration:none;<?= $p === $pageCourante ? 'background:var(--primary);color:#fff' : 'background:#f3f4f6;color:var(--text)' ?>"><?= $p ?></a>
         <?php endfor; ?>
       </div>
     <?php endif; ?>

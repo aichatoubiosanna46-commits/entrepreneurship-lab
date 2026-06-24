@@ -98,7 +98,7 @@ $currentPage = 'rapport_cohorte.php';
       <div style="font-size:13px;color:#6b7280">Inscrits à au moins 1 cours</div>
     </div>
     <div class="admin-card" style="text-align:center">
-      <div style="font-size:32px;font-weight:800;color:#6C47D4"><?= round(array_sum(array_column($students,'xp_total'))/max(1,count($students))) ?></div>
+      <div style="font-size:32px;font-weight:800;color:var(--primary-mid)"><?= round(array_sum(array_column($students,'xp_total'))/max(1,count($students))) ?></div>
       <div style="font-size:13px;color:#6b7280">XP moyen par étudiant</div>
     </div>
   </div>

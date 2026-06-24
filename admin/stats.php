@@ -59,7 +59,7 @@ $inscritsParMois = $pdo->query(
 
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-icon" style="background:#EDE9FE;color:#6C47D4"><i class="ti ti-users"></i></div>
+      <div class="stat-icon" style="background:var(--primary-light);color:var(--primary-mid)"><i class="ti ti-users"></i></div>
       <div><p class="stat-label">Apprenants</p><p class="stat-val"><?= $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn() ?></p></div>
     </div>
     <div class="stat-card">
@@ -67,7 +67,7 @@ $inscritsParMois = $pdo->query(
       <div><p class="stat-label">Formations</p><p class="stat-val"><?= $pdo->query('SELECT COUNT(*) FROM courses WHERE actif=1')->fetchColumn() ?></p></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#EEEDFE;color:#534AB7"><i class="ti ti-certificate"></i></div>
+      <div class="stat-icon" style="background:var(--primary-light);color:var(--primary-mid)"><i class="ti ti-certificate"></i></div>
       <div><p class="stat-label">Certificats</p><p class="stat-val"><?= $pdo->query('SELECT COUNT(*) FROM certificates')->fetchColumn() ?></p></div>
     </div>
     <div class="stat-card">
@@ -114,9 +114,9 @@ $inscritsParMois = $pdo->query(
   <div class="admin-card">
     <div class="admin-card-header"><h2>Quiz</h2></div>
     <div class="stats-grid" style="margin-bottom:0">
-      <div class="stat-card"><div class="stat-icon" style="background:#EEEDFE;color:#534AB7"><i class="ti ti-help-circle"></i></div><div><p class="stat-label">Tentatives</p><p class="stat-val"><?= $quizStats['total'] ?></p></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--primary-light);color:var(--primary-mid)"><i class="ti ti-help-circle"></i></div><div><p class="stat-label">Tentatives</p><p class="stat-val"><?= $quizStats['total'] ?></p></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:#EAF3DE;color:#3B6D11"><i class="ti ti-check"></i></div><div><p class="stat-label">Réussies</p><p class="stat-val"><?= $quizStats['reussi'] ?></p></div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:#EDE9FE;color:#6C47D4"><i class="ti ti-chart-bar"></i></div><div><p class="stat-label">Score moyen</p><p class="stat-val"><?= $quizStats['score_moyen'] ?>%</p></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--primary-light);color:var(--primary-mid)"><i class="ti ti-chart-bar"></i></div><div><p class="stat-label">Score moyen</p><p class="stat-val"><?= $quizStats['score_moyen'] ?>%</p></div></div>
     </div>
   </div>
 </div>
@@ -132,7 +132,7 @@ new Chart(document.getElementById('revenusChart'), {
     datasets: [{
       label: 'FCFA',
       data: revenusData.map(r => r.total),
-      backgroundColor: '#6C47D4',
+      backgroundColor: '#10B981',
       borderRadius: 6,
     }]
   },
@@ -146,8 +146,8 @@ new Chart(document.getElementById('inscritsChart'), {
     datasets: [{
       label: 'Apprenants',
       data: inscritsData.map(r => r.total),
-      borderColor: '#534AB7',
-      backgroundColor: '#534AB720',
+      borderColor: '#047857',
+      backgroundColor: '#04785720',
       fill: true,
       tension: 0.4,
     }]

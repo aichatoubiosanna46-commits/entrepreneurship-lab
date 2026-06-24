@@ -53,13 +53,6 @@ if (estConnecte()) {
       </div>
     </a>
 
-    <!-- Barre de recherche -->
-    <form class="nav-search" action="<?= SITE_URL ?>/search.php" method="GET">
-      <i class="ti ti-search nav-search-icon"></i>
-      <input type="search" name="q" placeholder="Rechercher une formation..." class="nav-search-input"
-             autocomplete="off" value="<?= h($_GET['q'] ?? '') ?>">
-    </form>
-
     <?php if (estConnecte()): ?>
     <div class="nav-links">
       <a href="<?= SITE_URL ?>/dashboard.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'dashboard.php' ? 'nav-link-active' : '' ?>">
@@ -129,9 +122,6 @@ if (estConnecte()) {
   </div>
 
   <div class="nav-mobile">
-    <form action="<?= SITE_URL ?>/search.php" method="GET" style="padding:8px 0">
-      <input type="search" name="q" placeholder="Rechercher..." style="width:100%;padding:8px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;box-sizing:border-box">
-    </form>
     <?php if (estConnecte()): ?>
       <div style="padding:8px 0;font-weight:500;color:var(--amber)"><?= h($_SESSION['user_nom'] ?? '') ?></div>
       <a href="<?= SITE_URL ?>/dashboard.php">Mon espace</a>
@@ -155,14 +145,10 @@ if (estConnecte()) {
 </nav>
 
 <style>
-.nav-search { display:flex;align-items:center;gap:6px;background:var(--surface-alt,#f9fafb);border:1px solid var(--border,#e5e7eb);border-radius:24px;padding:6px 14px;flex:1;max-width:320px;margin:0 16px; }
-.nav-search-icon { color:var(--text-muted,#6b7280);font-size:16px;flex-shrink:0; }
-.nav-search-input { border:none;background:transparent;font-size:13px;width:100%;outline:none; }
-.nav-icon-btn { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text,#111);text-decoration:none;transition:.15s;position:relative;font-size:18px; }
-.nav-icon-btn:hover { background:var(--surface-alt,#f9fafb); }
+.nav-icon-btn { width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;transition:.15s;position:relative;font-size:20px;z-index:1; }
+.nav-icon-btn:hover { background:rgba(255,255,255,.12);color:#F59E0B; }
 .nav-bell { position:relative; }
-.nav-notif-badge { position:absolute;top:4px;right:4px;background:#dc2626;color:#fff;font-size:9px;font-weight:800;border-radius:99px;padding:1px 4px;min-width:14px;text-align:center;line-height:1.4; }
-@media(max-width:860px){ .nav-search{display:none;} }
+.nav-notif-badge { position:absolute;top:2px;right:2px;background:#EF4444;color:#fff;font-size:9px;font-weight:800;border-radius:99px;padding:1px 4px;min-width:14px;text-align:center;line-height:1.4;box-shadow:0 0 0 2px #1C1917; }
 
 /* ── Fix sidebar liens noirs ── */
 .user-sidebar-nav a.user-nav-item { color: #6b7280 !important; }

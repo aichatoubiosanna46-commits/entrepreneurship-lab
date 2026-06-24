@@ -2,7 +2,7 @@
 // admin/quiz_edit.php — Modifier un quiz et ses questions/réponses
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqInstructeurOuAdmin();
+reqAdmin();
 $pdo = getPDO();
 
 $quizId = (int)($_GET['id'] ?? 0);
@@ -141,8 +141,8 @@ $bankCategories = $pdo->query("SELECT DISTINCT categorie FROM question_bank WHER
             <div style="font-size:22px;font-weight:800;color:#16a34a"><?= $stats['reussis'] ?></div>
             <div style="font-size:11px;color:var(--text-muted)">Réussites</div>
           </div>
-          <div style="text-align:center;padding:12px;background:#EDE9FE;border-radius:8px">
-            <div style="font-size:22px;font-weight:800;color:#6C47D4"><?= $stats['moy'] ?>%</div>
+          <div style="text-align:center;padding:12px;background:var(--primary-light);border-radius:8px">
+            <div style="font-size:22px;font-weight:800;color:var(--primary-mid)"><?= $stats['moy'] ?>%</div>
             <div style="font-size:11px;color:var(--text-muted)">Score moyen</div>
           </div>
         </div>

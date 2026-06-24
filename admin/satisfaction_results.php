@@ -78,7 +78,7 @@ $currentPage = 'satisfaction_results.php';
       <div style="font-size:20px;margin-top:4px"><?= str_repeat('⭐', round($avgQualite)) ?></div>
     </div>
     <div class="admin-card" style="text-align:center">
-      <div style="font-size:36px;font-weight:800;color:#6C47D4"><?= $avgNPS ?>/10</div>
+      <div style="font-size:36px;font-weight:800;color:var(--primary-mid)"><?= $avgNPS ?>/10</div>
       <div style="font-size:13px;color:#6b7280">Score NPS moyen</div>
     </div>
   </div>

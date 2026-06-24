@@ -16,17 +16,6 @@ if (isset($_GET['toggle_coach'])) {
     redirect(SITE_URL . '/admin/coaches.php', 'Rôle mis à jour.', 'success');
 }
 
-// Promouvoir/rétrograder instructeur
-if (isset($_GET['toggle_instructeur'])) {
-    $userId = (int)$_GET['toggle_instructeur'];
-    $user = $pdo->prepare('SELECT role FROM users WHERE id=?');
-    $user->execute([$userId]);
-    $user = $user->fetch();
-    $newRole = ($user['role'] ?? 'etudiant') === 'instructeur' ? 'etudiant' : 'instructeur';
-    $pdo->prepare('UPDATE users SET role=? WHERE id=?')->execute([$newRole, $userId]);
-    redirect(SITE_URL . '/admin/coaches.php', 'Rôle mis à jour.', 'success');
-}
-
 try {
     $users = $pdo->query(
         'SELECT id, nom, prenom, email, role, created_at FROM users WHERE actif=1 ORDER BY role DESC, nom ASC'
@@ -49,16 +38,15 @@ $currentPage = 'coaches.php';
 <div class="admin-content">
   <div class="admin-topbar">
     <div>
-      <h1 class="admin-page-title">Gestion des coachs &amp; instructeurs</h1>
-      <p class="admin-page-sub">Promouvoir un étudiant au rôle de coach ou d'instructeur</p>
+      <h1 class="admin-page-title">Gestion des coachs</h1>
+      <p class="admin-page-sub">Promouvoir un étudiant au rôle de coach</p>
     </div>
   </div>
   <?= flash() ?>
 
-  <div style="background:#FEF3C7;border:1px solid #fde68a;border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:#92400E">
+  <div class="alert alert-info">
     <i class="ti ti-info-circle"></i>
-    <strong>Rôle Coach</strong> — accède au Review Center, note les assignments et envoie des messages aux étudiants.<br>
-    <strong>Rôle Instructeur</strong> — crée et gère ses propres cours (modules, séquences, quiz) sans accès aux autres cours ni aux paramètres admin.
+    <span><strong>Rôle Coach</strong> — accède au Review Center, note les assignments et envoie des messages aux étudiants.</span>
   </div>
 
   <div class="admin-card">
@@ -84,16 +72,9 @@ $currentPage = 'coaches.php';
           <td>
             <div style="display:flex;gap:6px">
               <a href="?toggle_coach=<?= $u['id'] ?>"
-                 class="btn-outline btn-sm"
-                 style="<?= ($u['role']??'etudiant')==='coach' ? 'color:#dc2626;border-color:#fca5a5' : '' ?>"
+                 class="btn-outline btn-sm<?= ($u['role']??'etudiant')==='coach' ? ' btn-outline-danger' : '' ?>"
                  onclick="return confirm('<?= ($u['role']??'etudiant')==='coach' ? 'Rétrograder en étudiant ?' : 'Promouvoir comme coach ?' ?>')">
                 <?= ($u['role']??'etudiant')==='coach' ? '<i class="ti ti-arrow-down"></i> Rétrograder' : '<i class="ti ti-star"></i> Coach' ?>
-              </a>
-              <a href="?toggle_instructeur=<?= $u['id'] ?>"
-                 class="btn-outline btn-sm"
-                 style="<?= ($u['role']??'etudiant')==='instructeur' ? 'color:#dc2626;border-color:#fca5a5' : '' ?>"
-                 onclick="return confirm('<?= ($u['role']??'etudiant')==='instructeur' ? 'Rétrograder en étudiant ?' : 'Promouvoir comme instructeur ?' ?>')">
-                <?= ($u['role']??'etudiant')==='instructeur' ? '<i class="ti ti-arrow-down"></i> Rétrograder' : '<i class="ti ti-school"></i> Instructeur' ?>
               </a>
             </div>
           </td>

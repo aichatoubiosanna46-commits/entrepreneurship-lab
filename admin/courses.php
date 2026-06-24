@@ -2,7 +2,7 @@
 // admin/courses.php — Liste des cours
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqInstructeurOuAdmin();
+reqAdmin();
 
 $pdo = getPDO();
 $sql = 'SELECT c.*, cat.nom as categorie,
@@ -10,9 +10,6 @@ $sql = 'SELECT c.*, cat.nom as categorie,
             (SELECT COUNT(*) FROM modules m WHERE m.course_id = c.id) as nb_modules
      FROM courses c
      JOIN categories cat ON cat.id = c.category_id';
-if (!estAdmin()) {
-    $sql .= ' WHERE c.formateur_id = ' . (int)$_SESSION['user_id'];
-}
 $sql .= ' ORDER BY c.created_at DESC';
 $courses = $pdo->query($sql)->fetchAll();
 ?>
@@ -62,14 +59,14 @@ $courses = $pdo->query($sql)->fetchAll();
               <?php if ($c['miniature']): ?>
                 <img src="<?= SITE_URL ?>/assets/uploads/<?= h($c['miniature']) ?>" style="width:40px;height:40px;border-radius:6px;object-fit:cover">
               <?php else: ?>
-                <div style="width:40px;height:40px;border-radius:6px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#6C47D4">
+                <div style="width:40px;height:40px;border-radius:6px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary-mid)">
                   <i class="ti ti-school"></i>
                 </div>
               <?php endif; ?>
               <div>
                 <div style="font-weight:500;font-size:13px"><?= h($c['titre']) ?></div>
                 <?php if ($c['certificat']): ?>
-                  <span style="font-size:11px;color:#534AB7"><i class="ti ti-certificate"></i> Certificat</span>
+                  <span style="font-size:11px;color:var(--primary-mid)"><i class="ti ti-certificate"></i> Certificat</span>
                 <?php endif; ?>
               </div>
             </div>
@@ -117,7 +114,7 @@ $courses = $pdo->query($sql)->fetchAll();
           </td>
           <td>
             <div style="display:flex;gap:6px">
-              <a href="<?= SITE_URL ?>/admin/modules.php?course_id=<?= $c['id'] ?>" class="btn-icon" title="Modules" style="color:#534AB7">
+              <a href="<?= SITE_URL ?>/admin/modules.php?course_id=<?= $c['id'] ?>" class="btn-icon" title="Modules">
                 <i class="ti ti-layout-list"></i>
               </a>
               <a href="<?= SITE_URL ?>/admin/course_edit.php?id=<?= $c['id'] ?>" class="btn-icon" title="Modifier">

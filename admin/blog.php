@@ -88,7 +88,7 @@ $pageTitle = 'Blog';
                     <form method="POST" onsubmit="return confirm('Supprimer cet article ?')">
                       <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                       <input type="hidden" name="article_id" value="<?= $a['id'] ?>">
-                      <button type="submit" name="delete_article" style="background:#FEE2E2;border:1px solid #FECACA;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px;color:#991B1B">
+                      <button type="submit" name="delete_article" class="btn-icon btn-icon-danger">
                         <i class="ti ti-trash"></i>
                       </button>
                     </form>
@@ -104,7 +104,7 @@ $pageTitle = 'Blog';
     <?php if ($pages > 1): ?>
       <div style="display:flex;gap:6px;justify-content:center;margin-top:16px">
         <?php for ($p = 1; $p <= $pages; $p++): ?>
-          <a href="?page=<?= $p ?>" style="padding:6px 12px;border-radius:6px;font-size:13px;text-decoration:none;<?= $p === $pageCourante ? 'background:var(--primary,#6C47D4);color:#fff' : 'background:#f3f4f6;color:var(--text)' ?>"><?= $p ?></a>
+          <a href="?page=<?= $p ?>" style="padding:6px 12px;border-radius:6px;font-size:13px;text-decoration:none;<?= $p === $pageCourante ? 'background:var(--primary);color:#fff' : 'background:#f3f4f6;color:var(--text)' ?>"><?= $p ?></a>
         <?php endfor; ?>
       </div>
     <?php endif; ?>

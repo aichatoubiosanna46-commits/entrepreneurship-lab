@@ -222,6 +222,18 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
 .auth-bottom a { color: #F59E0B; font-weight: 600; text-decoration: none; }
 .auth-bottom a:hover { text-decoration: underline; }
 
+/* Bouton Google */
+.btn-google {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 12px;
+  background: #fff; color: #1C1917;
+  border: 1.5px solid #e5e7eb; border-radius: 10px;
+  font-size: 14px; font-weight: 600; text-decoration: none;
+  font-family: inherit;
+  transition: background .15s, border-color .15s;
+}
+.btn-google:hover { background: #f9fafb; border-color: #d1d5db; }
+
 /* Responsive */
 @media (max-width: 860px) {
   .auth-brand { display: none; }
@@ -357,6 +369,16 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
       </form>
 
       <div class="auth-divider">ou</div>
+
+      <a href="<?= SITE_URL ?>/google_login.php" class="btn-google">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+          <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.55-1.84.87-3.06.87-2.36 0-4.36-1.6-5.08-3.74H.92v2.34A9 9 0 0 0 9 18z"/>
+          <path fill="#FBBC05" d="M3.92 10.69A5.4 5.4 0 0 1 3.64 9c0-.59.1-1.16.28-1.69V4.97H.92A9 9 0 0 0 0 9c0 1.45.35 2.83.92 4.03l3-2.34z"/>
+          <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A9 9 0 0 0 9 0a9 9 0 0 0-8.08 4.97l3 2.34C4.64 5.18 6.64 3.58 9 3.58z"/>
+        </svg>
+        Continuer avec Google
+      </a>
 
       <div class="auth-bottom">
         Pas encore inscrit ?

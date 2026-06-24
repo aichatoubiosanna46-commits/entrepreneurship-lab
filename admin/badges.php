@@ -69,8 +69,8 @@ $pageTitle = 'Gestion des badges';
               <?php if ($b['image']): ?>
                 <img src="<?= SITE_URL ?>/assets/uploads/<?= h($b['image']) ?>" alt="" style="width:48px;height:48px;object-fit:contain;border-radius:8px">
               <?php else: ?>
-                <div style="width:48px;height:48px;border-radius:8px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">
-                  <i class="ti ti-award" style="color:#6C47D4"></i>
+                <div style="width:48px;height:48px;border-radius:8px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">
+                  <i class="ti ti-award" style="color:var(--primary-mid)"></i>
                 </div>
               <?php endif; ?>
               <div style="flex:1">
@@ -92,7 +92,7 @@ $pageTitle = 'Gestion des badges';
               <form method="POST" style="flex:1" onsubmit="return confirm('Supprimer ce badge ?')">
                 <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                 <input type="hidden" name="badge_id" value="<?= $b['id'] ?>">
-                <button type="submit" name="delete_badge" style="width:100%;padding:6px 12px;background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;border-radius:6px;font-size:12px;cursor:pointer">
+                <button type="submit" name="delete_badge" class="btn-outline-danger btn-sm btn-full">
                   <i class="ti ti-trash"></i> Supprimer
                 </button>
               </form>

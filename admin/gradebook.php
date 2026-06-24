@@ -245,7 +245,7 @@ $pageTitle = 'Gradebook';
       </div>
 
       <div style="margin-top:16px;font-size:12px;color:var(--text-muted)">
-        <span style="display:inline-block;width:12px;height:12px;background:#EEF2FF;border:1px solid #6C47D4;margin-right:4px"></span> Quiz
+        <span style="display:inline-block;width:12px;height:12px;background:var(--primary-light);border:1px solid var(--primary-mid);margin-right:4px"></span> Quiz
         <span style="display:inline-block;width:12px;height:12px;background:#EAF3DE;border:1px solid #97C459;margin:0 4px 0 12px"></span> Devoirs
       </div>
     <?php elseif (!$courseId): ?>
