@@ -107,43 +107,38 @@ function navItem(string $href, string $icon, string $label, string $current): st
     <?= navItem('stats.php',             'ti-chart-bar',         'Statistiques',        $currentPage) ?>
     <?= navItem('audit_log.php',         'ti-shield-check',      'Journal d\'audit',    $currentPage) ?>
   
-    <div class="sidebar-section">NOUVEAUTÉS</div>
-    <a href="<?= SITE_URL ?>/admin/messages.php" class="sidebar-link <?= ($currentPage??'')==='messages.php'?'active':'' ?>">
-      <i class="ti ti-messages"></i> <span>Messagerie</span>
+    <p class="sidebar-section-label">Nouveautés</p>
+    <a href="<?= SITE_URL ?>/admin/messages.php" class="sidebar-item<?= ($currentPage??'')==='messages.php'?' active':'' ?>">
+      <i class="ti ti-messages" aria-hidden="true"></i><span>Messagerie</span>
     </a>
-    <a href="<?= SITE_URL ?>/admin/question_bank.php" class="sidebar-link <?= ($currentPage??'')==='question_bank.php'?'active':'' ?>">
-      <i class="ti ti-database"></i> <span>Banque de questions</span>
+    <a href="<?= SITE_URL ?>/admin/question_bank.php" class="sidebar-item<?= ($currentPage??'')==='question_bank.php'?' active':'' ?>">
+      <i class="ti ti-database" aria-hidden="true"></i><span>Banque de questions</span>
     </a>
-    <a href="<?= SITE_URL ?>/admin/satisfaction_results.php" class="sidebar-link <?= ($currentPage??'')==='satisfaction_results.php'?'active':'' ?>">
-      <i class="ti ti-mood-smile"></i> <span>Satisfaction</span>
+    <a href="<?= SITE_URL ?>/admin/satisfaction_results.php" class="sidebar-item<?= ($currentPage??'')==='satisfaction_results.php'?' active':'' ?>">
+      <i class="ti ti-mood-smile" aria-hidden="true"></i><span>Satisfaction</span>
     </a>
-    <a href="<?= SITE_URL ?>/admin/contact_messages.php" class="sidebar-link <?= ($currentPage??'')==='contact_messages.php'?'active':'' ?>">
-      <i class="ti ti-mail"></i> <span>Messages contact</span>
-    </a>
-
-
-    <div class="sidebar-section">GESTION AVANCÉE</div>
-    <a href="<?= SITE_URL ?>/admin/bundles.php" class="sidebar-link <?= ($currentPage??'')==='bundles.php'?'active':'' ?>">
-      <i class="ti ti-package"></i> <span>Bundles / Packs</span>
-    </a>
-    <a href="<?= SITE_URL ?>/admin/invoices.php" class="sidebar-link <?= ($currentPage??'')==='invoices.php'?'active':'' ?>">
-      <i class="ti ti-receipt"></i> <span>Factures</span>
-    </a>
-    <a href="<?= SITE_URL ?>/admin/email_campagnes.php" class="sidebar-link <?= ($currentPage??'')==='email_campagnes.php'?'active':'' ?>">
-      <i class="ti ti-mail-forward"></i> <span>Emails ciblés</span>
-    </a>
-    <a href="<?= SITE_URL ?>/admin/rapport_cohorte.php" class="sidebar-link <?= ($currentPage??'')==='rapport_cohorte.php'?'active':'' ?>">
-      <i class="ti ti-report"></i> <span>Rapport cohorte</span>
+    <a href="<?= SITE_URL ?>/admin/contact_messages.php" class="sidebar-item<?= ($currentPage??'')==='contact_messages.php'?' active':'' ?>">
+      <i class="ti ti-mail" aria-hidden="true"></i><span>Messages contact</span>
     </a>
 
-
-    <a href="<?= SITE_URL ?>/admin/course_import.php" class="sidebar-link <?= ($currentPage??'')==='course_import.php'?'active':'' ?>">
-      <i class="ti ti-file-import"></i> <span>Import cours JSON</span>
+    <p class="sidebar-section-label">Gestion avancée</p>
+    <a href="<?= SITE_URL ?>/admin/bundles.php" class="sidebar-item<?= ($currentPage??'')==='bundles.php'?' active':'' ?>">
+      <i class="ti ti-package" aria-hidden="true"></i><span>Bundles / Packs</span>
     </a>
-
-
-    <a href="<?= SITE_URL ?>/admin/coaches.php" class="sidebar-link <?= ($currentPage??'')==='coaches.php'?'active':'' ?>">
-      <i class="ti ti-star"></i> <span>Gestion coachs</span>
+    <a href="<?= SITE_URL ?>/admin/invoices.php" class="sidebar-item<?= ($currentPage??'')==='invoices.php'?' active':'' ?>">
+      <i class="ti ti-receipt" aria-hidden="true"></i><span>Factures</span>
+    </a>
+    <a href="<?= SITE_URL ?>/admin/email_campagnes.php" class="sidebar-item<?= ($currentPage??'')==='email_campagnes.php'?' active':'' ?>">
+      <i class="ti ti-mail-forward" aria-hidden="true"></i><span>Emails ciblés</span>
+    </a>
+    <a href="<?= SITE_URL ?>/admin/rapport_cohorte.php" class="sidebar-item<?= ($currentPage??'')==='rapport_cohorte.php'?' active':'' ?>">
+      <i class="ti ti-report" aria-hidden="true"></i><span>Rapport cohorte</span>
+    </a>
+    <a href="<?= SITE_URL ?>/admin/course_import.php" class="sidebar-item<?= ($currentPage??'')==='course_import.php'?' active':'' ?>">
+      <i class="ti ti-file-import" aria-hidden="true"></i><span>Import cours JSON</span>
+    </a>
+    <a href="<?= SITE_URL ?>/admin/coaches.php" class="sidebar-item<?= ($currentPage??'')==='coaches.php'?' active':'' ?>">
+      <i class="ti ti-star" aria-hidden="true"></i><span>Gestion coachs</span>
     </a>
 
 </nav>
