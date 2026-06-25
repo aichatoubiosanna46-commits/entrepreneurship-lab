@@ -197,14 +197,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="ca-card">
           <p class="ca-card-title"><i class="ti ti-lock"></i> Accès & tarification</p>
           <div class="form-group">
-            <label>Parcours</label>
-            <select name="tarif">
-              <option value="decouverte"    <?= $course['tarif']==='decouverte'    ?'selected':'' ?>>🆓 Découverte — Gratuit</option>
-              <option value="essentiel"     <?= $course['tarif']==='essentiel'     ?'selected':'' ?>>⭐ Essentiel — 5 000 FCFA</option>
-              <option value="business_plan" <?= $course['tarif']==='business_plan' ?'selected':'' ?>>📊 Business Plan — 15 000 FCFA</option>
-              <option value="lancement"     <?= $course['tarif']==='lancement'     ?'selected':'' ?>>🚀 Lancement — 25 000 FCFA</option>
+            <label>Série (parcours)</label>
+            <select id="tarif" name="tarif" onchange="onTarifChange(this.value)">
+              <option value="decouverte"    <?= $course['tarif']==='decouverte'    ?'selected':'' ?>>🆓 Phase 0 — Gratuit</option>
+              <option value="essentiel"     <?= $course['tarif']==='essentiel'     ?'selected':'' ?>>⭐ Série 1 — Essentiel (1 000 – 5 000 FCFA)</option>
+              <option value="business_plan" <?= $course['tarif']==='business_plan' ?'selected':'' ?>>📊 Série 2 — Avancé (5 000 – 10 000 FCFA)</option>
+              <option value="lancement"     <?= $course['tarif']==='lancement'     ?'selected':'' ?>>🚀 Série 3 — Expert (10 000 – 15 000 FCFA)</option>
             </select>
+            <small style="color:var(--text-muted);font-size:11px">
+              Chaque série a ses propres couleurs et son propre positionnement (voir aperçu ci-dessous).
+            </small>
           </div>
+
+          <div id="tarif-info" style="border-radius:9px;padding:12px 14px;font-size:12px;margin-bottom:14px;transition:.2s;"></div>
           <div class="form-group">
             <label>Type d'accès</label>
             <select name="type" id="type" onchange="togglePrix(this.value)">
@@ -333,6 +338,27 @@ function previewImg(input) {
   };
   reader.readAsDataURL(input.files[0]);
 }
+
+// ── Info série (couleurs officielles Ariziki — une par série)
+const tarifData = {
+  decouverte:    { label:'Phase 0 — GRATUITE',   bg:'#085041', border:'#085041', text:'#ffffff',  badgeBg:'rgba(125,255,196,.25)', badgeText:'#7fffc4', hint:'3 modules d\'onboarding · 0 FCFA · fond vert foncé, texte blanc.' },
+  essentiel:     { label:'Série 1 — ESSENTIEL',  bg:'#ffffff', border:'rgba(0,0,0,.15)', text:'#085041', badgeBg:'#d0ece4', badgeText:'#085041', hint:'9 modules de validation · 1 000 – 5 000 FCFA · fond blanc, bordure légère.' },
+  business_plan: { label:'Série 2 — AVANCÉ',     bg:'#F5F0E8', border:'rgba(0,0,0,.1)',  text:'#085041', badgeBg:'rgba(216,90,48,.18)', badgeText:'#D85A30', hint:'9 modules de lancement · 5 000 – 10 000 FCFA · fond sable.' },
+  lancement:     { label:'Série 3 — EXPERT',     bg:'#1A1A18', border:'#1A1A18', text:'#ffffff',  badgeBg:'rgba(255,255,255,.18)', badgeText:'#ffffff', hint:'9 modules de croissance · 10 000 – 15 000 FCFA · fond noir, pleine largeur.' },
+};
+
+function onTarifChange(val) {
+  const d   = tarifData[val];
+  const box = document.getElementById('tarif-info');
+  box.style.background = d.bg;
+  box.style.border     = '1px solid ' + d.border;
+  box.style.color      = d.text;
+  box.innerHTML = `<span style="display:inline-block;background:${d.badgeBg};color:${d.badgeText};font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:6px">${d.label.split(' — ')[1]}</span><br><strong>${d.label}</strong><br>${d.hint}`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  onTarifChange(document.getElementById('tarif').value);
+});
 </script>
 </body>
 </html>

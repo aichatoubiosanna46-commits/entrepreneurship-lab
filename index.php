@@ -449,28 +449,28 @@ img { max-width: 100%; }
     <div style="background:var(--navy);color:#fff;border-radius:var(--radius-lg);padding:22px">
       <span style="display:inline-block;background:rgba(125,255,196,.18);color:#7fffc4;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">GRATUIT</span>
       <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Phase 0 — Le Déclic</h4>
-      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">Découvre ton potentiel entrepreneurial et identifie tes premières pistes d'opportunités, sans aucun risque.</p>
+      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">Comprends pourquoi tu peux entreprendre maintenant. Pas après le diplôme, pas « quand tu seras prêt ». Maintenant.</p>
       <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:10px">3 modules d'onboarding</p>
       <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#7fffc4">0 FCFA</p>
     </div>
     <div style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:var(--radius-lg);padding:22px">
-      <span style="display:inline-block;background:rgba(14,122,92,.12);color:var(--navy-mid);font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">ESSENTIEL</span>
+      <span style="display:inline-block;background:#d0ece4;color:var(--navy);font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">ESSENTIEL</span>
       <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Série 1 — Valider ton idée</h4>
-      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Teste ton idée sur le terrain avant d'investir temps et argent, avec des méthodes simples et adaptées au Bénin.</p>
+      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Radar à opportunités, étude de marché terrain, persona client, MVP et premier test réel. Méthode 100% béninoise.</p>
       <p style="font-size:10.5px;color:var(--text-muted);margin-bottom:10px">9 modules de validation</p>
       <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy)">1 000 – 5 000 FCFA</p>
     </div>
     <div style="background:var(--bg-light);border:1px solid rgba(0,0,0,.06);border-radius:var(--radius-lg);padding:22px">
       <span style="display:inline-block;background:rgba(216,90,48,.14);color:var(--gold-dark);font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">AVANCÉ</span>
       <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Série 2 — Lancer et vendre</h4>
-      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Passe à l'action : premiers clients, premières ventes, premiers retours du marché, avec un accompagnement concret.</p>
+      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Business Model Canvas, pricing adapté, acquisition clients, réseaux sociaux, premier pitch et financement local.</p>
       <p style="font-size:10.5px;color:var(--text-muted);margin-bottom:10px">9 modules de lancement</p>
       <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy)">5 000 – 10 000 FCFA</p>
     </div>
     <div style="background:#1a1a18;color:#fff;border-radius:var(--radius-lg);padding:22px;grid-column:1 / -1">
       <span style="display:inline-block;background:rgba(255,255,255,.14);color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">EXPERT</span>
       <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Série 3 — Structurer et scaler</h4>
-      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">Structure ton activité pour durer : gestion, équipe, croissance — et prépare le passage à l'échelle de ton entreprise.</p>
+      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">Statut juridique, comptabilité simplifiée, équipe, délégation, levée de fonds et développement vers d'autres marchés.</p>
       <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
         <div>
           <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:6px">9 modules de croissance</p>

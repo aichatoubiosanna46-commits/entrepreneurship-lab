@@ -337,13 +337,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               Parcours (tarif) <span style="color:red">*</span>
             </label>
             <select id="tarif" name="tarif" onchange="onTarifChange(this.value)">
-              <option value="decouverte"    <?= (($_POST['tarif']??'decouverte')==='decouverte')    ?'selected':'' ?>>🆓 Découverte — Gratuit</option>
-              <option value="essentiel"     <?= (($_POST['tarif']??'')==='essentiel')    ?'selected':'' ?>>⭐ Essentiel — 5 000 FCFA</option>
-              <option value="business_plan" <?= (($_POST['tarif']??'')==='business_plan')?'selected':'' ?>>📊 Business Plan — 15 000 FCFA</option>
-              <option value="lancement"     <?= (($_POST['tarif']??'')==='lancement')    ?'selected':'' ?>>🚀 Lancement — 25 000 FCFA</option>
+              <option value="decouverte"    <?= (($_POST['tarif']??'decouverte')==='decouverte')    ?'selected':'' ?>>🆓 Phase 0 — Gratuit</option>
+              <option value="essentiel"     <?= (($_POST['tarif']??'')==='essentiel')    ?'selected':'' ?>>⭐ Série 1 — Essentiel (1 000 – 5 000 FCFA)</option>
+              <option value="business_plan" <?= (($_POST['tarif']??'')==='business_plan')?'selected':'' ?>>📊 Série 2 — Avancé (5 000 – 10 000 FCFA)</option>
+              <option value="lancement"     <?= (($_POST['tarif']??'')==='lancement')    ?'selected':'' ?>>🚀 Série 3 — Expert (10 000 – 15 000 FCFA)</option>
             </select>
             <small style="color:var(--text-muted);font-size:11px">
-              Ce cours sera visible uniquement pour les utilisateurs ayant ce parcours.
+              Chaque série a ses propres couleurs et son propre positionnement (voir aperçu ci-dessous).
             </small>
           </div>
 
@@ -425,21 +425,21 @@ function togglePrix(val) {
   val === 'payant' ? g.removeAttribute('hidden') : g.setAttribute('hidden', '');
 }
 
-// ── Info tarif
+// ── Info tarif (couleurs officielles Ariziki — une par série)
 const tarifData = {
-  decouverte:    { label:'🆓 Découverte',    color:'#EAF3DE', border:'#97C459', text:'#27500A', hint:'Visible par tous sans paiement. Accès 100% gratuit.', type:'gratuit' },
-  essentiel:     { label:'⭐ Essentiel',     color:'#EDE9FE', border:'#8B5CF6', text:'#4C1D95', hint:'Réservé aux abonnés Essentiel — 5 000 FCFA/mois.', type:'payant' },
-  business_plan: { label:'📊 Business Plan', color:'#FBE3DA', border:'#F5C518', text:'#92400E', hint:'Réservé aux abonnés Business Plan — 15 000 FCFA/mois.', type:'payant' },
-  lancement:     { label:'🚀 Lancement',     color:'#D1FAE5', border:'#10b981', text:'#065F46', hint:'Réservé aux abonnés Lancement — 25 000 FCFA/mois.', type:'payant' },
+  decouverte:    { label:'Phase 0 — GRATUITE',   bg:'#085041', border:'#085041', text:'#ffffff',  badgeBg:'rgba(125,255,196,.25)', badgeText:'#7fffc4', hint:'3 modules d\'onboarding · 0 FCFA · fond vert foncé, texte blanc.', type:'gratuit' },
+  essentiel:     { label:'Série 1 — ESSENTIEL',  bg:'#ffffff', border:'rgba(0,0,0,.15)', text:'#085041', badgeBg:'#d0ece4', badgeText:'#085041', hint:'9 modules de validation · 1 000 – 5 000 FCFA · fond blanc, bordure légère.', type:'payant' },
+  business_plan: { label:'Série 2 — AVANCÉ',     bg:'#F5F0E8', border:'rgba(0,0,0,.1)',  text:'#085041', badgeBg:'rgba(216,90,48,.18)', badgeText:'#D85A30', hint:'9 modules de lancement · 5 000 – 10 000 FCFA · fond sable.', type:'payant' },
+  lancement:     { label:'Série 3 — EXPERT',     bg:'#1A1A18', border:'#1A1A18', text:'#ffffff',  badgeBg:'rgba(255,255,255,.18)', badgeText:'#ffffff', hint:'9 modules de croissance · 10 000 – 15 000 FCFA · fond noir, pleine largeur.', type:'payant' },
 };
 
 function onTarifChange(val) {
   const d   = tarifData[val];
   const box = document.getElementById('tarif-info');
-  box.style.background   = d.color;
+  box.style.background   = d.bg;
   box.style.border       = '1px solid ' + d.border;
   box.style.color        = d.text;
-  box.innerHTML = `<strong>${d.label}</strong><br>${d.hint}`;
+  box.innerHTML = `<span style="display:inline-block;background:${d.badgeBg};color:${d.badgeText};font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:6px">${d.label.split(' — ')[1]}</span><br><strong>${d.label}</strong><br>${d.hint}`;
   // Suggérer le type
   const typeEl = document.getElementById('type');
   typeEl.value = d.type;
