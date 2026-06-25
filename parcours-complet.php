@@ -1,6 +1,6 @@
 <?php
 // ============================================================
-//  parcours-lancement.php — Parcours "Lancement" (8 000 FCFA)
+//  parcours-complet.php — Parcours "Parcours Complet" (25 000 FCFA)
 // ============================================================
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
@@ -10,15 +10,15 @@ reqConnecte();
 $pdo    = getPDO();
 $user   = utilisateurCourant();
 $userId = (int)$_SESSION['user_id'];
-$cours  = chargerParcours($pdo, 'lancement', $userId);
+$cours  = chargerParcours($pdo, 'parcours_complet', $userId);
 
 $config = [
-  'tarif'       => 'lancement',
-  'nom'         => 'Lancement',
+  'tarif'       => 'parcours_complet',
+  'nom'         => 'Parcours Complet',
   'emoji'       => 'ti-rocket',
-  'accroche'    => 'Lancer son activité',
-  'desc'        => 'Le parcours complet : coaching intensif, accompagnement terrain et certification universitaire.',
-  'prix'        => 8000,
+  'accroche'    => 'Structurer et scaler son entreprise',
+  'desc'        => 'L\'expérience complète : toutes les séries, coaching intensif, accompagnement terrain et certification universitaire.',
+  'prix'        => 25000,
   'badge'       => '<i class="ti ti-trophy"></i> Complet',
   'badge_cls'   => 'pro',
   'grad_hero'   => 'linear-gradient(135deg,#0d3b2e 0%,#1a6b52 100%)',

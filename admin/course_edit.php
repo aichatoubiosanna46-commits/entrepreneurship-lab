@@ -214,10 +214,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-group">
             <label>Série (parcours)</label>
             <select id="tarif" name="tarif" onchange="onTarifChange(this.value)">
-              <option value="decouverte"    <?= $course['tarif']==='decouverte'    ?'selected':'' ?>>🆓 Phase 0 — Gratuit</option>
-              <option value="essentiel"     <?= $course['tarif']==='essentiel'     ?'selected':'' ?>>Série 1 — Essentiel (1 000 – 5 000 FCFA)</option>
-              <option value="business_plan" <?= $course['tarif']==='business_plan' ?'selected':'' ?>>Série 2 — Avancé (5 000 – 10 000 FCFA)</option>
-              <option value="lancement"     <?= $course['tarif']==='lancement'     ?'selected':'' ?>>Série 3 — Expert (10 000 – 15 000 FCFA)</option>
+              <option value="decouverte"       <?= $course['tarif']==='decouverte'       ?'selected':'' ?>>🆓 Phase 0 — Gratuit</option>
+              <option value="serie_1_2"        <?= $course['tarif']==='serie_1_2'        ?'selected':'' ?>>Séries 1 + 2 (15 000 FCFA)</option>
+              <option value="parcours_complet" <?= $course['tarif']==='parcours_complet' ?'selected':'' ?>>Parcours Complet (25 000 FCFA)</option>
             </select>
             <small style="color:var(--text-muted);font-size:11px">
               Chaque série a ses propres couleurs et son propre positionnement (voir aperçu ci-dessous).
@@ -356,10 +355,9 @@ function previewImg(input) {
 
 // ── Info série (couleurs officielles Ariziki — une par série)
 const tarifData = {
-  decouverte:    { label:'Phase 0 — GRATUITE',   bg:'#085041', border:'#085041', text:'#ffffff',  badgeBg:'rgba(125,255,196,.25)', badgeText:'#7fffc4', hint:'3 modules d\'onboarding · 0 FCFA · fond vert foncé, texte blanc.' },
-  essentiel:     { label:'Série 1 — ESSENTIEL',  bg:'#ffffff', border:'rgba(0,0,0,.15)', text:'#085041', badgeBg:'#d0ece4', badgeText:'#085041', hint:'9 modules de validation · 1 000 – 5 000 FCFA · fond blanc, bordure légère.' },
-  business_plan: { label:'Série 2 — AVANCÉ',     bg:'#F5F0E8', border:'rgba(0,0,0,.1)',  text:'#085041', badgeBg:'rgba(216,90,48,.18)', badgeText:'#D85A30', hint:'9 modules de lancement · 5 000 – 10 000 FCFA · fond sable.' },
-  lancement:     { label:'Série 3 — EXPERT',     bg:'#1A1A18', border:'#1A1A18', text:'#ffffff',  badgeBg:'rgba(255,255,255,.18)', badgeText:'#ffffff', hint:'9 modules de croissance · 10 000 – 15 000 FCFA · fond noir, pleine largeur.' },
+  decouverte:       { label:'Phase 0 — GRATUITE', bg:'#085041', border:'#085041', text:'#ffffff',  badgeBg:'rgba(125,255,196,.25)', badgeText:'#7fffc4', hint:'3 modules d\'onboarding · 0 FCFA · fond vert foncé, texte blanc.' },
+  serie_1_2:        { label:'Séries 1 + 2',       bg:'#ffffff', border:'rgba(0,0,0,.15)', text:'#085041', badgeBg:'#d0ece4', badgeText:'#085041', hint:'Modules de validation et de structuration · 15 000 FCFA.' },
+  parcours_complet: { label:'Parcours Complet',   bg:'#1A1A18', border:'#1A1A18', text:'#ffffff',  badgeBg:'rgba(255,255,255,.18)', badgeText:'#ffffff', hint:'Toutes les séries · 25 000 FCFA · fond noir, pleine largeur.' },
 };
 
 function onTarifChange(val) {

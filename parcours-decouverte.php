@@ -23,8 +23,8 @@ $config = [
   'badge_cls'   => 'free',
   'grad_hero'   => 'linear-gradient(135deg,#1a1710 0%,#2d2108 100%)',
   'accent'      => '#22c55e',
-  'upgrade_tarif'=> 'business-plan',
-  'upgrade_nom' => 'Business Plan',
-  'upgrade_prix'=> '5 000 FCFA',
+  'upgrade_tarif'=> 'series-1-2',
+  'upgrade_nom' => 'Séries 1 + 2',
+  'upgrade_prix'=> '15 000 FCFA',
 ];
 include __DIR__ . '/includes/parcours_template.php';

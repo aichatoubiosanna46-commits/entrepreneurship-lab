@@ -72,7 +72,7 @@ CREATE TABLE courses (
     video_intro   VARCHAR(500)  DEFAULT NULL,
     niveau        ENUM('debutant','intermediaire','avance') NOT NULL DEFAULT 'debutant',
     type          ENUM('gratuit','payant') NOT NULL DEFAULT 'gratuit',
-    tarif         ENUM('decouverte','essentiel','business_plan','lancement') NOT NULL DEFAULT 'decouverte',
+    tarif         ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL DEFAULT 'decouverte',
     prix          DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     duree_heures  DECIMAL(4,1)  DEFAULT NULL,
     certificat    TINYINT(1)    NOT NULL DEFAULT 0,

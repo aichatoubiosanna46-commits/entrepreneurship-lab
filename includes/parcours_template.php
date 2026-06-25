@@ -309,9 +309,9 @@ $progMoyen  = $nbCours > 0 ? (int)round(array_sum(array_column($cours,'progressi
       <div class="sb-body" style="padding:8px 0">
         <?php
         $allTarifs = [
-          'decouverte'    => ['ti-bulb','Découverte','parcours-decouverte.php'],
-          'business_plan' => ['ti-chart-bar','Business Plan','parcours-business-plan.php'],
-          'lancement'     => ['ti-rocket','Lancement','parcours-lancement.php'],
+          'decouverte'       => ['ti-bulb','Découverte','parcours-decouverte.php'],
+          'serie_1_2'        => ['ti-chart-bar','Séries 1 + 2','parcours-series-1-2.php'],
+          'parcours_complet' => ['ti-rocket','Parcours Complet','parcours-complet.php'],
         ];
         foreach ($allTarifs as $k => [$em,$nm,$pg]): ?>
         <a href="<?= SITE_URL ?>/<?= $pg ?>" style="display:flex;align-items:center;gap:10px;padding:10px 18px;text-decoration:none;color:inherit;transition:background .15s;<?= $k === $config['tarif'] ? 'background:#f9f9f9;font-weight:700;border-left:3px solid var(--accent)' : '' ?>">

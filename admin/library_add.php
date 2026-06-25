@@ -71,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label>Accès minimum requis</label>
       <select name="tarif_min">
         <option value="decouverte">Découverte (gratuit)</option>
-        <option value="business_plan">Business Plan</option>
-        <option value="lancement">Lancement</option>
+        <option value="serie_1_2">Séries 1 + 2</option>
+        <option value="parcours_complet">Parcours Complet</option>
       </select>
     </div>
     <div class="form-field">

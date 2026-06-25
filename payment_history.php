@@ -25,7 +25,7 @@ try {
 $subs = $pdo->prepare('SELECT * FROM subscriptions WHERE user_id = ? ORDER BY created_at DESC');
 $subs->execute([$userId]);
 $subs = $subs->fetchAll();
-$planNames = ['decouverte'=>'Découverte','business_plan'=>'Business Plan','lancement'=>'Lancement'];
+$planNames = ['decouverte'=>'Phase 0','serie_1_2'=>'Séries 1+2','parcours_complet'=>'Parcours Complet'];
 ?>
 <!DOCTYPE html>
 <html lang="fr">

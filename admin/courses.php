@@ -76,10 +76,9 @@ $courses = $pdo->query($sql)->fetchAll();
           <td>
             <?php
             $tarifMap = [
-              'decouverte'    => ['ti-gift','Découverte',   '#EAF3DE','#27500A'],
-              'essentiel'     => ['ti-star','Essentiel',    '#EDE9FE','#4C1D95'],
-              'business_plan' => ['ti-chart-bar','Business Plan','#FBE3DA','#92400E'],
-              'lancement'     => ['ti-rocket','Lancement',    '#D1FAE5','#065F46'],
+              'decouverte'       => ['ti-gift','Découverte',        '#EAF3DE','#27500A'],
+              'serie_1_2'        => ['ti-chart-bar','Séries 1 + 2', '#FBE3DA','#92400E'],
+              'parcours_complet' => ['ti-rocket','Parcours Complet','#D1FAE5','#065F46'],
             ];
             [$tIco,$tNom,$tBg,$tCol] = $tarifMap[$c['tarif'] ?? 'decouverte'] ?? ['ti-books','—','#f4f4f4','#666'];
             ?>

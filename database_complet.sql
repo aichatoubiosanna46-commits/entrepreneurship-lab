@@ -72,7 +72,7 @@ CREATE TABLE courses (
     video_intro   VARCHAR(500)  DEFAULT NULL,
     niveau        ENUM('debutant','intermediaire','avance') NOT NULL DEFAULT 'debutant',
     type          ENUM('gratuit','payant') NOT NULL DEFAULT 'gratuit',
-    tarif         ENUM('decouverte','essentiel','business_plan','lancement') NOT NULL DEFAULT 'decouverte',
+    tarif         ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL DEFAULT 'decouverte',
     prix          DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     duree_heures  DECIMAL(4,1)  DEFAULT NULL,
     certificat    TINYINT(1)    NOT NULL DEFAULT 0,
@@ -335,7 +335,7 @@ CREATE TABLE IF NOT EXISTS library_resources (
     description TEXT DEFAULT NULL,
     fichier     VARCHAR(255) NOT NULL,
     type        ENUM('business_plan','social_media','sales_script','autre') NOT NULL DEFAULT 'autre',
-    tarif_min   ENUM('decouverte','business_plan','lancement') NOT NULL DEFAULT 'decouverte',
+    tarif_min   ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL DEFAULT 'decouverte',
     actif       TINYINT(1) NOT NULL DEFAULT 1,
     downloads   INT UNSIGNED NOT NULL DEFAULT 0,
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -366,7 +366,7 @@ CREATE TABLE IF NOT EXISTS learning_path_courses (
 CREATE TABLE IF NOT EXISTS subscriptions (
     id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id    INT UNSIGNED NOT NULL,
-    tarif      ENUM('decouverte','business_plan','lancement') NOT NULL,
+    tarif      ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL,
     statut     ENUM('actif','expire','annule') NOT NULL DEFAULT 'actif',
     paye       TINYINT(1) NOT NULL DEFAULT 0,
     expire_le  DATETIME DEFAULT NULL,
@@ -426,7 +426,7 @@ ALTER TABLE courses
   ADD COLUMN IF NOT EXISTS slug         VARCHAR(220) DEFAULT NULL,
   ADD COLUMN IF NOT EXISTS niveau       ENUM('debutant','intermediaire','avance') NOT NULL DEFAULT 'debutant',
   ADD COLUMN IF NOT EXISTS type         ENUM('gratuit','payant') NOT NULL DEFAULT 'gratuit',
-  ADD COLUMN IF NOT EXISTS tarif        ENUM('decouverte','business_plan','lancement') NOT NULL DEFAULT 'decouverte',
+  ADD COLUMN IF NOT EXISTS tarif        ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL DEFAULT 'decouverte',
   ADD COLUMN IF NOT EXISTS prix         DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   ADD COLUMN IF NOT EXISTS duree_heures DECIMAL(4,1)  DEFAULT NULL,
   ADD COLUMN IF NOT EXISTS certificat   TINYINT(1)    NOT NULL DEFAULT 0,
@@ -552,8 +552,8 @@ CREATE TABLE IF NOT EXISTS progress (
     FOREIGN KEY (sequence_id)REFERENCES sequences(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 12. Ajouter 'essentiel' dans l'ENUM tarif des courses
-ALTER TABLE courses MODIFY COLUMN tarif ENUM('decouverte','essentiel','business_plan','lancement') NOT NULL DEFAULT 'decouverte';
+-- 12. Restructuration des tarifs (3 plans : decouverte/serie_1_2/parcours_complet)
+ALTER TABLE courses MODIFY COLUMN tarif ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL DEFAULT 'decouverte';
 
 -- 13. Ajouter colonnes optionnelles au module si absentes (module_add.php étendu)
 ALTER TABLE modules
@@ -1035,7 +1035,7 @@ CREATE TABLE IF NOT EXISTS library_resources (
     description TEXT DEFAULT NULL,
     fichier     VARCHAR(255) NOT NULL,
     type        ENUM('business_plan','social_media','sales_script','autre') NOT NULL DEFAULT 'autre',
-    tarif_min   ENUM('decouverte','business_plan','lancement') NOT NULL DEFAULT 'decouverte',
+    tarif_min   ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL DEFAULT 'decouverte',
     actif       TINYINT(1) NOT NULL DEFAULT 1,
     downloads   INT UNSIGNED NOT NULL DEFAULT 0,
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -1066,7 +1066,7 @@ CREATE TABLE IF NOT EXISTS learning_path_courses (
 CREATE TABLE IF NOT EXISTS subscriptions (
     id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id    INT UNSIGNED NOT NULL,
-    tarif      ENUM('decouverte','business_plan','lancement') NOT NULL,
+    tarif      ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL,
     statut     ENUM('actif','expire','annule') NOT NULL DEFAULT 'actif',
     paye       TINYINT(1) NOT NULL DEFAULT 0,
     expire_le  DATETIME DEFAULT NULL,
@@ -1127,7 +1127,7 @@ ALTER TABLE courses
   ADD COLUMN IF NOT EXISTS slug         VARCHAR(220) DEFAULT NULL,
   ADD COLUMN IF NOT EXISTS niveau       ENUM('debutant','intermediaire','avance') NOT NULL DEFAULT 'debutant',
   ADD COLUMN IF NOT EXISTS type         ENUM('gratuit','payant') NOT NULL DEFAULT 'gratuit',
-  ADD COLUMN IF NOT EXISTS tarif        ENUM('decouverte','business_plan','lancement') NOT NULL DEFAULT 'decouverte',
+  ADD COLUMN IF NOT EXISTS tarif        ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL DEFAULT 'decouverte',
   ADD COLUMN IF NOT EXISTS prix         DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   ADD COLUMN IF NOT EXISTS duree_heures DECIMAL(4,1)  DEFAULT NULL,
   ADD COLUMN IF NOT EXISTS certificat   TINYINT(1)    NOT NULL DEFAULT 0,
@@ -1253,8 +1253,8 @@ CREATE TABLE IF NOT EXISTS progress (
     FOREIGN KEY (sequence_id)REFERENCES sequences(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 12. Ajouter 'essentiel' dans l'ENUM tarif des courses
-ALTER TABLE courses MODIFY COLUMN tarif ENUM('decouverte','essentiel','business_plan','lancement') NOT NULL DEFAULT 'decouverte';
+-- 12. Restructuration des tarifs (3 plans : decouverte/serie_1_2/parcours_complet)
+ALTER TABLE courses MODIFY COLUMN tarif ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL DEFAULT 'decouverte';
 
 -- 13. Ajouter colonnes optionnelles au module si absentes (module_add.php étendu)
 ALTER TABLE modules

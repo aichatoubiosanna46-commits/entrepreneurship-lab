@@ -4,7 +4,7 @@
 -- ============================================================
 
 ALTER TABLE courses
-  ADD COLUMN tarif ENUM('decouverte','business_plan','lancement') NOT NULL DEFAULT 'decouverte'
+  ADD COLUMN tarif ENUM('decouverte','serie_1_2','parcours_complet') NOT NULL DEFAULT 'decouverte'
   AFTER type;
 
 -- Index pour filtrer rapidement par tarif

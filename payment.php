@@ -16,41 +16,32 @@ $activeSub = $sub->fetch();
 
 $plans = [
     'decouverte'    => [
-        'nom'      => 'Découverte',
+        'nom'      => 'Phase 0',
         'prix'     => 0,
         'emoji'    => 'ti-bulb',
         'couleur'  => '#16a34a',
         'bg'       => '#ECFDF5',
-        'desc'     => 'Pour valider ton idée et découvrir l\'entrepreneuriat',
-        'features' => ['Formations gratuites','Accès illimité','Support email','Accès à la communauté'],
+        'desc'     => 'Accès immédiat, sans engagement, pour découvrir la méthode et te faire ton propre avis.',
+        'features' => ['3 modules complets','Outil « Radar à Opportunités »','Badge « Explorateur Entrepreneurial »','Accès au forum communautaire'],
     ],
-    'essentiel'     => [
-        'nom'      => 'Essentiel',
-        'prix'     => 5000,
-        'emoji'    => 'ti-star-filled',
-        'couleur'  => '#C04A22',
-        'bg'       => '#F5F0E8',
-        'desc'     => 'Formations essentielles pour démarrer ton business',
-        'features' => ['Formations Essentiel','Ressources PDF de base','Certificats de complétion','Support prioritaire'],
-    ],
-    'business_plan' => [
-        'nom'      => 'Business Plan',
+    'serie_1_2'     => [
+        'nom'      => 'Séries 1 + 2',
         'prix'     => 15000,
         'emoji'    => 'ti-chart-bar',
-        'couleur'  => '#D85A30',
+        'couleur'  => '#085041',
         'bg'       => '#FBE3DA',
-        'desc'     => 'Accès complet aux formations avancées + coaching',
-        'features' => ['Tout Essentiel inclus','Toutes les formations','Bibliothèque ressources complète','Coaching groupe mensuel'],
+        'desc'     => 'De l\'idée à ta première vente. Le cœur du programme pour les étudiants en action.',
+        'features' => ['18 modules (Séries 1 & 2)','Tous les templates & outils','Coaching mensuel en groupe','Certification Université de Parakou','Paiement par tranches possible'],
         'popular'  => true,
     ],
-    'lancement'     => [
-        'nom'      => 'Lancement',
+    'parcours_complet' => [
+        'nom'      => 'Parcours Complet',
         'prix'     => 25000,
         'emoji'    => 'ti-rocket',
-        'couleur'  => '#085041',
+        'couleur'  => '#1A1A18',
         'bg'       => '#F0F9F5',
-        'desc'     => 'Accompagnement VIP pour lancer ton activité',
-        'features' => ['Tout Business Plan inclus','Bibliothèque complète','Coaching 1-1 mensuel','Accès anticipé nouveautés'],
+        'desc'     => 'Les 30 modules, le coaching 1:1, et l\'accès au réseau alumni d\'entrepreneurs béninois.',
+        'features' => ['30 modules complets','Coaching individuel mensuel','Accès réseau alumni','Certificat mention Excellente','Mise en relation partenaires'],
     ],
 ];
 
@@ -210,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
 .pay-badges { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
 .pay-badge-item { display:inline-flex; align-items:center; gap:6px; background:rgba(245,158,11,.15); border:1px solid rgba(245,158,11,.3); border-radius:20px; padding:5px 14px; font-size:11px; color:#D85A30; font-weight:600; }
 .pay-wrap { max-width:1080px; margin:0 auto; padding:0 20px; }
-.plans-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin:-28px auto 32px; position:relative; z-index:10; }
+.plans-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin:-28px auto 32px; position:relative; z-index:10; }
 .plan-card { background:#fff; border:1.5px solid #e5e7eb; border-radius:18px; overflow:hidden; transition:transform .2s,box-shadow .2s; display:flex; flex-direction:column; box-shadow:0 4px 16px rgba(0,0,0,.06); }
 .plan-card:hover { transform:translateY(-5px); box-shadow:0 12px 32px rgba(0,0,0,.12); }
 .plan-card.popular { border-color:#D85A30; box-shadow:0 8px 32px rgba(245,158,11,.2); }
@@ -290,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
       <div class="plan-card <?= !empty($plan['popular']) ? 'popular' : '' ?>">
         <div class="plan-header" style="background:<?= $plan['bg'] ?>">
           <?php if (!empty($plan['popular'])): ?>
-            <div class="plan-popular-badge"><i class="ti ti-star-filled"></i> Le plus populaire</div>
+            <div class="plan-popular-badge"><i class="ti ti-star-filled"></i> Le plus choisi</div>
           <?php endif; ?>
           <span class="plan-emoji"><i class="ti <?= $plan['emoji'] ?>"></i></span>
           <div class="plan-name" style="color:<?= $plan['couleur'] ?>"><?= h($plan['nom']) ?></div>
