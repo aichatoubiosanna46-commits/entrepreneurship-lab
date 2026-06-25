@@ -250,6 +250,11 @@ img { max-width: 100%; }
   .elab-section { padding: 32px 16px; }
   .cta-section, .cta-section[style] { padding: 40px 20px !important; }
 }
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
 </style>
 </head>
 <body>
@@ -380,7 +385,7 @@ img { max-width: 100%; }
   </div>
 </div>
 <?php if (!empty($mesModules)): ?>
-<div class="elab-section">
+<div class="elab-section reveal">
   <div class="sec-tag">Ma progression</div>
   <div class="sec-title">Modules en cours</div>
   <div class="modules-grid">
@@ -413,7 +418,7 @@ img { max-width: 100%; }
 <?php endif; ?>
 
 <!-- LE CONSTAT -->
-<div class="elab-section" id="constat" style="background:var(--bg-light)">
+<div class="elab-section reveal" id="constat" style="background:var(--bg-light)">
   <div class="sec-tag">Le constat</div>
   <div class="sec-title">Le diplôme ne suffit plus.</div>
   <div class="sec-sub">Au Bénin, décrocher un emploi après les études prend en moyenne 3 à 7 ans. Ce n'est pas une fatalité.</div>
@@ -444,7 +449,7 @@ img { max-width: 100%; }
 </div>
 
 <!-- LE PARCOURS -->
-<div class="elab-section" id="parcours">
+<div class="elab-section reveal" id="parcours">
   <div class="sec-tag">Le parcours</div>
   <div class="sec-title">30 modules. Une seule direction.</div>
   <div class="sec-sub">Un programme progressif en 3 séries, conçu pour t'amener de l'idée à la première vente — pendant tes études.</div>
@@ -481,7 +486,7 @@ img { max-width: 100%; }
 </div>
 
 <!-- LA METHODE -->
-<div class="elab-section" id="methode" style="background:#f0f9f5">
+<div class="elab-section reveal" id="methode" style="background:#f0f9f5">
   <div class="sec-tag">La méthode</div>
   <div class="sec-title">80% pratique. 20% théorie.</div>
   <div class="sec-sub">On ne te donne pas des cours magistraux. On te met en situation réelle, avec des outils béninois, pour des problèmes béninois.</div>
@@ -525,7 +530,7 @@ img { max-width: 100%; }
 </div>
 
 <!-- TEMOIGNAGES -->
-<div class="elab-section" id="temoignages" style="background:#fff">
+<div class="elab-section reveal" id="temoignages" style="background:#fff">
   <div class="sec-tag">Ils ont osé</div>
   <div class="sec-title">Des étudiants qui ont franchi le pas.</div>
   <div class="sec-sub">Pas des exceptions. Des exemples reproductibles, avec les bons outils.</div>
@@ -577,7 +582,7 @@ img { max-width: 100%; }
 </div>
 
 <!-- POURQUOI NOUS -->
-<div class="elab-section">
+<div class="elab-section reveal">
   <div class="sec-tag">Pourquoi nous ?</div>
   <div class="sec-title">Conçu pour les étudiants entrepreneurs</div>
   <div class="sec-sub">Compatible avec ton emploi du temps universitaire, 100% en ligne</div>
@@ -601,7 +606,7 @@ img { max-width: 100%; }
 </div>
 
 <!-- TARIFS -->
-<div class="elab-section alt" id="tarifs">
+<div class="elab-section alt reveal" id="tarifs">
   <div class="sec-tag">Tarification</div>
   <div class="sec-title">Conçu pour ta bourse d'étudiant.</div>
   <div class="sec-sub">Paiement en Mobile Money. Pas besoin de carte bancaire. Commence gratuitement.</div>
@@ -646,21 +651,8 @@ img { max-width: 100%; }
   <p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:22px">Paiement accepté via MTN Mobile Money · Moov Money · Wave — Paiement en 3 fois disponible sur demande.</p>
 </div>
 
-<!-- COMMENT CA MARCHE -->
-<div class="elab-section dark" id="comment">
-  <div class="sec-tag light">Parcours</div>
-  <div class="sec-title light">Comment ça marche ?</div>
-  <div class="sec-sub light">4 étapes pour lancer ton entreprise</div>
-  <div class="how-steps">
-    <div class="hstep"><div class="step-num">1</div><h4>Crée ton compte</h4><p>Inscription gratuite en 2 min, aucune carte bancaire requise</p></div>
-    <div class="hstep"><div class="step-num">2</div><h4>Choisis ta formation</h4><p>Gratuit, Business Plan ou parcours complet avec coaching</p></div>
-    <div class="hstep"><div class="step-num">3</div><h4>Apprends & pratique</h4><p>Vidéos courtes + exercices concrets + coaching 1:1</p></div>
-    <div class="hstep"><div class="step-num">4</div><h4>Lance ton business</h4><p>Certifié par l'Université de Parakou, prêt à te lancer</p></div>
-  </div>
-</div>
-
 <!-- NOTRE EQUIPE -->
-<div class="elab-section alt" id="equipe" style="text-align:center">
+<div class="elab-section alt reveal" id="equipe" style="text-align:center">
   <div class="sec-tag">L'équipe</div>
   <div class="sec-title" style="margin-bottom:6px">Portés par CPID ONG.</div>
   <p style="font-size:13px;color:var(--text-muted);max-width:520px;margin:0 auto 36px;line-height:1.75">
@@ -813,6 +805,21 @@ img { max-width: 100%; }
     </div>
   </div>
 </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(function (el) { observer.observe(el); });
+});
+</script>
 
 </body>
 </html>
