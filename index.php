@@ -229,6 +229,7 @@ img { max-width: 100%; }
   .elab-hero { min-height: 400px; padding: 48px 20px; }
   .elab-nav-links { display: none; }
   .elab-nav-burger { display: block; }
+  .elab-nav > .elab-nav-btn { display: none; }
   .equipe-grid { grid-template-columns: 1fr !important; max-width: 420px !important; margin-left: auto !important; margin-right: auto !important; }
   .elab-section { padding: 40px 20px; }
   .constat-grid > div, .parcours-grid > div, .methode-grid > div, .temoignages-grid > div { padding: 18px !important; }
@@ -290,6 +291,11 @@ img { max-width: 100%; }
   <a href="#temoignages">Témoignages</a>
   <a href="#tarifs">Tarifs</a>
   <a href="#equipe">À propos</a>
+  <?php if (estConnecte()): ?>
+    <a href="<?= SITE_URL ?>/dashboard.php" style="color:var(--gold);font-weight:700">Mon espace</a>
+  <?php else: ?>
+    <a href="<?= SITE_URL ?>/register.php" style="color:var(--gold);font-weight:700">Commencer gratuitement →</a>
+  <?php endif; ?>
 </div>
 
 <?= flash() ?>
