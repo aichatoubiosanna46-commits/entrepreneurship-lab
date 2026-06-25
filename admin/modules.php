@@ -113,10 +113,10 @@ $modules = $modules->fetchAll();
               <a href="<?= SITE_URL ?>/admin/sequences.php?module_id=<?= $m['id'] ?>" class="btn-icon" title="Séquences">
                 <i class="ti ti-list-numbers"></i>
               </a>
-              <?php if (estAdmin()): ?>
               <a href="<?= SITE_URL ?>/admin/module_edit.php?id=<?= $m['id'] ?>&course_id=<?= $courseId ?>" class="btn-icon" title="Modifier">
                 <i class="ti ti-edit"></i>
               </a>
+              <?php if (estAdmin()): ?>
               <a href="<?= SITE_URL ?>/admin/module_delete.php?id=<?= $m['id'] ?>&course_id=<?= $courseId ?>&csrf=<?= csrfToken() ?>"
                  class="btn-icon btn-icon-danger"
                  onclick="return confirm('Supprimer ce module et toutes ses séquences ?')" title="Supprimer">

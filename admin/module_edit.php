@@ -2,13 +2,13 @@
 // admin/module_edit.php — Modifier un module
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo      = getPDO();
 $id       = (int)($_GET['id']        ?? 0);
 $courseId = (int)($_GET['course_id'] ?? 0);
-if (!$id) { redirect(SITE_URL . '/admin/courses.php', 'Module introuvable.', 'error'); }
-if (!moduleAppartientInstructeur($id)) { redirect(SITE_URL . '/admin/courses.php', 'Accès refusé : ce module ne vous appartient pas.', 'error'); }
+if (!$id) { redirect(SITE_URL . '/dashboard.php', 'Module introuvable.', 'error'); }
+if (!moduleAppartientInstructeur($id)) { redirect(SITE_URL . '/dashboard.php', 'Accès refusé : ce module ne vous appartient pas.', 'error'); }
 
 $module = $pdo->prepare('SELECT * FROM modules WHERE id = ?');
 $module->execute([$id]);
