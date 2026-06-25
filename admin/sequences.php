@@ -2,12 +2,12 @@
 // admin/sequences.php — Séquences d'un module
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo      = getPDO();
 $moduleId = (int)($_GET['module_id'] ?? 0);
 if (!$moduleId) { header('Location: '.SITE_URL.'/admin/courses.php'); exit; }
-if (!moduleAppartientInstructeur($moduleId)) { redirect(SITE_URL . '/admin/courses.php', 'Accès refusé : ce module ne vous appartient pas.', 'error'); }
+if (!moduleAppartientInstructeur($moduleId)) { redirect(SITE_URL . '/dashboard.php', 'Accès refusé : ce module ne vous appartient pas.', 'error'); }
 
 $module = $pdo->prepare('SELECT m.*, c.titre as course_titre, c.id as course_id FROM modules m JOIN courses c ON c.id = m.course_id WHERE m.id = ?');
 $module->execute([$moduleId]);

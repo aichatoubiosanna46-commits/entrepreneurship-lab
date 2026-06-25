@@ -4,9 +4,10 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 reqAdmin();
 
-$pdo        = getPDO();
-$categories = $pdo->query('SELECT * FROM categories ORDER BY nom')->fetchAll();
-$erreurs    = [];
+$pdo          = getPDO();
+$categories   = $pdo->query('SELECT * FROM categories ORDER BY nom')->fetchAll();
+$instructeurs = $pdo->query("SELECT id, nom, prenom FROM users WHERE role='instructeur' AND actif=1 ORDER BY nom")->fetchAll();
+$erreurs      = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifierCSRF();
@@ -31,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $certificat     = isset($_POST['certificat'])  ? 1 : 0;
     $quiz_final     = isset($_POST['quiz_final'])  ? 1 : 0;
     $note_min       = (int)($_POST['note_min']     ?? 70);
+    $formateur_id   = (int)($_POST['formateur_id'] ?? 0) ?: null;
 
     // ── Validation
     if (!$titre)       $erreurs[] = 'Le titre est requis.';
@@ -61,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $duree_heures ?: null,
             $certificat, $actif, $statut,
             $_SESSION['admin_id'] ?? null,
-            estAdmin() ? null : $_SESSION['user_id']
+            $formateur_id
         ]);
         $newId = $pdo->lastInsertId();
         redirect(
@@ -236,6 +238,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </select>
             </div>
           </div>
+
+          <!-- Formateur assigné -->
+          <div class="form-group">
+            <label for="formateur_id">Instructeur assigné (optionnel)</label>
+            <select id="formateur_id" name="formateur_id">
+              <option value="">— Aucun (géré par l'admin uniquement) —</option>
+              <?php foreach ($instructeurs as $ins): ?>
+                <option value="<?= $ins['id'] ?>" <?= (($_POST['formateur_id'] ?? '') == $ins['id']) ? 'selected' : '' ?>>
+                  <?= h($ins['nom'].' '.$ins['prenom']) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+            <p style="font-size:12px;color:#9ca3af;margin-top:4px">L'instructeur assigné pourra ajouter/modifier les séquences de ce cours depuis son espace, sans pouvoir le supprimer ni changer son prix.</p>
+          </div>
+          <?php if (empty($instructeurs)): ?>
+          <p style="font-size:12px;color:#9ca3af">Aucun instructeur disponible — promouvez un étudiant depuis <a href="<?= SITE_URL ?>/admin/coaches.php">Coachs &amp; instructeurs</a>.</p>
+          <?php endif; ?>
 
           <!-- Durée · Vidéo intro -->
           <div class="form-row-2">

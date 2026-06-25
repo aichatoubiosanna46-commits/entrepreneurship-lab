@@ -7,7 +7,8 @@ reqAdmin();
 $pdo = getPDO();
 $sql = 'SELECT c.*, cat.nom as categorie,
             (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = c.id) as nb_inscrits,
-            (SELECT COUNT(*) FROM modules m WHERE m.course_id = c.id) as nb_modules
+            (SELECT COUNT(*) FROM modules m WHERE m.course_id = c.id) as nb_modules,
+            (SELECT CONCAT(u.nom, " ", u.prenom) FROM users u WHERE u.id = c.formateur_id) as formateur_nom
      FROM courses c
      JOIN categories cat ON cat.id = c.category_id';
 $sql .= ' ORDER BY c.created_at DESC';
@@ -48,7 +49,7 @@ $courses = $pdo->query($sql)->fetchAll();
       <thead>
         <tr>
           <th>Cours</th><th>Catégorie</th><th>Parcours</th><th>Modules</th><th>Type</th>
-          <th>Prix</th><th>Inscrits</th><th>Statut</th><th>Actions</th>
+          <th>Prix</th><th>Inscrits</th><th>Formateur</th><th>Statut</th><th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -101,6 +102,7 @@ $courses = $pdo->query($sql)->fetchAll();
           </td>
           <td><?= fcfa((float)$c['prix']) ?></td>
           <td><strong><?= $c['nb_inscrits'] ?></strong></td>
+          <td><?= h($c['formateur_nom'] ?? '—') ?></td>
           <td>
             <?php
             $badgeMap = [
@@ -141,7 +143,7 @@ $courses = $pdo->query($sql)->fetchAll();
         </tr>
         <?php endforeach; ?>
         <?php if (empty($courses)): ?>
-        <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-muted)">
+        <tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text-muted)">
           Aucun cours. <a href="<?= SITE_URL ?>/admin/course_add.php">Créer le premier</a>
         </td></tr>
         <?php endif; ?>

@@ -98,6 +98,14 @@ if (estConnecte()) {
           <a href="<?= SITE_URL ?>/favorites.php"><i class="ti ti-heart"></i> Mes favoris</a>
           <a href="<?= SITE_URL ?>/payment.php"><i class="ti ti-credit-card"></i> Abonnement</a>
           <a href="<?= SITE_URL ?>/profil.php"><i class="ti ti-user"></i> Mon profil</a>
+          <?php if (function_exists('estCoach') && estCoach()): ?>
+          <div class="dropdown-divider"></div>
+          <a href="<?= SITE_URL ?>/admin/review_center.php"><i class="ti ti-checklist"></i> Review Center (Coach)</a>
+          <?php endif; ?>
+          <?php if (function_exists('estInstructeur') && estInstructeur() && !estAdmin()): ?>
+          <div class="dropdown-divider"></div>
+          <a href="<?= SITE_URL ?>/mes-cours-instructeur.php"><i class="ti ti-school"></i> Mes cours (Instructeur)</a>
+          <?php endif; ?>
           <div class="dropdown-divider"></div>
           <a href="<?= SITE_URL ?>/logout.php" style="color:#993C1D"><i class="ti ti-logout"></i> Déconnexion</a>
         </div>

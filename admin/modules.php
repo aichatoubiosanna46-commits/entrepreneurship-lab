@@ -2,12 +2,12 @@
 // admin/modules.php — Modules d'un cours
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+reqInstructeurOuAdmin();
 
 $pdo      = getPDO();
 $courseId = (int)($_GET['course_id'] ?? 0);
 if (!$courseId) { header('Location: '.SITE_URL.'/admin/courses.php'); exit; }
-if (!courseAppartientInstructeur($courseId)) { redirect(SITE_URL . '/admin/courses.php', 'Accès refusé : ce cours ne vous appartient pas.', 'error'); }
+if (!courseAppartientInstructeur($courseId)) { redirect(SITE_URL . '/dashboard.php', 'Accès refusé : ce cours ne vous appartient pas.', 'error'); }
 
 $course = $pdo->prepare('SELECT * FROM courses WHERE id = ?');
 $course->execute([$courseId]);

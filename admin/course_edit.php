@@ -14,8 +14,9 @@ $course->execute([$id]);
 $course = $course->fetch();
 if (!$course) { redirect(SITE_URL . '/admin/courses.php', 'Cours introuvable.', 'error'); }
 
-$categories = $pdo->query('SELECT * FROM categories ORDER BY nom')->fetchAll();
-$erreurs    = [];
+$categories   = $pdo->query('SELECT * FROM categories ORDER BY nom')->fetchAll();
+$instructeurs = $pdo->query("SELECT id, nom, prenom FROM users WHERE role='instructeur' AND actif=1 ORDER BY nom")->fetchAll();
+$erreurs      = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifierCSRF();
@@ -32,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $statut       = $_POST['statut']   ?? 'brouillon';
     $actif        = isset($_POST['actif'])      ? 1 : 0;
     $certificat   = isset($_POST['certificat']) ? 1 : 0;
+    $formateur_id = (int)($_POST['formateur_id'] ?? 0) ?: null;
 
     if (!$titre)       $erreurs[] = 'Le titre est requis.';
     if (!$category_id) $erreurs[] = 'Veuillez choisir une catégorie.';
@@ -47,14 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($erreurs)) {
         $pdo->prepare(
             'UPDATE courses SET category_id=?, titre=?, description=?, miniature=?, video_intro=?,
-             niveau=?, type=?, tarif=?, prix=?, duree_heures=?, certificat=?, actif=?, statut=?
+             niveau=?, type=?, tarif=?, prix=?, duree_heures=?, certificat=?, actif=?, statut=?, formateur_id=?
              WHERE id=?'
         )->execute([
             $category_id, $titre, $description ?: null, $miniature, $video_intro ?: null,
             $niveau, $type, $tarif,
             $type === 'gratuit' ? 0 : $prix,
             $duree_heures ?: null,
-            $certificat, $actif, $statut, $id
+            $certificat, $actif, $statut, $formateur_id, $id
         ]);
         redirect(SITE_URL . '/admin/courses.php', 'Cours mis à jour avec succès.', 'success');
     }
@@ -63,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'titre' => $titre, 'description' => $description, 'category_id' => $category_id,
         'niveau' => $niveau, 'duree_heures' => $duree_heures, 'video_intro' => $video_intro,
         'type' => $type, 'tarif' => $tarif, 'prix' => $prix, 'statut' => $statut,
-        'actif' => $actif, 'certificat' => $certificat,
+        'actif' => $actif, 'certificat' => $certificat, 'formateur_id' => $formateur_id,
     ]);
 }
 ?>
@@ -162,6 +164,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-group">
             <label>Vidéo de présentation (URL YouTube)</label>
             <input type="url" name="video_intro" value="<?= h($course['video_intro'] ?? '') ?>" placeholder="https://youtube.com/watch?v=...">
+          </div>
+
+          <div class="form-group">
+            <label>Instructeur assigné (optionnel)</label>
+            <select name="formateur_id">
+              <option value="">— Aucun (géré par l'admin uniquement) —</option>
+              <?php foreach ($instructeurs as $ins): ?>
+                <option value="<?= $ins['id'] ?>" <?= ($course['formateur_id'] ?? null) == $ins['id'] ? 'selected' : '' ?>>
+                  <?= h($ins['nom'].' '.$ins['prenom']) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+            <p style="font-size:12px;color:#9ca3af;margin-top:4px">L'instructeur assigné pourra ajouter/modifier les séquences de ce cours depuis son espace, sans pouvoir le supprimer ni changer son prix.</p>
           </div>
         </div>
 
