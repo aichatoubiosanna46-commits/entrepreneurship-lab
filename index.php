@@ -213,14 +213,17 @@ try {
 .foot-bottom p { font-size: 9px; color: rgba(255,255,255,.35); }
 
 /* RESPONSIVE */
+html, body { max-width: 100%; overflow-x: hidden; }
+img { max-width: 100%; }
 @media (max-width: 900px) {
-  .pricing-grid, .tarifs-grid { grid-template-columns: 1fr 1fr; }
-  .why-grid, .modules-grid { grid-template-columns: 1fr 1fr; }
-  .how-steps { grid-template-columns: 1fr 1fr; }
+  .pricing-grid, .tarifs-grid { grid-template-columns: 1fr 1fr !important; }
+  .why-grid, .modules-grid { grid-template-columns: 1fr 1fr !important; }
+  .how-steps { grid-template-columns: 1fr 1fr !important; }
   .equipe-grid { grid-template-columns: 1fr 1fr !important; max-width: 700px !important; }
-  .parcours-grid, .methode-grid { grid-template-columns: 1fr 1fr; }
-  .constat-grid, .temoignages-grid { grid-template-columns: 1fr; }
+  .parcours-grid, .methode-grid { grid-template-columns: 1fr 1fr !important; }
+  .constat-grid, .temoignages-grid { grid-template-columns: 1fr !important; }
   .footer-grid { grid-template-columns: 1fr 1fr !important; }
+  .elab-nav { gap: 16px; padding: 12px 20px; }
 }
 @media (max-width: 768px) {
   .elab-hero { min-height: 400px; padding: 48px 20px; }
@@ -228,10 +231,13 @@ try {
   .elab-nav-burger { display: block; }
   .equipe-grid { grid-template-columns: 1fr !important; max-width: 420px !important; margin-left: auto !important; margin-right: auto !important; }
   .elab-section { padding: 40px 20px; }
+  .constat-grid > div, .parcours-grid > div, .methode-grid > div, .temoignages-grid > div { padding: 18px !important; }
+  .hero-connected-inner { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 500px) {
-  .pricing-grid, .why-grid, .modules-grid, .how-steps, .tarifs-grid { grid-template-columns: 1fr; }
-  .parcours-grid, .methode-grid { grid-template-columns: 1fr; }
+  .pricing-grid, .why-grid, .modules-grid, .how-steps, .tarifs-grid { grid-template-columns: 1fr !important; }
+  .parcours-grid, .methode-grid { grid-template-columns: 1fr !important; }
+  .constat-grid, .temoignages-grid { grid-template-columns: 1fr !important; }
   .equipe-grid { max-width: 100% !important; padding: 0 16px; }
   .footer-grid { grid-template-columns: 1fr !important; }
   .methode-band { flex-direction: column; text-align: center; gap: 18px; padding: 24px 20px; }
@@ -239,6 +245,9 @@ try {
   .trust-bar { gap: 12px; padding: 10px 16px; }
   .stats-bar { padding: 14px 16px; gap: 16px; }
   .partner-pill { padding: 16px 22px; font-size: 12px; min-width: 160px; min-height: 56px; }
+  .elab-nav { padding: 10px 16px; gap: 10px; }
+  .elab-section { padding: 32px 16px; }
+  .cta-section, .cta-section[style] { padding: 40px 20px !important; }
 }
 </style>
 </head>
