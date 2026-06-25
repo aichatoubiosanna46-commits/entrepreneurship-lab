@@ -266,7 +266,7 @@ body.user-dash-page { background: #F5F0E8 !important; }
     <div class="dash-empty">
       <i class="ti ti-heart"></i>
       <h3>Aucun favori pour l'instant.</h3>
-      <p>Ajoutez des formations à vos favoris en cliquant sur le cœur ❤️.</p>
+      <p>Ajoutez des formations à vos favoris en cliquant sur le cœur <i class="ti ti-heart"></i>.</p>
       <a href="<?= SITE_URL ?>/search.php" class="btn-primary" style="margin-top:16px">Explorer les formations</a>
     </div>
     <?php else: ?>

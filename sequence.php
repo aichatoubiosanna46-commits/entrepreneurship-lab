@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'marqu
     $redirectCompletion = $seq['redirect_completion'] ?? null;
 
     if ($coursComplete && $redirectCompletion) {
-        redirect($redirectCompletion, 'Cours complété ! 🎉', 'success');
+        redirect($redirectCompletion, 'Cours complété !', 'success');
     }
     $dest = $nextSeq
         ? SITE_URL . '/sequence.php?id=' . $nextSeq['id']
@@ -447,7 +447,7 @@ if ($userId) {
     $pct_cours = progressionCours($userId, $course['id'] ?? 0);
     if ($pct_cours >= 100): ?>
 <div style="background:linear-gradient(135deg,#FBE3DA,#F5F0E8);border:2px solid #D85A30;border-radius:16px;padding:28px;margin:24px 0;text-align:center">
-    <div style="font-size:48px;margin-bottom:12px">🎉</div>
+    <div style="font-size:48px;margin-bottom:12px;color:#D85A30"><i class="ti ti-confetti"></i></div>
     <h3 style="font-size:20px;font-weight:800;color:#1A1A18;margin-bottom:8px">Félicitations <?= h(explode(' ', $_SESSION['user_nom'] ?? '')[0]) ?> !</h3>
     <p style="font-size:14px;color:#6b7280;margin-bottom:16px">Tu as complété l'intégralité de ce cours. Ton certificat est disponible !</p>
     <a href="<?= SITE_URL ?>/certificate.php?course=<?= $course['id'] ?? 0 ?>"

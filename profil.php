@@ -233,7 +233,7 @@ try {
         </div>
 
         <div style="border-top:1px solid #f3f4f6;padding-top:16px;margin-top:4px;margin-bottom:16px">
-          <div style="font-size:13px;font-weight:600;color:#1A1A18;margin-bottom:14px">🎓 Informations académiques</div>
+          <div style="font-size:13px;font-weight:600;color:#1A1A18;margin-bottom:14px"><i class="ti ti-school"></i> Informations académiques</div>
           <div class="form-row">
             <div class="form-group"><label>Université</label><input type="text" name="universite" value="<?= h($user['universite'] ?? '') ?>" placeholder="Université de Parakou"></div>
             <div class="form-group"><label>Filière</label><input type="text" name="filiere" value="<?= h($user['filiere'] ?? '') ?>" placeholder="Licence Pro Entrepreneuriat"></div>

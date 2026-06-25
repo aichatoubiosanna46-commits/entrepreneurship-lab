@@ -75,15 +75,15 @@ $courses = $pdo->query($sql)->fetchAll();
           <td>
             <?php
             $tarifMap = [
-              'decouverte'    => ['🆓','Découverte',   '#EAF3DE','#27500A'],
-              'essentiel'     => ['⭐','Essentiel',    '#EDE9FE','#4C1D95'],
-              'business_plan' => ['📊','Business Plan','#FBE3DA','#92400E'],
-              'lancement'     => ['🚀','Lancement',    '#D1FAE5','#065F46'],
+              'decouverte'    => ['ti-gift','Découverte',   '#EAF3DE','#27500A'],
+              'essentiel'     => ['ti-star','Essentiel',    '#EDE9FE','#4C1D95'],
+              'business_plan' => ['ti-chart-bar','Business Plan','#FBE3DA','#92400E'],
+              'lancement'     => ['ti-rocket','Lancement',    '#D1FAE5','#065F46'],
             ];
-            [$tEm,$tNom,$tBg,$tCol] = $tarifMap[$c['tarif'] ?? 'decouverte'] ?? ['📚','—','#f4f4f4','#666'];
+            [$tIco,$tNom,$tBg,$tCol] = $tarifMap[$c['tarif'] ?? 'decouverte'] ?? ['ti-books','—','#f4f4f4','#666'];
             ?>
             <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;background:<?= $tBg ?>;color:<?= $tCol ?>">
-              <?= $tEm ?> <?= $tNom ?>
+              <i class="ti <?= $tIco ?>"></i> <?= $tNom ?>
             </span>
           </td>
           <td>

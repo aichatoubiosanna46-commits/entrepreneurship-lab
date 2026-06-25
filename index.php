@@ -371,7 +371,7 @@ img { max-width: 100%; }
 <div class="hero-connected">
   <div class="hero-connected-inner">
     <div class="hero-greeting">
-      <h1>Bonjour, <span class="name-highlight"><?= h($user['prenom']) ?></span> 👋</h1>
+      <h1>Bonjour, <span class="name-highlight"><?= h($user['prenom']) ?></span> <i class="ti ti-hand-stop"></i></h1>
       <p>Continue ta progression ou explore de nouveaux parcours ci-dessous.</p>
     </div>
     <a href="<?= SITE_URL ?>/dashboard.php" class="btn-primary">
@@ -487,22 +487,22 @@ img { max-width: 100%; }
   <div class="sec-sub">On ne te donne pas des cours magistraux. On te met en situation réelle, avec des outils béninois, pour des problèmes béninois.</div>
   <div class="methode-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px">
     <div style="background:#fff;border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06)">
-      <div style="font-size:24px;margin-bottom:10px">🎬</div>
+      <div style="font-size:24px;margin-bottom:10px;color:var(--navy)"><i class="ti ti-movie"></i></div>
       <h4 style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Vidéos interactives</h4>
       <p style="font-size:11px;color:var(--text-muted);line-height:1.6">Des capsules courtes et concrètes, conçues pour être vues entre deux cours, avec des quiz pour ancrer chaque notion.</p>
     </div>
     <div style="background:#fff;border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06)">
-      <div style="font-size:24px;margin-bottom:10px">🛠️</div>
+      <div style="font-size:24px;margin-bottom:10px;color:var(--navy)"><i class="ti ti-tools"></i></div>
       <h4 style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Outils prêts à l'emploi</h4>
       <p style="font-size:11px;color:var(--text-muted);line-height:1.6">Modèles, fiches et calculateurs téléchargeables que tu utilises immédiatement sur ton propre projet.</p>
     </div>
     <div style="background:#fff;border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06)">
-      <div style="font-size:24px;margin-bottom:10px">🌍</div>
+      <div style="font-size:24px;margin-bottom:10px;color:var(--navy)"><i class="ti ti-world"></i></div>
       <h4 style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Cas 100% béninois</h4>
       <p style="font-size:11px;color:var(--text-muted);line-height:1.6">Des études de cas tirées d'entrepreneurs étudiants locaux, pas de théories importées hors contexte.</p>
     </div>
     <div style="background:#fff;border-radius:var(--radius-lg);padding:20px;border:1px solid rgba(0,0,0,.06)">
-      <div style="font-size:24px;margin-bottom:10px">🏅</div>
+      <div style="font-size:24px;margin-bottom:10px;color:var(--navy)"><i class="ti ti-medal"></i></div>
       <h4 style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:6px">Badges & certification</h4>
       <p style="font-size:11px;color:var(--text-muted);line-height:1.6">Chaque étape franchie débloque un badge vérifiable, jusqu'à la certification finale co-signée par l'université.</p>
     </div>
@@ -638,7 +638,7 @@ img { max-width: 100%; }
       <span style="display:inline-block;background:rgba(255,255,255,.18);color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px;align-self:flex-start">EXPERT</span>
       <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Série 3 — Structurer et scaler</h4>
       <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px;flex:1">Statut juridique, comptabilité simplifiée, équipe, délégation, levée de fonds et développement vers d'autres marchés.</p>
-      <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:10px">9 modules de croissance · 🎓 Certification UP · 👤 Coaching 1:1 · 🏆 Badge numérique · 🤝 Alumni</p>
+      <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:10px">9 modules de croissance · <i class="ti ti-school"></i> Certification UP · <i class="ti ti-user"></i> Coaching 1:1 · <i class="ti ti-trophy"></i> Badge numérique · <i class="ti ti-handshake"></i> Alumni</p>
       <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:16px">10 000 – 15 000 FCFA</div>
       <a href="<?= SITE_URL ?>/register.php" class="btn-pricing gold">S'inscrire →</a>
     </div>

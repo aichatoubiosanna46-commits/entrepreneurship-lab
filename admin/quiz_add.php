@@ -239,7 +239,7 @@ $NB_REPONSES  = 4;
         <?php endfor; ?>
 
         <div class="form-group" style="margin-top:12px">
-          <label>💡 Explication (affichée après validation)</label>
+          <label><i class="ti ti-bulb"></i> Explication (affichée après validation)</label>
           <textarea name="q_explication[<?= $qi ?>]" class="fld" rows="2"
             placeholder="Pourquoi cette réponse est correcte..."></textarea>
         </div>

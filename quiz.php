@@ -198,8 +198,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'start
 if (!$quizStarted && !empty($questions)): ?>
 <div class="quiz-wrap" style="max-width:600px;margin:60px auto;padding:0 24px">
   <div style="background:#fff;border-radius:20px;padding:40px;border:1px solid #e5e7eb;box-shadow:0 4px 24px rgba(0,0,0,.06);text-align:center">
-    <div style="width:80px;height:80px;background:linear-gradient(135deg,#D85A30,#C04A22);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px">
-      ❓
+    <div style="width:80px;height:80px;background:linear-gradient(135deg,#D85A30,#C04A22);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px;color:#fff">
+      <i class="ti ti-help"></i>
     </div>
     <h1 style="font-size:22px;font-weight:800;color:#1A1A18;margin-bottom:10px"><?= h($quiz['titre']) ?></h1>
     <?php if ($quiz['description']): ?>
@@ -590,7 +590,7 @@ function finishQuiz() {
   circle.style.border = reussi ? '4px solid #16a34a' : '4px solid #dc2626';
   circle.textContent = pct + '%';
 
-  document.getElementById('scoreTitle').textContent = reussi ? '🎉 Quiz réussi !' : 'Quiz non validé';
+  document.getElementById('scoreTitle').textContent = reussi ? 'Quiz réussi !' : 'Quiz non validé';
   document.getElementById('scoreDesc').textContent = reussi
     ? 'Félicitations ! Tu as obtenu ' + pct + '% — seuil de réussite : ' + seuil + '%'
     : 'Tu as obtenu ' + pct + '% — il faut ' + seuil + '% pour valider. Tu peux réessayer !';

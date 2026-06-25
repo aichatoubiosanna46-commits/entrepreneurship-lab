@@ -151,7 +151,7 @@ $progMoyen  = $nbCours > 0 ? (int)round(array_sum(array_column($cours,'progressi
 <div class="parc-hero">
   <div class="parc-hero-inner">
     <div class="parc-back"><a href="<?= SITE_URL ?>/pricing.php"><i class="ti ti-arrow-left"></i> Changer de parcours</a></div>
-    <div class="parc-pill"><?= $config['emoji'] ?> Parcours <?= h($config['nom']) ?> <?= $config['prix'] > 0 ? '— '.number_format($config['prix'],0,',',' ').' FCFA' : '— Gratuit' ?></div>
+    <div class="parc-pill"><i class="ti <?= h($config['emoji']) ?>"></i> Parcours <?= h($config['nom']) ?> <?= $config['prix'] > 0 ? '— '.number_format($config['prix'],0,',',' ').' FCFA' : '— Gratuit' ?></div>
     <h1><?= h($config['accroche']) ?></h1>
     <p><?= h($config['desc']) ?></p>
     <div class="parc-meta">
@@ -208,7 +208,7 @@ $progMoyen  = $nbCours > 0 ? (int)round(array_sum(array_column($cours,'progressi
           <?php if ($c['miniature']): ?>
             <img src="<?= SITE_URL ?>/assets/uploads/<?= h($c['miniature']) ?>" alt="">
           <?php else: ?>
-            <?= $c['emoji'] ?? '📚' ?>
+            <i class="ti ti-books"></i>
           <?php endif; ?>
         </div>
         <div class="course-meta">
@@ -294,7 +294,7 @@ $progMoyen  = $nbCours > 0 ? (int)round(array_sum(array_column($cours,'progressi
 
     <!-- Récap -->
     <div class="sidebar-box">
-      <div class="sb-head"><h3>📊 Mon avancement</h3></div>
+      <div class="sb-head"><h3><i class="ti ti-chart-bar"></i> Mon avancement</h3></div>
       <div class="sb-body">
         <div class="stat-row"><span>Cours</span><span class="val"><?= $nbCours ?></span></div>
         <div class="stat-row"><span>Modules</span><span class="val"><?= $totalMods ?></span></div>
@@ -305,17 +305,17 @@ $progMoyen  = $nbCours > 0 ? (int)round(array_sum(array_column($cours,'progressi
 
     <!-- Navigation parcours -->
     <div class="sidebar-box">
-      <div class="sb-head"><h3>🗺 Mes parcours</h3></div>
+      <div class="sb-head"><h3><i class="ti ti-map"></i> Mes parcours</h3></div>
       <div class="sb-body" style="padding:8px 0">
         <?php
         $allTarifs = [
-          'decouverte'    => ['💡','Découverte','parcours-decouverte.php'],
-          'business_plan' => ['📊','Business Plan','parcours-business-plan.php'],
-          'lancement'     => ['🚀','Lancement','parcours-lancement.php'],
+          'decouverte'    => ['ti-bulb','Découverte','parcours-decouverte.php'],
+          'business_plan' => ['ti-chart-bar','Business Plan','parcours-business-plan.php'],
+          'lancement'     => ['ti-rocket','Lancement','parcours-lancement.php'],
         ];
         foreach ($allTarifs as $k => [$em,$nm,$pg]): ?>
         <a href="<?= SITE_URL ?>/<?= $pg ?>" style="display:flex;align-items:center;gap:10px;padding:10px 18px;text-decoration:none;color:inherit;transition:background .15s;<?= $k === $config['tarif'] ? 'background:#f9f9f9;font-weight:700;border-left:3px solid var(--accent)' : '' ?>">
-          <span><?= $em ?></span>
+          <span><i class="ti <?= $em ?>"></i></span>
           <span style="font-size:13px"><?= $nm ?></span>
           <?php if ($k === $config['tarif']): ?><i class="ti ti-arrow-right" style="margin-left:auto;font-size:14px;color:var(--accent)"></i><?php endif; ?>
         </a>
@@ -326,7 +326,7 @@ $progMoyen  = $nbCours > 0 ? (int)round(array_sum(array_column($cours,'progressi
     <!-- Upgrade si pas dernier tarif -->
     <?php if (!empty($config['upgrade_tarif'])): ?>
     <div class="upgrade-box">
-      <h3>🚀 Passer au niveau supérieur</h3>
+      <h3><i class="ti ti-rocket"></i> Passer au niveau supérieur</h3>
       <p>Le parcours <strong><?= h($config['upgrade_nom']) ?></strong> t'offre plus de contenu, du coaching et un certificat reconnu.</p>
       <a href="<?= SITE_URL ?>/parcours-<?= $config['upgrade_tarif'] ?>.php" class="upgrade-btn">
         Voir le parcours <?= h($config['upgrade_nom']) ?> — <?= h($config['upgrade_prix']) ?> →

@@ -69,7 +69,7 @@ if ($userId && !empty($course['prerequis_course_id'])) {
         <?php include __DIR__ . '/includes/header.php'; ?>
         <div style="max-width:500px;margin:80px auto;padding:0 24px;text-align:center">
           <div style="background:#fff;border-radius:20px;padding:40px;border:1px solid #e5e7eb;box-shadow:0 4px 24px rgba(0,0,0,.06)">
-            <div style="font-size:48px;margin-bottom:16px">🔒</div>
+            <div style="font-size:48px;margin-bottom:16px"><i class="ti ti-lock"></i></div>
             <h2 style="font-size:20px;font-weight:800;color:#1A1A18;margin-bottom:10px">Cours prérequis non complété</h2>
             <p style="font-size:14px;color:#6b7280;margin-bottom:20px;line-height:1.7">
               Pour accéder à <strong><?= h($course['titre']) ?></strong>, tu dois d'abord compléter le cours prérequis :
@@ -116,7 +116,7 @@ $pdo->prepare(
 )->execute([$userId, $course['id'], $utm_source, $utm_medium, $utm_campaign]);
 // Déclencher automation inscription cours
 triggerAutomation('course_enrolled', $userId, $course['id']);
-redirect(SITE_URL . '/module.php?slug=' . urlencode($slug), 'Inscription réussie ! Bonne formation 🎉', 'success');
+redirect(SITE_URL . '/module.php?slug=' . urlencode($slug), 'Inscription réussie ! Bonne formation', 'success');
 
     }
 }

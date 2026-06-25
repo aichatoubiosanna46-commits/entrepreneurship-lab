@@ -166,7 +166,7 @@ require_once __DIR__ . '/includes/header.php';
             'accepte'      => '✓ Accepté',
             'refuse'       => '✗ Refusé',
             'en_correction' => '⏳ En correction',
-            default        => '📤 Soumis'
+            default        => '<i class="ti ti-upload"></i> Soumis'
           } ?>
         </span>
       </div>

@@ -360,7 +360,7 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #C04A22 !important; }
         <i class="ti ti-trophy" style="font-size:22px;color:#1A1A18"></i>
       </div>
       <div style="flex:1">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D85A30;margin-bottom:6px">🏆 Défi de la semaine</div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#D85A30;margin-bottom:6px"><i class="ti ti-trophy"></i> Défi de la semaine</div>
         <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:6px"><?= h($defiSemaine['titre']) ?></div>
         <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:12px"><?= h(substr($defiSemaine['description'],0,150)) ?>...</div>
         <div style="display:flex;align-items:center;gap:12px">

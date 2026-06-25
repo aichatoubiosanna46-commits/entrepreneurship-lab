@@ -77,7 +77,7 @@ body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
 <div class="sat-wrap">
   <?php if ($succes): ?>
   <div class="sat-card" style="text-align:center">
-    <div style="font-size:64px;margin-bottom:16px">🙏</div>
+    <div style="font-size:64px;margin-bottom:16px;color:#D85A30"><i class="ti ti-heart"></i></div>
     <h1>Merci pour votre avis !</h1>
     <p>Votre retour nous aide à améliorer continuellement la qualité des formations Ariziki.</p>
     <a href="<?= SITE_URL ?>/dashboard.php" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#D85A30;color:#1A1A18;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;margin-top:16px">
@@ -86,7 +86,7 @@ body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
   </div>
   <?php else: ?>
   <div class="sat-card">
-    <div style="font-size:32px;margin-bottom:12px">📋</div>
+    <div style="font-size:32px;margin-bottom:12px;color:#D85A30"><i class="ti ti-clipboard-list"></i></div>
     <h1>Votre avis sur "<?= h($course['titre']) ?>"</h1>
     <p>3 minutes pour nous aider à améliorer votre expérience. Merci !</p>
 
@@ -95,7 +95,7 @@ body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
         <label>1. Comment évaluez-vous la qualité globale du cours ?</label>
         <div class="stars" id="stars-1">
           <?php for($i=1;$i<=5;$i++): ?>
-          <button type="button" class="star-btn" data-val="<?= $i ?>" onclick="setStar(1,<?= $i ?>)">⭐</button>
+          <button type="button" class="star-btn" data-val="<?= $i ?>" onclick="setStar(1,<?= $i ?>)"><i class="ti ti-star-filled"></i></button>
           <?php endfor; ?>
         </div>
         <input type="hidden" name="reponses[qualite]" id="r-qualite" value="">
@@ -105,7 +105,7 @@ body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
         <label>2. Le contenu était-il adapté à vos besoins ?</label>
         <div class="stars" id="stars-2">
           <?php for($i=1;$i<=5;$i++): ?>
-          <button type="button" class="star-btn" data-val="<?= $i ?>" onclick="setStar(2,<?= $i ?>)">⭐</button>
+          <button type="button" class="star-btn" data-val="<?= $i ?>" onclick="setStar(2,<?= $i ?>)"><i class="ti ti-star-filled"></i></button>
           <?php endfor; ?>
         </div>
         <input type="hidden" name="reponses[pertinence]" id="r-pertinence" value="">

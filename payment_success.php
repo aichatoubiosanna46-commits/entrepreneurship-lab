@@ -67,7 +67,7 @@ if (!$pay) {
         $montant   = $txnData['amount'] ?? $pay['montant'];
 
         if ($txnStatus === 'approved') {
-            // ✅ Paiement validé — activer l'abonnement
+            // Paiement validé — activer l'abonnement
             $plan = $pay['plan'];
 
             // Idempotence : ne pas doubler si déjà validé

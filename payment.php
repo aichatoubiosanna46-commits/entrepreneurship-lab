@@ -18,7 +18,7 @@ $plans = [
     'decouverte'    => [
         'nom'      => 'Découverte',
         'prix'     => 0,
-        'emoji'    => '💡',
+        'emoji'    => 'ti-bulb',
         'couleur'  => '#16a34a',
         'bg'       => '#ECFDF5',
         'desc'     => 'Pour valider ton idée et découvrir l\'entrepreneuriat',
@@ -27,7 +27,7 @@ $plans = [
     'essentiel'     => [
         'nom'      => 'Essentiel',
         'prix'     => 5000,
-        'emoji'    => '⭐',
+        'emoji'    => 'ti-star-filled',
         'couleur'  => '#C04A22',
         'bg'       => '#F5F0E8',
         'desc'     => 'Formations essentielles pour démarrer ton business',
@@ -36,7 +36,7 @@ $plans = [
     'business_plan' => [
         'nom'      => 'Business Plan',
         'prix'     => 15000,
-        'emoji'    => '📊',
+        'emoji'    => 'ti-chart-bar',
         'couleur'  => '#D85A30',
         'bg'       => '#FBE3DA',
         'desc'     => 'Accès complet aux formations avancées + coaching',
@@ -46,7 +46,7 @@ $plans = [
     'lancement'     => [
         'nom'      => 'Lancement',
         'prix'     => 25000,
-        'emoji'    => '🚀',
+        'emoji'    => 'ti-rocket',
         'couleur'  => '#085041',
         'bg'       => '#F0F9F5',
         'desc'     => 'Accompagnement VIP pour lancer ton activité',
@@ -290,9 +290,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
       <div class="plan-card <?= !empty($plan['popular']) ? 'popular' : '' ?>">
         <div class="plan-header" style="background:<?= $plan['bg'] ?>">
           <?php if (!empty($plan['popular'])): ?>
-            <div class="plan-popular-badge">⭐ Le plus populaire</div>
+            <div class="plan-popular-badge"><i class="ti ti-star-filled"></i> Le plus populaire</div>
           <?php endif; ?>
-          <span class="plan-emoji"><?= $plan['emoji'] ?></span>
+          <span class="plan-emoji"><i class="ti <?= $plan['emoji'] ?>"></i></span>
           <div class="plan-name" style="color:<?= $plan['couleur'] ?>"><?= h($plan['nom']) ?></div>
           <div class="plan-price">
             <?php if ($plan['prix'] === 0): ?>
@@ -322,7 +322,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
           <?php else: ?>
             <button type="button" class="btn-plan-paid"
                     style="background:linear-gradient(135deg,<?= $plan['couleur'] ?>,<?= $plan['couleur'] ?>dd)"
-                    onclick="ouvrirPaiement('<?= $key ?>','<?= h($plan['nom']) ?>',<?= $plan['prix'] ?>,'<?= $plan['emoji'] ?>')">
+                    onclick="ouvrirPaiement('<?= $key ?>','<?= h($plan['nom']) ?>',<?= $plan['prix'] ?>)">
               <i class="ti ti-credit-card"></i>
               Choisir — <?= number_format($plan['prix'], 0, ',', ' ') ?> FCFA
             </button>
@@ -343,7 +343,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
 <!-- Overlay avec champ code promo -->
 <div class="overlay-pay" id="overlay-pay">
   <div class="overlay-card">
-    <span class="overlay-emoji" id="ol-emoji">💳</span>
+    <span class="overlay-emoji" id="ol-emoji"><i class="ti ti-credit-card"></i></span>
     <h3 id="ol-plan-name">Business Plan</h3>
     <p>Paiement sécurisé via FedaPay — Mobile Money, Visa, Mastercard.</p>
 
@@ -382,7 +382,6 @@ function ouvrirPaiement(tarif, nom, prix, emoji) {
     currentPrix      = prix;
     currentPrixFinal = prix;
     currentPromo     = '';
-    document.getElementById('ol-emoji').textContent      = emoji || '💳';
     document.getElementById('ol-plan-name').textContent   = nom;
     document.getElementById('ol-plan-price').textContent  = prix.toLocaleString('fr') + ' FCFA';
     document.getElementById('ol-prix-original').style.display = 'none';

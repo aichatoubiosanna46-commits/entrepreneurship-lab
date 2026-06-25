@@ -100,7 +100,7 @@ $statusLabels = ['planifie'=>'Planifié','confirme'=>'Confirmé','annule'=>'Annu
           <div style="flex:1;min-width:0">
             <div style="font-weight:700;font-size:14px;margin-bottom:2px"><?= h($s['titre']) ?></div>
             <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">
-              👤 <?= h($s['prenom'].' '.$s['nom']) ?> · <?= h($s['email']) ?>
+              <i class="ti ti-user"></i> <?= h($s['prenom'].' '.$s['nom']) ?> · <?= h($s['email']) ?>
             </div>
             <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text-muted)">
               <span><i class="ti ti-calendar"></i> <?= date('d/m/Y à H:i', strtotime($s['date_heure'])) ?></span>

@@ -39,7 +39,7 @@ body{background:#0f172a;color:#e2e8f0;font-family:'Plus Jakarta Sans',sans-serif
 <body>
 <div class="docs-wrap">
   <div class="docs-header">
-    <div class="docs-title">📡 API REST — <?= SITE_NAME ?></div>
+    <div class="docs-title"><i class="ti ti-antenna"></i> API REST — <?= SITE_NAME ?></div>
     <div class="docs-sub">API publique pour intégrer les données de la plateforme dans vos applications.</div>
     <div class="base-url"><i class="ti ti-link"></i> <?= SITE_URL ?>/api/?endpoint=</div>
   </div>

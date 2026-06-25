@@ -245,7 +245,7 @@ function genererCertificat(int $userId, int $courseId): bool {
     $course->execute([$courseId]);
     $c = $course->fetch();
     if ($c) {
-        notifierUtilisateur($userId, 'Certificat obtenu ! 🎓', 'Félicitations ! Vous avez complété « '.$c['titre'].' ». Votre certificat est disponible.', 'success', SITE_URL . '/certificate.php?course=' . $courseId);
+        notifierUtilisateur($userId, 'Certificat obtenu !', 'Félicitations ! Vous avez complété « '.$c['titre'].' ». Votre certificat est disponible.', 'success', SITE_URL . '/certificate.php?course=' . $courseId);
     }
 
     // Vérifier si un certificat de bundle doit être délivré
@@ -325,7 +325,7 @@ function verifierCertificatBundle(int $userId, int $courseId): void {
                 $bTitre->execute([$bundleId]);
                 $titre = $bTitre->fetchColumn();
                 if ($titre) {
-                    notifierUtilisateur($userId, 'Certificat de parcours obtenu ! 🏆',
+                    notifierUtilisateur($userId, 'Certificat de parcours obtenu !',
                         'Vous avez complété tous les cours du pack « '.$titre.' ». Votre certificat de parcours est disponible.',
                         'success', SITE_URL . '/certificate.php?bundle=' . $bundleId);
                 }

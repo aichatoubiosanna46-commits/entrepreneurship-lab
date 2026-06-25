@@ -344,7 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         
         <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px">
-          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">⚙️ Paramètres avancés</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px"><i class="ti ti-settings"></i> Paramètres avancés</div>
           <div class="form-row">
             <div class="form-group">
               <label>XP récompense</label>
@@ -363,7 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Chapitres vidéo -->
         <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:4px">
           <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">
-            🎬 Chapitres vidéo <small style="font-weight:400;color:var(--text-muted)">(optionnel)</small>
+            <i class="ti ti-movie"></i> Chapitres vidéo <small style="font-weight:400;color:var(--text-muted)">(optionnel)</small>
           </div>
           <?php
           try {

@@ -26,7 +26,7 @@ foreach ($stmt->fetchAll() as $c) {
 $tarifs = [
   'decouverte' => [
     'slug'    => 'decouverte',
-    'emoji'   => '💡',
+    'emoji'   => 'ti-bulb',
     'nom'     => 'Découverte',
     'accroche'=> 'Trouver son idée de business',
     'desc'    => 'Valide ton projet en 4h avec notre méthode adaptée au contexte béninois. Sans carte bancaire.',
@@ -45,12 +45,12 @@ $tarifs = [
   ],
   'business_plan' => [
     'slug'    => 'business-plan',
-    'emoji'   => '📊',
+    'emoji'   => 'ti-chart-bar',
     'nom'     => 'Business Plan',
     'accroche'=> 'Business Plan simplifié',
     'desc'    => 'De l\'idée au plan d\'action concret. Tout ce qu\'il faut pour convaincre un investisseur.',
     'prix'    => 5000,
-    'badge'   => '⭐ Populaire',
+    'badge'   => '<i class="ti ti-star-filled"></i> Populaire',
     'badge_cls'=> 'pop',
     'thumb'   => 't2',
     'btn_cls' => 'gold',
@@ -66,12 +66,12 @@ $tarifs = [
   ],
   'lancement' => [
     'slug'    => 'lancement',
-    'emoji'   => '🚀',
+    'emoji'   => 'ti-rocket',
     'nom'     => 'Lancement',
     'accroche'=> 'Lancer son activité',
     'desc'    => 'Le parcours complet : coaching intensif, accompagnement terrain et certification universitaire.',
     'prix'    => 8000,
-    'badge'   => '🏆 Complet',
+    'badge'   => '<i class="ti ti-trophy"></i> Complet',
     'badge_cls'=> 'pro',
     'thumb'   => 't3',
     'btn_cls' => 'solid',
@@ -209,7 +209,7 @@ $tarifs = [
 
 <!-- Hero -->
 <div class="p-hero">
-  <div class="p-hero-pill">🎓 Étape 2 sur 3</div>
+  <div class="p-hero-pill"><i class="ti ti-school"></i> Étape 2 sur 3</div>
   <h1>Choisis ton <span>parcours</span></h1>
   <p>Ton compte est prêt ! Sélectionne le parcours qui correspond à ton objectif entrepreneurial.</p>
 </div>
@@ -241,7 +241,7 @@ $tarifs = [
     <?php foreach ($tarifs as $key => $t): ?>
     <div class="p-card <?= !empty($t['featured']) ? 'featured' : '' ?>">
       <div class="p-thumb <?= $t['thumb'] ?>">
-        <?= $t['emoji'] ?>
+        <i class="ti <?= $t['emoji'] ?>"></i>
         <span class="p-badge <?= $t['badge_cls'] ?>"><?= $t['badge'] ?></span>
       </div>
       <div class="p-body">

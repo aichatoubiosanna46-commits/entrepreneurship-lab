@@ -474,7 +474,7 @@ function checkStrength(val) {
 
   const score = Object.values(checks).filter(Boolean).length;
   const colors  = ['#e5e7eb','#dc2626','#D85A30','#eab308','#16a34a'];
-  const labels  = ['','Trop faible','Moyen','Fort','Très fort 🔒'];
+  const labels  = ['','Trop faible','Moyen','Fort','Très fort'];
   const txtClrs = ['#9ca3af','#dc2626','#C04A22','#ca8a04','#16a34a'];
 
   for (let i = 1; i <= 4; i++) {

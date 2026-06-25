@@ -58,7 +58,7 @@ if (!$result) { header('Location: ' . SITE_URL . '/dashboard.php'); exit; }
   </div>
 
   <h1 class="result-title">
-    <?= $result['reussi'] ? 'Félicitations ! 🎉' : 'Pas encore...' ?>
+    <?= $result['reussi'] ? 'Félicitations ! <i class="ti ti-confetti"></i>' : 'Pas encore...' ?>
   </h1>
   <p class="result-sub">
     <?php if ($result['reussi']): ?>

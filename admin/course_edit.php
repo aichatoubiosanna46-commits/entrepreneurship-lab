@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-group">
             <label>Statut</label>
             <select name="statut">
-              <?php foreach (['brouillon'=>'📝 Brouillon','publie'=>'✅ Publié','archive'=>'📦 Archivé'] as $v=>$l): ?>
+              <?php foreach (['brouillon'=>'Brouillon','publie'=>'Publié','archive'=>'Archivé'] as $v=>$l): ?>
                 <option value="<?= $v ?>" <?= $course['statut'] === $v ? 'selected' : '' ?>><?= $l ?></option>
               <?php endforeach; ?>
             </select>
@@ -200,9 +200,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label>Série (parcours)</label>
             <select id="tarif" name="tarif" onchange="onTarifChange(this.value)">
               <option value="decouverte"    <?= $course['tarif']==='decouverte'    ?'selected':'' ?>>🆓 Phase 0 — Gratuit</option>
-              <option value="essentiel"     <?= $course['tarif']==='essentiel'     ?'selected':'' ?>>⭐ Série 1 — Essentiel (1 000 – 5 000 FCFA)</option>
-              <option value="business_plan" <?= $course['tarif']==='business_plan' ?'selected':'' ?>>📊 Série 2 — Avancé (5 000 – 10 000 FCFA)</option>
-              <option value="lancement"     <?= $course['tarif']==='lancement'     ?'selected':'' ?>>🚀 Série 3 — Expert (10 000 – 15 000 FCFA)</option>
+              <option value="essentiel"     <?= $course['tarif']==='essentiel'     ?'selected':'' ?>>Série 1 — Essentiel (1 000 – 5 000 FCFA)</option>
+              <option value="business_plan" <?= $course['tarif']==='business_plan' ?'selected':'' ?>>Série 2 — Avancé (5 000 – 10 000 FCFA)</option>
+              <option value="lancement"     <?= $course['tarif']==='lancement'     ?'selected':'' ?>>Série 3 — Expert (10 000 – 15 000 FCFA)</option>
             </select>
             <small style="color:var(--text-muted);font-size:11px">
               Chaque série a ses propres couleurs et son propre positionnement (voir aperçu ci-dessous).
@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label>Type d'accès</label>
             <select name="type" id="type" onchange="togglePrix(this.value)">
               <option value="gratuit" <?= $course['type']==='gratuit' ?'selected':'' ?>>🆓 Gratuit</option>
-              <option value="payant"  <?= $course['type']==='payant'  ?'selected':'' ?>>💳 Payant</option>
+              <option value="payant"  <?= $course['type']==='payant'  ?'selected':'' ?>>Payant</option>
             </select>
           </div>
           <div class="form-group" id="prix-group" <?= $course['type']!=='payant' ? 'hidden' : '' ?>>
@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <!-- SEO -->
         <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:4px">
-          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">🔍 Référencement (SEO)</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px"><i class="ti ti-search"></i> Référencement (SEO)</div>
           <div class="form-group">
             <label>Titre SEO <small style="font-weight:400;color:var(--text-muted)">(60 car. max recommandé)</small></label>
             <input type="text" name="seo_title" value="<?= h($course['seo_title'] ?? $course['titre'] ?? '') ?>" placeholder="Titre optimisé pour Google" maxlength="70">

@@ -15,11 +15,11 @@ $cours  = chargerParcours($pdo, 'lancement', $userId);
 $config = [
   'tarif'       => 'lancement',
   'nom'         => 'Lancement',
-  'emoji'       => '🚀',
+  'emoji'       => 'ti-rocket',
   'accroche'    => 'Lancer son activité',
   'desc'        => 'Le parcours complet : coaching intensif, accompagnement terrain et certification universitaire.',
   'prix'        => 8000,
-  'badge'       => '🏆 Complet',
+  'badge'       => '<i class="ti ti-trophy"></i> Complet',
   'badge_cls'   => 'pro',
   'grad_hero'   => 'linear-gradient(135deg,#0d3b2e 0%,#1a6b52 100%)',
   'accent'      => '#10b981',

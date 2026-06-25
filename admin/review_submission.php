@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             : 'Votre devoir « '.$sub['assignment_titre'].' » a été refusé — Note : '.$note.'/'.$sub['note_max'].'. Consultez le feedback et resoumettez.';
 
         notifierUtilisateur($sub['student_id'],
-            $statut === 'accepte' ? '✅ Devoir accepté !' : '❌ Devoir refusé',
+            $statut === 'accepte' ? 'Devoir accepté !' : 'Devoir refusé',
             $notifMsg,
             $statut === 'accepte' ? 'success' : 'error',
             SITE_URL . '/assignment.php?id=' . $sub['assignment_id']
@@ -323,8 +323,8 @@ $currentPage = 'review_submission.php';
           <div class="form-group">
             <label>Décision</label>
             <select name="statut" style="width:100%;padding:10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;font-family:inherit">
-              <option value="accepte" <?= ($sub['statut']==='accepte')?'selected':'' ?>>✅ Accepter</option>
-              <option value="refuse" <?= ($sub['statut']==='refuse')?'selected':'' ?>>❌ Refuser (resoumission autorisée)</option>
+              <option value="accepte" <?= ($sub['statut']==='accepte')?'selected':'' ?>>Accepter</option>
+              <option value="refuse" <?= ($sub['statut']==='refuse')?'selected':'' ?>>Refuser (resoumission autorisée)</option>
             </select>
           </div>
 

@@ -143,7 +143,7 @@ $currentPage = 'sequence_add.php';
           <div class="form-group">
             <label>Type de contenu</label>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <?php $types = ['video'=>'🎬 Vidéo','texte'=>'📄 Texte','ebook'=>'📚 eBook riche','audio'=>'🎵 Audio','quiz'=>'❓ Quiz','assignment'=>'📋 Livrable']; ?>
+              <?php $types = ['video'=>'<i class="ti ti-movie"></i> Vidéo','texte'=>'<i class="ti ti-file-text"></i> Texte','ebook'=>'<i class="ti ti-books"></i> eBook riche','audio'=>'<i class="ti ti-music"></i> Audio','quiz'=>'<i class="ti ti-help"></i> Quiz','assignment'=>'<i class="ti ti-clipboard-list"></i> Livrable']; ?>
               <?php foreach ($types as $val => $lbl): ?>
               <label style="display:flex;align-items:center;gap:6px;padding:8px 12px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer;font-size:13px;transition:.15s" onclick="switchType('<?= $val ?>')">
                 <input type="radio" name="type_contenu" value="<?= $val ?>" <?= $val==='video'?'checked':'' ?> style="accent-color:#D85A30">

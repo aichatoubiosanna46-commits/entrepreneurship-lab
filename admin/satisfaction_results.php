@@ -75,7 +75,7 @@ $currentPage = 'satisfaction_results.php';
     <div class="admin-card" style="text-align:center">
       <div style="font-size:36px;font-weight:800;color:#16a34a"><?= $avgQualite ?>/5</div>
       <div style="font-size:13px;color:#6b7280">Qualité moyenne</div>
-      <div style="font-size:20px;margin-top:4px"><?= str_repeat('⭐', round($avgQualite)) ?></div>
+      <div style="font-size:20px;margin-top:4px;color:#D85A30"><?= str_repeat('<i class="ti ti-star-filled"></i>', round($avgQualite)) ?></div>
     </div>
     <div class="admin-card" style="text-align:center">
       <div style="font-size:36px;font-weight:800;color:var(--primary-mid)"><?= $avgNPS ?>/10</div>
@@ -93,7 +93,7 @@ $currentPage = 'satisfaction_results.php';
         <?php $data = json_decode($r['reponses'], true); ?>
         <tr>
           <td><?= $r['nom'] ? h($r['nom'].' '.$r['prenom']) : '<em style="color:#9ca3af">Anonyme</em>' ?></td>
-          <td style="text-align:center"><?= str_repeat('⭐', (int)($data['qualite']??0)) ?></td>
+          <td style="text-align:center;color:#D85A30"><?= str_repeat('<i class="ti ti-star-filled"></i>', (int)($data['qualite']??0)) ?></td>
           <td style="text-align:center"><strong><?= $data['nps'] ?? '—' ?>/10</strong></td>
           <td style="font-size:12px;max-width:200px"><?= h(mb_substr($data['positif']??'—',0,80)) ?></td>
           <td style="font-size:12px;max-width:200px"><?= h(mb_substr($data['amelioration']??'—',0,80)) ?></td>
