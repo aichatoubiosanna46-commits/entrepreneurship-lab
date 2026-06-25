@@ -44,7 +44,7 @@ $courses = $pdo->query($sql)->fetchAll();
 
   <?= flash() ?>
 
-  <div class="admin-card" style="padding:0;overflow:hidden">
+  <div class="admin-card" style="padding:0;overflow-x:auto">
     <table class="admin-table" style="margin:0">
       <thead>
         <tr>

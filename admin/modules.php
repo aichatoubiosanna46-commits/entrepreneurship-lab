@@ -51,9 +51,11 @@ $modules = $modules->fetchAll();
         &nbsp;·&nbsp; <strong style="color:var(--amber)"><?= $tLabel ?></strong>
       </p>
     </div>
+    <?php if (estAdmin()): ?>
     <a href="<?= SITE_URL ?>/admin/module_add.php?course_id=<?= $courseId ?>" class="btn-primary btn-sm">
       <i class="ti ti-plus"></i> Nouveau module
     </a>
+    <?php endif; ?>
   </div>
 
   <?= flash() ?>
@@ -63,9 +65,11 @@ $modules = $modules->fetchAll();
     <i class="ti ti-layout-list" style="font-size:52px;display:block;margin-bottom:16px;opacity:.3"></i>
     <h3 style="margin-bottom:8px;font-weight:500;color:var(--text)">Aucun module pour ce cours</h3>
     <p>Les modules regroupent les séquences pédagogiques.</p>
+    <?php if (estAdmin()): ?>
     <a href="<?= SITE_URL ?>/admin/module_add.php?course_id=<?= $courseId ?>" class="btn-primary" style="margin-top:20px;display:inline-flex">
       <i class="ti ti-plus"></i> Créer le premier module
     </a>
+    <?php endif; ?>
   </div>
   <?php else: ?>
   <div class="admin-card" style="padding:0;overflow:hidden">
@@ -109,6 +113,7 @@ $modules = $modules->fetchAll();
               <a href="<?= SITE_URL ?>/admin/sequences.php?module_id=<?= $m['id'] ?>" class="btn-icon" title="Séquences">
                 <i class="ti ti-list-numbers"></i>
               </a>
+              <?php if (estAdmin()): ?>
               <a href="<?= SITE_URL ?>/admin/module_edit.php?id=<?= $m['id'] ?>&course_id=<?= $courseId ?>" class="btn-icon" title="Modifier">
                 <i class="ti ti-edit"></i>
               </a>
@@ -117,6 +122,7 @@ $modules = $modules->fetchAll();
                  onclick="return confirm('Supprimer ce module et toutes ses séquences ?')" title="Supprimer">
                 <i class="ti ti-trash"></i>
               </a>
+              <?php endif; ?>
             </div>
           </td>
         </tr>
