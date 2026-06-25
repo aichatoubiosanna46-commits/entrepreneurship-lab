@@ -52,6 +52,10 @@ function navItem(string $href, string $icon, string $label, string $current): st
     <?= navItem('quizzes.php',        'ti-help-circle',      'Quiz',               $currentPage) ?>
     <?= navItem('quiz_add.php',       'ti-circle-plus',      'Ajouter un quiz',    $currentPage) ?>
 
+    <p class="sidebar-section-label">Badges</p>
+    <?= navItem('badges.php',         'ti-medal',            'Badges',             $currentPage) ?>
+    <?= navItem('badge_add.php',      'ti-medal-2',          'Ajouter un badge',   $currentPage) ?>
+
     <p class="sidebar-section-label">Paiements</p>
     <?= navItem('payments.php',       'ti-credit-card',      'Paiements',          $currentPage) ?>
 

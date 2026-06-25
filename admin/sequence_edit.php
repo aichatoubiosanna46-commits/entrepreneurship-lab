@@ -21,19 +21,26 @@ $seq = $stmt->fetch();
 if (!$seq) { http_response_code(404); die('Séquence introuvable.'); }
 
 $moduleId = $moduleId ?: $seq['module_id'];
+
+$autresSequences = $pdo->prepare('SELECT id, titre FROM sequences WHERE module_id = ? AND id != ? ORDER BY ordre ASC, id ASC');
+$autresSequences->execute([$moduleId, $id]);
+$autresSequences = $autresSequences->fetchAll();
+
 $erreurs  = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifierCSRF();
 
-    $titre    = trim($_POST['titre']       ?? '');
-    $desc     = trim($_POST['description'] ?? '');
-    $contenu  = trim($_POST['contenu']     ?? '');
-    $videoUrl = trim($_POST['video_url']   ?? '');
-    $audioUrl = trim($_POST['audio_url']   ?? '');
-    $duree    = (int)($_POST['duree_min']  ?? 0);
-    $ordre    = (int)($_POST['ordre']      ?? 0);
-    $actif    = isset($_POST['actif']) ? 1 : 0;
+    $titre        = trim($_POST['titre']       ?? '');
+    $desc         = trim($_POST['description'] ?? '');
+    $contenu      = trim($_POST['contenu']     ?? '');
+    $videoUrl     = trim($_POST['video_url']   ?? '');
+    $audioUrl     = trim($_POST['audio_url']   ?? '');
+    $duree        = (int)($_POST['duree_min']  ?? 0);
+    $ordre        = (int)($_POST['ordre']      ?? 0);
+    $actif        = isset($_POST['actif']) ? 1 : 0;
+    $prerequisId  = (int)($_POST['prerequis_sequence_id'] ?? 0) ?: null;
+    $prerequisMin = ($_POST['prerequis_quiz_min'] ?? '') !== '' ? (int)$_POST['prerequis_quiz_min'] : null;
 
     if (!$titre) $erreurs[] = 'Le titre est requis.';
 
@@ -54,13 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($erreurs)) {
         $stmt = $pdo->prepare(
             'UPDATE sequences SET titre=?, description=?, contenu=?, video_url=?, audio_url=?,
-             image_seq=?, fichier_pdf=?, duree_min=?, ordre=?, actif=? WHERE id=?'
+             image_seq=?, fichier_pdf=?, duree_min=?, ordre=?, prerequis_sequence_id=?, prerequis_quiz_min=?, actif=? WHERE id=?'
         );
         $stmt->execute([
             $titre, $desc ?: null, $contenu ?: null,
             $videoUrl ?: null, $audioUrl ?: null,
             $imageSeq, $fichierPdf,
-            $duree ?: null, $ordre, $actif, $id
+            $duree ?: null, $ordre, $prerequisId, $prerequisMin, $actif, $id
         ]);
         redirect(SITE_URL.'/admin/sequences.php?module_id='.$moduleId,
                  'Séquence mise à jour !', 'success');
@@ -174,6 +181,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <input type="checkbox" name="actif" value="1" <?= $seq['actif'] ? 'checked' : '' ?>>
               <span>Visible pour les apprenants</span>
             </label>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2 class="admin-card-title"><i class="ti ti-lock"></i> Prérequis (navigation séquentielle)</h2>
+          <div class="form-group">
+            <label for="prerequis_sequence_id">Déverrouillée seulement après…</label>
+            <select id="prerequis_sequence_id" name="prerequis_sequence_id">
+              <option value="">— Aucun prérequis (accès libre) —</option>
+              <?php foreach ($autresSequences as $as): ?>
+                <option value="<?= $as['id'] ?>" <?= ($seq['prerequis_sequence_id'] ?? '') == $as['id'] ? 'selected' : '' ?>>
+                  <?= h($as['titre']) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="prerequis_quiz_min">Score minimum au quiz de cette séquence (%)</label>
+            <input type="number" id="prerequis_quiz_min" name="prerequis_quiz_min" min="0" max="100"
+                   value="<?= h($seq['prerequis_quiz_min'] ?? '') ?>" placeholder="Laisser vide si pas de quiz requis">
           </div>
         </div>
 

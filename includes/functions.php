@@ -249,6 +249,108 @@ function notifierUtilisateur(int $userId, string $titre, string $message = '', s
 }
 
 // ------------------------------------------------------------
+// Vérifie si une séquence est déverrouillée pour un apprenant
+// (prérequis : séquence précédente terminée + score quiz min)
+// ------------------------------------------------------------
+function sequenceEstDeverrouillee(int $userId, array $seq): bool {
+    if (empty($seq['prerequis_sequence_id'])) return true;
+
+    $pdo = getPDO();
+    $prereqId = (int) $seq['prerequis_sequence_id'];
+
+    $stmt = $pdo->prepare('SELECT terminee FROM progress WHERE user_id = ? AND sequence_id = ?');
+    $stmt->execute([$userId, $prereqId]);
+    $prog = $stmt->fetch();
+    if (!$prog || !$prog['terminee']) return false;
+
+    if (!empty($seq['prerequis_quiz_min'])) {
+        $stmt = $pdo->prepare(
+            'SELECT qr.score FROM quiz_results qr
+             JOIN quizzes q ON q.id = qr.quiz_id
+             WHERE q.sequence_id = ? AND qr.user_id = ?
+             ORDER BY qr.score DESC LIMIT 1'
+        );
+        $stmt->execute([$prereqId, $userId]);
+        $best = $stmt->fetchColumn();
+        if ($best === false || (int)$best < (int)$seq['prerequis_quiz_min']) return false;
+    }
+
+    return true;
+}
+
+// ------------------------------------------------------------
+// Attribue un badge à un utilisateur (idempotent)
+// ------------------------------------------------------------
+function attribuerBadge(int $userId, int $badgeId, ?int $courseId = null): void {
+    $pdo = getPDO();
+    $stmt = $pdo->prepare(
+        'INSERT IGNORE INTO user_badges (user_id, badge_id, course_id) VALUES (?, ?, ?)'
+    );
+    $stmt->execute([$userId, $badgeId, $courseId]);
+    if ($stmt->rowCount() > 0) {
+        $b = $pdo->prepare('SELECT titre, icone FROM badges WHERE id = ?');
+        $b->execute([$badgeId]);
+        $b = $b->fetch();
+        if ($b) {
+            notifierUtilisateur($userId, 'Badge débloqué ' . $b['icone'], 'Vous avez obtenu le badge « ' . $b['titre'] . ' » !', 'success');
+        }
+    }
+}
+
+// ------------------------------------------------------------
+// Ajoute un tag à un utilisateur (idempotent)
+// ------------------------------------------------------------
+function ajouterTag(int $userId, string $tag): void {
+    $pdo = getPDO();
+    $pdo->prepare('INSERT IGNORE INTO user_tags (user_id, tag) VALUES (?, ?)')
+        ->execute([$userId, $tag]);
+}
+
+// ------------------------------------------------------------
+// Déclenche les automations de fin de cours : badge, tag,
+// inscription automatique au cours suivant
+// ------------------------------------------------------------
+function declencherAutomationsCompletion(int $userId, int $courseId): void {
+    $pdo = getPDO();
+    $stmt = $pdo->prepare('SELECT * FROM courses WHERE id = ?');
+    $stmt->execute([$courseId]);
+    $course = $stmt->fetch();
+    if (!$course) return;
+
+    ajouterTag($userId, 'cours_complete_' . $course['slug']);
+
+    if (!empty($course['badge_id'])) {
+        attribuerBadge($userId, (int)$course['badge_id'], $courseId);
+    }
+
+    if (!empty($course['next_course_id'])) {
+        $next = $pdo->prepare('SELECT id, titre, slug FROM courses WHERE id = ?');
+        $next->execute([(int)$course['next_course_id']]);
+        $next = $next->fetch();
+        if ($next) {
+            $pdo->prepare(
+                'INSERT IGNORE INTO enrollments (user_id, course_id, statut, paye) VALUES (?, ?, "actif", 1)'
+            )->execute([$userId, $next['id']]);
+            notifierUtilisateur(
+                $userId, 'Nouveau module débloqué 🚀',
+                'Vous avez accès à « ' . $next['titre'] . ' ».',
+                'success', SITE_URL . '/module.php?slug=' . urlencode($next['slug'])
+            );
+        }
+    }
+}
+
+// ------------------------------------------------------------
+// Récupère la soumission d'un apprenant pour une activité
+// ------------------------------------------------------------
+function recupererSoumission(int $userId, int $activityId): array|false {
+    $pdo = getPDO();
+    $stmt = $pdo->prepare('SELECT * FROM activity_submissions WHERE user_id = ? AND activity_id = ?');
+    $stmt->execute([$userId, $activityId]);
+    return $stmt->fetch();
+}
+
+// ------------------------------------------------------------
 // Pagination — retourne [offset, pages, page_courante]
 // ------------------------------------------------------------
 function paginer(int $total, int $parPage = 12, string $param = 'page'): array {

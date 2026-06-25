@@ -1,14 +1,26 @@
 <?php
-// admin/course_add.php — Création d'un cours (version complète)
+// admin/course_edit.php — Modification d'un cours
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 reqAdmin();
 
-$pdo        = getPDO();
-$categories = $pdo->query('SELECT * FROM categories ORDER BY nom')->fetchAll();
-$badges     = $pdo->query('SELECT id, titre, icone FROM badges ORDER BY titre')->fetchAll();
-$autresCours = $pdo->query('SELECT id, titre FROM courses ORDER BY titre')->fetchAll();
-$erreurs    = [];
+$pdo = getPDO();
+$id  = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
+if (!$id) redirect(SITE_URL . '/admin/courses.php', 'Cours introuvable.', 'error');
+
+$stmt = $pdo->prepare('SELECT * FROM courses WHERE id = ?');
+$stmt->execute([$id]);
+$course = $stmt->fetch();
+if (!$course) redirect(SITE_URL . '/admin/courses.php', 'Cours introuvable.', 'error');
+
+$categories  = $pdo->query('SELECT * FROM categories ORDER BY nom')->fetchAll();
+$badges      = $pdo->query('SELECT id, titre, icone FROM badges ORDER BY titre')->fetchAll();
+$autresCours = $pdo->prepare('SELECT id, titre FROM courses WHERE id != ? ORDER BY titre');
+$autresCours->execute([$id]);
+$autresCours = $autresCours->fetchAll();
+$erreurs     = [];
+
+$data = $course;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifierCSRF();
@@ -42,24 +54,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($type === 'payant' && $prix <= 0) $erreurs[] = 'Indiquez un prix supérieur à 0 pour un cours payant.';
 
     // ── Upload miniature
-    $miniature = null;
+    $miniature = $course['miniature'];
     if (!empty($_FILES['miniature']['name'])) {
-        $miniature = uploadImage($_FILES['miniature'], 'courses');
-        if (!$miniature) $erreurs[] = 'Image invalide (JPG/PNG/WEBP, max 2Mo).';
+        $uploaded = uploadImage($_FILES['miniature'], 'courses');
+        if (!$uploaded) {
+            $erreurs[] = 'Image invalide (JPG/PNG/WEBP, max 2Mo).';
+        } else {
+            $miniature = $uploaded;
+        }
     }
 
     if (empty($erreurs)) {
-        $slugBase = slugUnique($pdo, 'courses', 'slug', slug($titre));
-        $stmt = $pdo->prepare(
-            'INSERT INTO courses
-             (category_id, titre, sous_titre, slug, description, miniature, video_intro,
-              niveau, langue, type, tarif, prix, duree_heures, certificat, quiz_final, note_min_certificat,
-              badge_id, next_course_id,
-              actif, statut, date_publication, ordre, created_by)
-             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,?)'
-        );
-        $stmt->execute([
-            $category_id, $titre, $sous_titre ?: null, $slugBase, $description,
+        $pdo->prepare(
+            'UPDATE courses SET
+                category_id = ?, titre = ?, sous_titre = ?, description = ?,
+                miniature = ?, video_intro = ?,
+                niveau = ?, langue = ?, type = ?, tarif = ?, prix = ?, duree_heures = ?,
+                certificat = ?, quiz_final = ?, note_min_certificat = ?,
+                badge_id = ?, next_course_id = ?,
+                actif = ?, statut = ?, date_publication = ?
+             WHERE id = ?'
+        )->execute([
+            $category_id, $titre, $sous_titre ?: null, $description,
             $miniature, $video_intro ?: null,
             $niveau, $langue,
             $type, $tarif,
@@ -69,15 +85,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $badge_id, $next_course_id,
             $actif, $statut,
             $date_publication ?: null,
-            $_SESSION['admin_id']
+            $id
         ]);
-        $newId = $pdo->lastInsertId();
         redirect(
-            SITE_URL . '/admin/modules.php?course_id=' . $newId,
-            'Cours créé avec succès ! Ajoutez maintenant les modules.',
+            SITE_URL . '/admin/courses.php',
+            'Cours mis à jour avec succès !',
             'success'
         );
     }
+    $data = array_merge($course, $_POST);
 }
 ?>
 <!DOCTYPE html>
@@ -85,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ajouter un cours — Admin</title>
+<title>Modifier un cours — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/dashboard.css">
@@ -99,13 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     border-radius:12px; padding:24px; }
 .ca-card-title    { font-size:14px; font-weight:600; color:var(--text-muted,#6b7280);
                     text-transform:uppercase; letter-spacing:.06em; margin:0 0 20px; }
-
-/* ── Sections internes ── */
-.ca-section-label { font-size:12px; font-weight:600; color:var(--text-muted,#6b7280);
-                    text-transform:uppercase; letter-spacing:.06em;
-                    margin:24px 0 12px; padding-bottom:8px;
-                    border-bottom:1px solid var(--border,#e5e7eb); }
-.ca-section-label:first-child { margin-top:0; }
 
 /* ── Form helpers ── */
 .form-row-3       { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
@@ -162,9 +171,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <i class="ti ti-chevron-right" style="font-size:12px"></i>
         <a href="<?= SITE_URL ?>/admin/courses.php">Cours</a>
         <i class="ti ti-chevron-right" style="font-size:12px"></i>
-        <span>Nouveau cours</span>
+        <span>Modifier</span>
       </nav>
-      <h1 class="admin-page-title">Créer un nouveau cours</h1>
+      <h1 class="admin-page-title">Modifier le cours</h1>
     </div>
     <a href="<?= SITE_URL ?>/admin/courses.php" class="btn-outline">
       <i class="ti ti-arrow-left"></i> Retour
@@ -181,6 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <form method="POST" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+    <input type="hidden" name="id" value="<?= $id ?>">
 
     <div class="ca-grid">
 
@@ -196,21 +206,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-group">
             <label for="titre">Titre du cours <span style="color:red">*</span></label>
             <input type="text" id="titre" name="titre"
-                   value="<?= h($_POST['titre'] ?? '') ?>"
+                   value="<?= h($data['titre'] ?? '') ?>"
                    placeholder="Ex : Lancer sa startup au Bénin" required>
           </div>
 
           <div class="form-group">
             <label for="sous_titre">Sous-titre</label>
             <input type="text" id="sous_titre" name="sous_titre"
-                   value="<?= h($_POST['sous_titre'] ?? '') ?>"
+                   value="<?= h($data['sous_titre'] ?? '') ?>"
                    placeholder="Une accroche courte et percutante">
           </div>
 
           <div class="form-group">
             <label for="description">Description complète</label>
             <textarea id="description" name="description" rows="5"
-                      placeholder="Objectifs du cours, ce que l'apprenant va apprendre..."><?= h($_POST['description'] ?? '') ?></textarea>
+                      placeholder="Objectifs du cours, ce que l'apprenant va apprendre..."><?= h($data['description'] ?? '') ?></textarea>
           </div>
 
           <!-- Catégorie · Niveau · Langue -->
@@ -221,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="">— Choisir —</option>
                 <?php foreach ($categories as $cat): ?>
                   <option value="<?= $cat['id'] ?>"
-                    <?= (($_POST['category_id'] ?? '') == $cat['id']) ? 'selected' : '' ?>>
+                    <?= (($data['category_id'] ?? '') == $cat['id']) ? 'selected' : '' ?>>
                     <?= h($cat['nom']) ?>
                   </option>
                 <?php endforeach; ?>
@@ -231,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <label for="niveau">Niveau</label>
               <select id="niveau" name="niveau">
                 <?php foreach (['debutant'=>'Débutant','intermediaire'=>'Intermédiaire','avance'=>'Avancé'] as $v=>$l): ?>
-                  <option value="<?= $v ?>" <?= (($_POST['niveau'] ?? 'debutant') === $v) ? 'selected' : '' ?>><?= $l ?></option>
+                  <option value="<?= $v ?>" <?= (($data['niveau'] ?? 'debutant') === $v) ? 'selected' : '' ?>><?= $l ?></option>
                 <?php endforeach; ?>
               </select>
             </div>
@@ -239,7 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <label for="langue">Langue</label>
               <select id="langue" name="langue">
                 <?php foreach (['Français','Anglais','Fon','Yoruba','Dendi'] as $lg): ?>
-                  <option value="<?= $lg ?>" <?= (($_POST['langue'] ?? 'Français') === $lg) ? 'selected' : '' ?>><?= $lg ?></option>
+                  <option value="<?= $lg ?>" <?= (($data['langue'] ?? 'Français') === $lg) ? 'selected' : '' ?>><?= $lg ?></option>
                 <?php endforeach; ?>
               </select>
             </div>
@@ -250,13 +260,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
               <label for="duree_heures"><i class="ti ti-clock" style="font-size:14px"></i> Durée estimée (heures)</label>
               <input type="number" id="duree_heures" name="duree_heures"
-                     min="0" step="0.5" value="<?= h($_POST['duree_heures'] ?? '') ?>"
+                     min="0" step="0.5" value="<?= h($data['duree_heures'] ?? '') ?>"
                      placeholder="Ex : 4.5">
             </div>
             <div class="form-group">
               <label for="video_intro"><i class="ti ti-brand-youtube" style="font-size:14px"></i> Vidéo de présentation (URL)</label>
               <input type="url" id="video_intro" name="video_intro"
-                     value="<?= h($_POST['video_intro'] ?? '') ?>"
+                     value="<?= h($data['video_intro'] ?? '') ?>"
                      placeholder="https://youtube.com/watch?v=...">
             </div>
           </div>
@@ -268,25 +278,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           <label class="checkbox-label" style="margin-bottom:14px">
             <input type="checkbox" name="certificat" value="1" id="chk-cert"
-                   <?= !empty($_POST['certificat']) ? 'checked' : '' ?>
+                   <?= !empty($data['certificat']) ? 'checked' : '' ?>
                    onchange="toggleCertOptions()">
             <span>Ce cours génère un certificat à la complétion</span>
           </label>
 
-          <div id="cert-options" style="<?= empty($_POST['certificat']) ? 'display:none' : '' ?>">
+          <div id="cert-options" style="<?= empty($data['certificat']) ? 'display:none' : '' ?>">
             <div class="cert-box">
               <div class="form-row-2" style="gap:12px">
                 <div class="form-group" style="margin-bottom:0">
                   <label class="checkbox-label">
                     <input type="checkbox" name="quiz_final" value="1"
-                           <?= !empty($_POST['quiz_final']) ? 'checked' : '' ?>>
+                           <?= !empty($data['quiz_final']) ? 'checked' : '' ?>>
                     <span>Exiger la réussite du quiz final</span>
                   </label>
                 </div>
                 <div class="form-group" style="margin-bottom:0">
                   <label for="note_min">Note minimale (%)</label>
                   <input type="number" id="note_min" name="note_min"
-                         min="0" max="100" value="<?= h($_POST['note_min'] ?? '70') ?>"
+                         min="0" max="100" value="<?= h($data['note_min_certificat'] ?? '70') ?>"
                          placeholder="70">
                 </div>
               </div>
@@ -306,7 +316,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <select id="badge_id" name="badge_id">
               <option value="">— Aucun —</option>
               <?php foreach ($badges as $b): ?>
-                <option value="<?= $b['id'] ?>" <?= (($_POST['badge_id'] ?? '') == $b['id']) ? 'selected' : '' ?>>
+                <option value="<?= $b['id'] ?>" <?= (($data['badge_id'] ?? '') == $b['id']) ? 'selected' : '' ?>>
                   <?= h($b['icone'].' '.$b['titre']) ?>
                 </option>
               <?php endforeach; ?>
@@ -317,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <select id="next_course_id" name="next_course_id">
               <option value="">— Aucun —</option>
               <?php foreach ($autresCours as $c): ?>
-                <option value="<?= $c['id'] ?>" <?= (($_POST['next_course_id'] ?? '') == $c['id']) ? 'selected' : '' ?>>
+                <option value="<?= $c['id'] ?>" <?= (($data['next_course_id'] ?? '') == $c['id']) ? 'selected' : '' ?>>
                   <?= h($c['titre']) ?>
                 </option>
               <?php endforeach; ?>
@@ -341,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="statut">Statut</label>
             <select id="statut" name="statut">
               <?php foreach (['brouillon'=>'📝 Brouillon','publie'=>'✅ Publié','archive'=>'📦 Archivé'] as $v=>$l): ?>
-                <option value="<?= $v ?>" <?= (($_POST['statut'] ?? 'brouillon') === $v) ? 'selected' : '' ?>><?= $l ?></option>
+                <option value="<?= $v ?>" <?= (($data['statut'] ?? 'brouillon') === $v) ? 'selected' : '' ?>><?= $l ?></option>
               <?php endforeach; ?>
             </select>
           </div>
@@ -349,14 +359,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-group">
             <label for="date_publication"><i class="ti ti-calendar" style="font-size:14px"></i> Date de publication</label>
             <input type="datetime-local" id="date_publication" name="date_publication"
-                   value="<?= h($_POST['date_publication'] ?? '') ?>">
+                   value="<?= h($data['date_publication'] ?? '') ?>">
             <small style="color:var(--text-muted);font-size:11px">Laisser vide = publication immédiate</small>
           </div>
 
           <div class="form-group">
             <label class="checkbox-label">
               <input type="checkbox" name="actif" value="1"
-                     <?= (!isset($_POST['actif']) || $_POST['actif']) ? 'checked' : '' ?>>
+                     <?= !empty($data['actif']) ? 'checked' : '' ?>>
               <span>Visible sur le site</span>
             </label>
           </div>
@@ -373,9 +383,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               Parcours (tarif) <span style="color:red">*</span>
             </label>
             <select id="tarif" name="tarif" onchange="onTarifChange(this.value)">
-              <option value="decouverte"    <?= (($_POST['tarif']??'decouverte')==='decouverte')    ?'selected':'' ?>>💡 Découverte — Gratuit</option>
-              <option value="business_plan" <?= (($_POST['tarif']??'')==='business_plan')?'selected':'' ?>>📊 Business Plan — 5 000 FCFA</option>
-              <option value="lancement"     <?= (($_POST['tarif']??'')==='lancement')    ?'selected':'' ?>>🚀 Lancement — 8 000 FCFA</option>
+              <option value="decouverte"    <?= (($data['tarif']??'decouverte')==='decouverte')    ?'selected':'' ?>>💡 Découverte — Gratuit</option>
+              <option value="business_plan" <?= (($data['tarif']??'')==='business_plan')?'selected':'' ?>>📊 Business Plan — 5 000 FCFA</option>
+              <option value="lancement"     <?= (($data['tarif']??'')==='lancement')    ?'selected':'' ?>>🚀 Lancement — 8 000 FCFA</option>
             </select>
             <small style="color:var(--text-muted);font-size:11px">
               Ce cours sera visible uniquement pour les utilisateurs ayant ce parcours.
@@ -388,16 +398,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-group">
             <label for="type">Type d'accès</label>
             <select id="type" name="type" onchange="togglePrix(this.value)">
-              <option value="gratuit" <?= (($_POST['type'] ?? 'gratuit') === 'gratuit') ? 'selected' : '' ?>>🆓 Gratuit</option>
-              <option value="payant"  <?= (($_POST['type'] ?? '') === 'payant')         ? 'selected' : '' ?>>💳 Payant</option>
+              <option value="gratuit" <?= (($data['type'] ?? 'gratuit') === 'gratuit') ? 'selected' : '' ?>>🆓 Gratuit</option>
+              <option value="payant"  <?= (($data['type'] ?? '') === 'payant')         ? 'selected' : '' ?>>💳 Payant</option>
             </select>
           </div>
 
           <div class="form-group" id="prix-group"
-               <?= (($_POST['type'] ?? 'gratuit') !== 'payant') ? 'hidden' : '' ?>>
+               <?= (($data['type'] ?? 'gratuit') !== 'payant') ? 'hidden' : '' ?>>
             <label for="prix">Prix (FCFA) <span style="color:red">*</span></label>
             <input type="number" id="prix" name="prix"
-                   min="0" step="500" value="<?= h($_POST['prix'] ?? '5000') ?>"
+                   min="0" step="500" value="<?= h($data['prix'] ?? '5000') ?>"
                    placeholder="5000">
           </div>
         </div>
@@ -408,12 +418,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           <div class="upload-zone" id="upload-zone"
                onclick="document.getElementById('miniature').click()">
-            <i class="ti ti-photo-plus" style="font-size:32px;color:var(--text-muted)"></i>
-            <p style="font-size:13px;color:var(--text-muted);margin:0">
-              Cliquer pour choisir une image
-            </p>
-            <small style="color:var(--text-muted)">JPG, PNG, WEBP — max 2 Mo</small>
-            <img id="preview-img" alt="Aperçu miniature">
+            <?php if (!empty($data['miniature'])): ?>
+              <img id="preview-img" alt="Aperçu miniature" src="<?= h(SITE_URL . '/uploads/courses/' . $data['miniature']) ?>" style="display:block">
+            <?php else: ?>
+              <i class="ti ti-photo-plus" style="font-size:32px;color:var(--text-muted)"></i>
+              <p style="font-size:13px;color:var(--text-muted);margin:0">
+                Cliquer pour choisir une image
+              </p>
+              <small style="color:var(--text-muted)">JPG, PNG, WEBP — max 2 Mo</small>
+              <img id="preview-img" alt="Aperçu miniature">
+            <?php endif; ?>
           </div>
           <input type="file" id="miniature" name="miniature"
                  accept="image/jpeg,image/png,image/webp"
@@ -422,11 +436,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- ── Bouton ── -->
         <button type="submit" class="btn-submit">
-          <i class="ti ti-device-floppy"></i> Enregistrer le cours
+          <i class="ti ti-device-floppy"></i> Enregistrer les modifications
         </button>
-        <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:-8px">
-          Après création, vous serez redirigé vers les modules du cours.
-        </p>
 
       </div><!-- /col droite -->
 
@@ -456,10 +467,6 @@ function onTarifChange(val) {
   box.style.border       = '1px solid ' + d.border;
   box.style.color        = d.text;
   box.innerHTML = `<strong>${d.label}</strong><br>${d.hint}`;
-  // Suggérer le type
-  const typeEl = document.getElementById('type');
-  typeEl.value = d.type;
-  togglePrix(d.type);
 }
 
 // ── Toggle options certificat
@@ -477,8 +484,7 @@ function previewImg(input) {
     const zone = document.getElementById('upload-zone');
     img.src   = e.target.result;
     img.style.display = 'block';
-    zone.querySelector('i').style.display    = 'none';
-    zone.querySelectorAll('p,small').forEach(el => el.style.display = 'none');
+    zone.querySelectorAll('i,p,small').forEach(el => el.style.display = 'none');
   };
   reader.readAsDataURL(input.files[0]);
 }

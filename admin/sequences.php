@@ -108,6 +108,9 @@ $sequences = $sequences->fetchAll();
           </td>
           <td>
             <div style="display:flex;gap:6px">
+              <a href="<?= SITE_URL ?>/admin/activities.php?sequence_id=<?= $s['id'] ?>" class="btn-icon" title="Activités (devoirs, auto-évaluation)">
+                <i class="ti ti-pencil-check"></i>
+              </a>
               <a href="<?= SITE_URL ?>/admin/sequence_edit.php?id=<?= $s['id'] ?>&module_id=<?= $moduleId ?>" class="btn-icon" title="Modifier">
                 <i class="ti ti-edit"></i>
               </a>

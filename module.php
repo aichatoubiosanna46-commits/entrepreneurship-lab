@@ -408,14 +408,14 @@ $pageTitle = $course['titre'];
             <?php else: ?>
               <?php foreach ($seqs as $s): ?>
               <?php $done = in_array($s['id'], $completees); ?>
-              <?php $href = $inscrit
-                ? SITE_URL . '/sequence.php?id=' . $s['id']
-                : SITE_URL . '/register.php'; ?>
-              <a href="<?= $href ?>" class="seq-item">
-                <div class="seq-check <?= $done ? 'done' : ($inscrit ? '' : 'locked') ?>">
+              <?php $prereqLocked = $inscrit && !$done && $userId && !sequenceEstDeverrouillee($userId, $s); ?>
+              <?php $href = (!$inscrit) ? SITE_URL . '/register.php'
+                : ($prereqLocked ? '#' : SITE_URL . '/sequence.php?id=' . $s['id']); ?>
+              <a href="<?= $href ?>" class="seq-item" <?= $prereqLocked ? 'style="opacity:.5;cursor:not-allowed" onclick="return false"' : '' ?>>
+                <div class="seq-check <?= $done ? 'done' : (($prereqLocked || !$inscrit) ? 'locked' : '') ?>">
                   <?php if ($done): ?>
                     <i class="ti ti-check"></i>
-                  <?php elseif (!$inscrit): ?>
+                  <?php elseif (!$inscrit || $prereqLocked): ?>
                     <i class="ti ti-lock" style="font-size:10px"></i>
                   <?php else: ?>
                     <i class="ti ti-player-play" style="font-size:10px;color:var(--primary)"></i>

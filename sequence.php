@@ -29,9 +29,19 @@ if (!estInscrit($userId, $seq['course_id'])) {
     redirect(SITE_URL . '/module.php?slug=' . urlencode($seq['course_slug']), 'Inscris-toi d\'abord au cours.', 'info');
 }
 
+// Vérifier prérequis (navigation séquentielle)
+if (!sequenceEstDeverrouillee($userId, $seq)) {
+    redirect(SITE_URL . '/module.php?slug=' . urlencode($seq['course_slug']), 'Termine d\'abord les étapes précédentes pour débloquer cette leçon.', 'info');
+}
+
+// Activités liées à la séquence (devoirs, exercices, auto-évaluation)
+$activitiesStmt = $pdo->prepare('SELECT * FROM activities WHERE sequence_id = ? AND actif = 1 ORDER BY id ASC');
+$activitiesStmt->execute([$seqId]);
+$activities = $activitiesStmt->fetchAll();
+
 // Séquences du module (navigation)
 $siblingsStmt = $pdo->prepare(
-    'SELECT id, titre, ordre FROM sequences WHERE module_id = ? AND actif = 1 ORDER BY ordre ASC, id ASC'
+    'SELECT id, titre, ordre, prerequis_sequence_id, prerequis_quiz_min FROM sequences WHERE module_id = ? AND actif = 1 ORDER BY ordre ASC, id ASC'
 );
 $siblingsStmt->execute([$seq['module_id']]);
 $siblings = $siblingsStmt->fetchAll();
@@ -80,16 +90,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'marqu
          ON DUPLICATE KEY UPDATE terminee = 1'
     )->execute([$userId, $seqId]);
 
-    // Vérifier si le cours est 100% complété → générer certificat
+    // Vérifier si le cours est 100% complété → certificat + automations
     $pct = progressionCours($userId, $seq['course_id']);
-    if ($pct === 100 && $seq['has_certificat']) {
-        genererCertificat($userId, $seq['course_id']);
+    if ($pct === 100) {
+        if ($seq['has_certificat']) {
+            genererCertificat($userId, $seq['course_id']);
+        }
+        declencherAutomationsCompletion($userId, $seq['course_id']);
     }
 
     $dest = $nextSeq
         ? SITE_URL . '/sequence.php?id=' . $nextSeq['id']
         : SITE_URL . '/module.php?slug=' . urlencode($seq['course_slug']);
     redirect($dest, 'Leçon marquée comme terminée !', 'success');
+}
+
+// Action : soumettre une activité (devoir noté ou auto-évaluation)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'soumettre_activite') {
+    verifierCSRF();
+    $activityId = (int)($_POST['activity_id'] ?? 0);
+    $activity = $pdo->prepare('SELECT * FROM activities WHERE id = ? AND sequence_id = ?');
+    $activity->execute([$activityId, $seqId]);
+    $activity = $activity->fetch();
+
+    if ($activity) {
+        $contenu = trim($_POST['contenu'] ?? '');
+        $choix   = trim($_POST['choix'] ?? '') ?: null;
+
+        $fichier = null;
+        if (!empty($_FILES['fichier']['name'])) {
+            $res = uploadFichier($_FILES['fichier'], 'submissions');
+            if ($res) $fichier = $res;
+        }
+
+        $pdo->prepare(
+            'INSERT INTO activity_submissions (activity_id, user_id, contenu, fichier, choix, statut)
+             VALUES (?, ?, ?, ?, ?, "soumis")
+             ON DUPLICATE KEY UPDATE contenu = VALUES(contenu),
+                fichier = COALESCE(VALUES(fichier), fichier), choix = VALUES(choix)'
+        )->execute([$activityId, $userId, $contenu ?: null, $fichier, $choix]);
+    }
+
+    redirect(SITE_URL . '/sequence.php?id=' . $seqId . '#activites', 'Réponse enregistrée !', 'success');
 }
 
 // Action : ajouter commentaire
@@ -265,16 +307,18 @@ $pct = progressionCours($userId, $seq['course_id']);
     <div class="seq-nav-list">
       <?php foreach ($siblings as $sib):
         $isCurrent = $sib['id'] == $seqId;
-        $isDone = false;
         $progCheck = $pdo->prepare('SELECT terminee FROM progress WHERE user_id = ? AND sequence_id = ?');
         $progCheck->execute([$userId, $sib['id']]);
         $pr = $progCheck->fetch();
         $isDone = $pr && $pr['terminee'];
+        $isLocked = !$isDone && !sequenceEstDeverrouillee($userId, $sib);
       ?>
-      <a href="<?= SITE_URL ?>/sequence.php?id=<?= $sib['id'] ?>"
-         class="seq-nav-item <?= $isCurrent ? 'active' : '' ?> <?= (!$isCurrent && $isDone) ? 'done' : '' ?>">
+      <a href="<?= $isLocked ? '#' : SITE_URL . '/sequence.php?id=' . $sib['id'] ?>"
+         class="seq-nav-item <?= $isCurrent ? 'active' : '' ?> <?= (!$isCurrent && $isDone) ? 'done' : '' ?>"
+         <?= $isLocked ? 'style="opacity:.5;cursor:not-allowed" onclick="return false"' : '' ?>>
         <div class="seq-nav-check <?= $isCurrent ? 'active-c' : ($isDone ? 'done-c' : '') ?>">
-          <?php if ($isDone): ?><i class="ti ti-check"></i>
+          <?php if ($isLocked): ?><i class="ti ti-lock" style="font-size:9px"></i>
+          <?php elseif ($isDone): ?><i class="ti ti-check"></i>
           <?php elseif ($isCurrent): ?><i class="ti ti-player-play" style="font-size:9px"></i>
           <?php endif; ?>
         </div>
@@ -364,6 +408,89 @@ $pct = progressionCours($userId, $seq['course_id']);
           <p>Score minimum : <?= $quiz['score_min'] ?>% — Testez vos connaissances !</p>
         </div>
         <a href="<?= SITE_URL ?>/quiz.php?id=<?= $quiz['id'] ?>">Commencer le quiz</a>
+      </div>
+      <?php endif; ?>
+
+      <?php if (!empty($activities)): ?>
+      <div id="activites">
+        <?php foreach ($activities as $act):
+            $sub = recupererSoumission($userId, (int)$act['id']);
+            $options = $act['options_json'] ? json_decode($act['options_json'], true) : [];
+            $rappelSub = null;
+            $rappelActiviteId = $options['rappel_activite_id'] ?? null;
+            if ($rappelActiviteId) {
+                $rappelSub = recupererSoumission($userId, (int)$rappelActiviteId);
+            }
+        ?>
+        <div class="admin-card" style="margin-bottom:20px;background:var(--surface-alt,#f9fafb);border:1px solid var(--border,#e5e7eb);border-radius:12px;padding:20px">
+
+          <?php if ($rappelSub && ($rappelSub['contenu'] || $rappelSub['choix'])): ?>
+          <div style="background:#FEF6E8;border:1px solid #EF9F27;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px">
+            <strong style="color:#BA7517"><i class="ti ti-history"></i> Pour rappel, voici ce que tu avais répondu :</strong>
+            <div style="margin-top:6px;color:var(--text-muted)">
+              <?php if ($rappelSub['choix']): ?><?= h($rappelSub['choix']) ?><?php endif; ?>
+              <?php if ($rappelSub['contenu']): ?><?= nl2br(h($rappelSub['contenu'])) ?><?php endif; ?>
+            </div>
+          </div>
+          <?php endif; ?>
+
+          <?php if ($act['type'] === 'auto_evaluation'): ?>
+            <h3 style="font-size:15px;margin:0 0 10px"><i class="ti ti-message-question" style="color:#534AB7"></i> <?= h($act['titre']) ?></h3>
+            <p style="font-size:14px;margin-bottom:14px"><?= h($act['consigne']) ?></p>
+            <?php if ($sub && $sub['choix']): ?>
+              <?php $msg = $options['messages'][$sub['choix']] ?? null; ?>
+              <div style="background:#fff;border-radius:10px;padding:14px;font-size:13px">
+                <strong>Ta réponse :</strong> <?= h($sub['choix']) ?>
+                <?php if ($sub['contenu']): ?><div style="margin-top:6px;color:var(--text-muted)"><?= h($sub['contenu']) ?></div><?php endif; ?>
+                <?php if ($msg): ?><div style="margin-top:10px;color:#534AB7;font-weight:600"><?= h($msg) ?></div><?php endif; ?>
+              </div>
+            <?php else: ?>
+              <form method="POST" id="form-act-<?= $act['id'] ?>">
+                <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+                <input type="hidden" name="action" value="soumettre_activite">
+                <input type="hidden" name="activity_id" value="<?= $act['id'] ?>">
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+                  <?php foreach (($options['boutons'] ?? []) as $bouton): ?>
+                  <button type="submit" name="choix" value="<?= h($bouton) ?>" class="btn-nav"><?= h($bouton) ?></button>
+                  <?php endforeach; ?>
+                </div>
+                <?php if (!empty($options['reponse_libre'])): ?>
+                <textarea name="contenu" placeholder="Réponse libre (optionnel)..." style="width:100%;border:1px solid var(--border,#e5e7eb);border-radius:8px;padding:10px;font-size:13px;box-sizing:border-box"></textarea>
+                <?php endif; ?>
+              </form>
+            <?php endif; ?>
+
+          <?php else: ?>
+            <h3 style="font-size:15px;margin:0 0 6px"><i class="ti ti-file-pencil" style="color:#BA7517"></i> <?= h($act['titre']) ?></h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px"><?= nl2br(h($act['consigne'])) ?></p>
+
+            <?php if ($sub): ?>
+              <div style="background:#fff;border-radius:10px;padding:14px;font-size:13px;margin-bottom:10px">
+                <strong>Soumis :</strong>
+                <?php if ($sub['contenu']): ?><div style="margin-top:6px"><?= nl2br(h($sub['contenu'])) ?></div><?php endif; ?>
+                <?php if ($sub['fichier']): ?><div style="margin-top:6px"><a href="<?= SITE_URL ?>/assets/uploads/<?= h($sub['fichier']) ?>" download>📎 Fichier joint</a></div><?php endif; ?>
+                <?php if ($sub['statut'] === 'corrige'): ?>
+                  <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border,#e5e7eb)">
+                    <strong style="color:#3B6D11">Note : <?= h((string)$sub['note']) ?><?= $act['note_max'] ? '/'.$act['note_max'] : '' ?></strong>
+                    <?php if ($sub['feedback']): ?><div style="margin-top:6px;color:var(--text-muted)"><?= nl2br(h($sub['feedback'])) ?></div><?php endif; ?>
+                  </div>
+                <?php else: ?>
+                  <div style="margin-top:8px;color:var(--text-muted);font-style:italic">En attente de correction…</div>
+                <?php endif; ?>
+              </div>
+            <?php endif; ?>
+
+            <form method="POST" enctype="multipart/form-data">
+              <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+              <input type="hidden" name="action" value="soumettre_activite">
+              <input type="hidden" name="activity_id" value="<?= $act['id'] ?>">
+              <textarea name="contenu" rows="5" placeholder="Ta réponse..." style="width:100%;border:1px solid var(--border,#e5e7eb);border-radius:8px;padding:10px;font-size:13px;box-sizing:border-box;margin-bottom:10px"><?= h($sub['contenu'] ?? '') ?></textarea>
+              <input type="file" name="fichier" style="margin-bottom:10px">
+              <button type="submit" class="btn-nav primary"><?= $sub ? 'Soumettre à nouveau' : 'Soumettre' ?></button>
+            </form>
+          <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
       </div>
       <?php endif; ?>
     </div>
