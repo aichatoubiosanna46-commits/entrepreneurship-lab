@@ -64,7 +64,7 @@ if ($userId && !empty($course['prerequis_course_id'])) {
         <title>Prérequis requis — <?= SITE_NAME ?></title>
         <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-        <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
+        <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=2">
         </head><body>
         <?php include __DIR__ . '/includes/header.php'; ?>
         <div style="max-width:500px;margin:80px auto;padding:0 24px;text-align:center">
@@ -171,7 +171,7 @@ $pageTitle = $course['titre'];
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=2">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/home.css">
 <style>
 /* ── Hero ── */

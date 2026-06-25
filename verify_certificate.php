@@ -39,7 +39,7 @@ $typeLabelVerif  = $cert && (($cert['type'] ?? 'completion') === 'connaissance')
 <title>Vérification de certificat — <?= SITE_NAME ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=2">
 </head>
 <body style="min-height:100vh;background:#f9fafb;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;font-family:'Plus Jakarta Sans',sans-serif">
 

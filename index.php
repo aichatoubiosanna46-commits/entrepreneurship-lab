@@ -43,7 +43,7 @@ try {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=2">
 <link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/home.css">
 <style>
 :root {
@@ -470,17 +470,12 @@ img { max-width: 100%; }
       <p style="font-size:10.5px;color:var(--text-muted);margin-bottom:10px">9 modules de lancement</p>
       <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy)">5 000 – 10 000 FCFA</p>
     </div>
-    <div style="background:#1a1a18;color:#fff;border-radius:var(--radius-lg);padding:22px;grid-column:1 / -1">
+    <div style="background:#1a1a18;color:#fff;border-radius:var(--radius-lg);padding:22px">
       <span style="display:inline-block;background:rgba(255,255,255,.14);color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px">EXPERT</span>
       <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Série 3 — Structurer et scaler</h4>
       <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">Statut juridique, comptabilité simplifiée, équipe, délégation, levée de fonds et développement vers d'autres marchés.</p>
-      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
-        <div>
-          <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:6px">9 modules de croissance</p>
-          <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff">10 000 – 15 000 FCFA</p>
-        </div>
-        <p style="font-size:11px;color:rgba(255,255,255,.65)">🎓 Certification UP &nbsp;|&nbsp; 👤 Coaching 1:1 &nbsp;|&nbsp; 🏆 Badge numérique &nbsp;|&nbsp; 🤝 Réseau Alumni</p>
-      </div>
+      <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:6px">9 modules de croissance</p>
+      <p style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#fff">10 000 – 15 000 FCFA</p>
     </div>
   </div>
 </div>
