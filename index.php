@@ -89,7 +89,7 @@ try {
 /* HERO (image unique) */
 .elab-hero { position: relative; overflow: hidden; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); min-height: 480px; width: 100%; display: flex; align-items: center; justify-content: center; padding: 64px 24px; }
 .elab-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
-.elab-hero-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(8,80,65,.88) 20%, rgba(8,80,65,.55) 100%); }
+.elab-hero-overlay { position: absolute; inset: 0; background: rgba(10,92,70,0.85); }
 .elab-hero-content { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; text-align: center; }
 .cbtn-primary {
   background: var(--gold); color: #fff; border: none; border-radius: 8px;
