@@ -28,7 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$vals['nom'])    $erreurs[] = 'Le nom est requis.';
     if (!$vals['prenom']) $erreurs[] = 'Le prénom est requis.';
     if (!filter_var($vals['email'], FILTER_VALIDATE_EMAIL)) $erreurs[] = 'Email invalide.';
-    if (strlen($vals['password']) < 8) $erreurs[] = 'Le mot de passe doit faire au moins 8 caractères.';
+    if (strlen($vals['password']) < 8)            $erreurs[] = 'Le mot de passe doit faire au moins 8 caractères.';
+    elseif (!preg_match('/[A-Z]/', $vals['password']))        $erreurs[] = 'Le mot de passe doit contenir au moins une majuscule.';
+    elseif (!preg_match('/[0-9]/', $vals['password']))        $erreurs[] = 'Le mot de passe doit contenir au moins un chiffre.';
+    elseif (!preg_match('/[^A-Za-z0-9]/', $vals['password'])) $erreurs[] = 'Le mot de passe doit contenir au moins un caractère spécial.';
     if ($vals['password'] !== $vals['confirm']) $erreurs[] = 'Les mots de passe ne correspondent pas.';
 
     if (empty($erreurs)) {
@@ -181,6 +184,15 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
   color: #9ca3af; padding: 4px; display: flex; align-items: center;
 }
 .input-toggle-pw:hover { color: #D85A30; }
+
+/* Strength */
+.strength-bars { display: flex; gap: 4px; margin-top: 6px; margin-bottom: 3px; }
+.strength-bar { flex: 1; height: 4px; border-radius: 2px; background: #e5e7eb; transition: background .3s; }
+.pw-requirements { list-style: none; padding: 0; margin: 6px 0 0; display: flex; flex-direction: column; gap: 3px; }
+.pw-requirements li { font-size: 11px; color: #9ca3af; display: flex; align-items: center; gap: 5px; transition: color .2s; }
+.pw-requirements li.ok { color: #16a34a; }
+.pw-requirements li::before { content: '○'; font-size: 10px; }
+.pw-requirements li.ok::before { content: '✓'; }
 
 /* Alert */
 .alert {
@@ -380,19 +392,35 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; backgrou
             <div class="input-icon-wrap">
               <i class="ti ti-lock input-icon" aria-hidden="true"></i>
               <input type="password" id="password" name="password"
-                     placeholder="Min. 8 caractères" required>
+                     placeholder="Min. 8 caractères" required
+                     oninput="checkStrength(this.value)">
               <button type="button" class="input-toggle-pw" onclick="togglePw(this)">
                 <i class="ti ti-eye"></i>
               </button>
             </div>
+            <div class="strength-bars">
+              <div class="strength-bar" id="bar1"></div>
+              <div class="strength-bar" id="bar2"></div>
+              <div class="strength-bar" id="bar3"></div>
+              <div class="strength-bar" id="bar4"></div>
+            </div>
+            <span id="strength-text" style="font-size:11px;color:#9ca3af"></span>
+            <ul class="pw-requirements">
+              <li id="req-length">Au moins 8 caractères</li>
+              <li id="req-upper">Une lettre majuscule</li>
+              <li id="req-number">Un chiffre</li>
+              <li id="req-special">Un caractère spécial (!@#$...)</li>
+            </ul>
           </div>
           <div class="form-group">
             <label for="confirm">Confirmation</label>
             <div class="input-icon-wrap">
               <i class="ti ti-lock input-icon" aria-hidden="true"></i>
               <input type="password" id="confirm" name="confirm"
-                     placeholder="Répéter" required>
+                     placeholder="Répéter" required
+                     oninput="checkMatch()">
             </div>
+            <span id="match-text" style="font-size:11px;display:block;margin-top:3px"></span>
           </div>
         </div>
 
@@ -430,6 +458,40 @@ function togglePw(btn) {
   const input = btn.closest('.input-icon-wrap').querySelector('input');
   input.type  = input.type === 'password' ? 'text' : 'password';
   btn.querySelector('i').className = input.type === 'password' ? 'ti ti-eye' : 'ti ti-eye-off';
+}
+
+function checkStrength(val) {
+  const checks = {
+    length:  val.length >= 8,
+    upper:   /[A-Z]/.test(val),
+    number:  /[0-9]/.test(val),
+    special: /[^A-Za-z0-9]/.test(val),
+  };
+  document.getElementById('req-length').classList.toggle('ok',  checks.length);
+  document.getElementById('req-upper').classList.toggle('ok',   checks.upper);
+  document.getElementById('req-number').classList.toggle('ok',  checks.number);
+  document.getElementById('req-special').classList.toggle('ok', checks.special);
+
+  const score = Object.values(checks).filter(Boolean).length;
+  const colors  = ['#e5e7eb','#dc2626','#D85A30','#eab308','#16a34a'];
+  const labels  = ['','Trop faible','Moyen','Fort','Très fort 🔒'];
+  const txtClrs = ['#9ca3af','#dc2626','#C04A22','#ca8a04','#16a34a'];
+
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('bar'+i).style.background = i <= score ? colors[score] : '#e5e7eb';
+  }
+  const txt = document.getElementById('strength-text');
+  txt.textContent = val.length > 0 ? labels[score] : '';
+  txt.style.color = txtClrs[score];
+}
+
+function checkMatch() {
+  const pw  = document.getElementById('password').value;
+  const cfm = document.getElementById('confirm').value;
+  const txt = document.getElementById('match-text');
+  if (!cfm) { txt.textContent = ''; return; }
+  txt.textContent = pw === cfm ? '✓ Les mots de passe correspondent' : '✗ Ne correspondent pas';
+  txt.style.color = pw === cfm ? '#16a34a' : '#dc2626';
 }
 </script>
 </body>
