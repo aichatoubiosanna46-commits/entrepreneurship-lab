@@ -266,7 +266,7 @@ textarea { resize: vertical; min-height: 90px; }
    NAVBAR & HEADER — Sunrise Africa
    ============================================================ */
 .navbar {
-  background: #1C1917;
+  background: var(--teal);
   position: sticky; top: 0; z-index: 200;
   box-shadow: 0 2px 16px rgba(0,0,0,.35);
 }
@@ -282,12 +282,12 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .nav-logo .logo-mark {
   width: 36px; height: 36px; font-size: 15px;
-  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  background: linear-gradient(135deg, var(--coral), var(--coral-dark));
   color: #fff; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
   font-weight: 800; flex-shrink: 0;
 }
-.nav-logo .logo-name    { font-size: 15px; font-weight: 700; color: #FEF3C7; display: block; }
+.nav-logo .logo-name    { font-size: 15px; font-weight: 700; color: #fff; display: block; }
 .nav-logo .logo-tagline { font-size: 10px; color: rgba(255,255,255,.4); display: block; }
 
 .nav-links {
@@ -302,7 +302,7 @@ textarea { resize: vertical; min-height: 90px; }
   white-space: nowrap;
 }
 .nav-link i { font-size: 16px; }
-.nav-link:hover, .nav-link-active { background: rgba(255,255,255,.07); color: #F59E0B; }
+.nav-link:hover, .nav-link-active { background: rgba(255,255,255,.07); color: var(--coral); }
 
 .nav-actions {
   display: flex; align-items: center; gap: 8px; flex-shrink: 0;
@@ -318,8 +318,8 @@ textarea { resize: vertical; min-height: 90px; }
 .btn-outline:hover { color: #fff; border-color: rgba(255,255,255,.4); }
 .btn-primary {
   font-size: 12px; font-weight: 700;
-  background: linear-gradient(135deg, #F59E0B, #D97706);
-  color: #1C1917; padding: 8px 18px;
+  background: linear-gradient(135deg, var(--coral), var(--coral-dark));
+  color: #fff; padding: 8px 18px;
   border-radius: 8px; text-decoration: none;
   display: inline-flex; align-items: center; gap: 6px;
   transition: opacity .15s; white-space: nowrap; border: none; cursor: pointer;
@@ -334,7 +334,7 @@ textarea { resize: vertical; min-height: 90px; }
   transition: background .15s, color .15s;
   font-size: 18px; position: relative;
 }
-.nav-icon-btn:hover { background: rgba(255,255,255,.1); color: #F59E0B; }
+.nav-icon-btn:hover { background: rgba(255,255,255,.1); color: var(--coral); }
 .nav-notif-badge {
   position: absolute; top: 4px; right: 4px;
   background: #EF4444; color: #fff;
@@ -356,11 +356,11 @@ textarea { resize: vertical; min-height: 90px; }
 .nav-user-chip:hover { background: rgba(255,255,255,.12); }
 .nav-user-avatar {
   width: 28px; height: 28px; border-radius: 50%;
-  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  background: linear-gradient(135deg, var(--coral), var(--coral-dark));
   color: #fff; font-size: 12px; font-weight: 700;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.nav-user-name { font-size: 13px; font-weight: 600; color: #FEF3C7; }
+.nav-user-name { font-size: 13px; font-weight: 600; color: #fff; }
 
 /* Dropdown */
 .nav-user-dropdown {
@@ -376,7 +376,7 @@ textarea { resize: vertical; min-height: 90px; }
   padding: 9px 16px; font-size: 13px; color: #374151;
   text-decoration: none; transition: background .1s;
 }
-.nav-user-dropdown a:hover { background: #FFFBEB; color: #D97706; }
+.nav-user-dropdown a:hover { background: var(--coral-light); color: var(--coral-dark); }
 .nav-user-dropdown a i { font-size: 16px; color: #9ca3af; }
 .dropdown-divider { height: 1px; background: #f3f4f6; margin: 4px 0; }
 
@@ -387,7 +387,7 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .nav-mobile {
   display: none; flex-direction: column; gap: 2px;
-  background: #1C1917; padding: 12px 20px 16px;
+  background: var(--teal); padding: 12px 20px 16px;
   border-top: 1px solid rgba(255,255,255,.08);
 }
 .nav-mobile.open { display: flex; }
@@ -396,13 +396,13 @@ textarea { resize: vertical; min-height: 90px; }
   color: rgba(255,255,255,.7); text-decoration: none;
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
-.nav-mobile a:hover { color: #F59E0B; }
+.nav-mobile a:hover { color: var(--coral); }
 
 /* ============================================================
-   FOOTER — Sunrise Africa
+   FOOTER — Ariziki
    ============================================================ */
 .site-footer {
-  background: #1C1917;
+  background: var(--dark);
   padding: 36px 24px 20px;
 }
 .footer-inner {
@@ -413,16 +413,16 @@ textarea { resize: vertical; min-height: 90px; }
 .footer-brand { display: flex; align-items: flex-start; gap: 12px; }
 .footer-brand .logo-mark {
   width: 36px; height: 36px; font-size: 15px; font-weight: 800;
-  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  background: linear-gradient(135deg, var(--coral), var(--coral-dark));
   color: #fff; border-radius: 9px;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.footer-brand .logo-name { font-size: 15px; font-weight: 700; color: #FEF3C7; }
+.footer-brand .logo-name { font-size: 15px; font-weight: 700; color: #fff; }
 .footer-tagline { font-size: 12px; color: rgba(255,255,255,.45); line-height: 1.7; margin-top: 4px; }
 .footer-links { display: flex; gap: 48px; flex-wrap: wrap; }
 .footer-col-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.4); margin-bottom: 10px; }
 .footer-links a { display: block; font-size: 13px; color: rgba(255,255,255,.55); text-decoration: none; margin-bottom: 7px; transition: color .15s; }
-.footer-links a:hover { color: #F59E0B; }
+.footer-links a:hover { color: var(--coral); }
 .footer-bottom {
   max-width: 1000px; margin: 0 auto;
   display: flex; justify-content: space-between; align-items: center;
@@ -431,7 +431,7 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .footer-bottom span { font-size: 12px; color: rgba(255,255,255,.35); }
 .footer-bottom a { color: rgba(255,255,255,.4); text-decoration: none; font-size: 18px; transition: color .15s; }
-.footer-bottom a:hover { color: #F59E0B; }
+.footer-bottom a:hover { color: var(--coral); }
 
 /* ============================================================
    RESPONSIVE
@@ -457,13 +457,13 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .user-sidebar-nav a:hover,
 .user-sidebar-nav a:hover i {
-  color: #D97706 !important;
-  background: #FFFBEB !important;
+  color: var(--coral-dark) !important;
+  background: var(--coral-light) !important;
 }
 .user-sidebar-nav a.active,
 .user-sidebar-nav a.active i {
-  color: #D97706 !important;
-  background: #FEF3C7 !important;
+  color: var(--coral-dark) !important;
+  background: var(--coral-light) !important;
 }
 .user-sidebar-footer a[style*="F0997B"] {
   color: #F0997B !important;

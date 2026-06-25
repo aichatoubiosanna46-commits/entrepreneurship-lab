@@ -291,10 +291,13 @@ img { max-width: 100%; }
   <a href="#temoignages">Témoignages</a>
   <a href="#tarifs">Tarifs</a>
   <a href="#equipe">À propos</a>
+  <a href="<?= SITE_URL ?>/about.php">En savoir plus</a>
+  <a href="<?= SITE_URL ?>/contact.php">Contact</a>
   <?php if (estConnecte()): ?>
     <a href="<?= SITE_URL ?>/dashboard.php" style="color:var(--gold);font-weight:700">Mon espace</a>
   <?php else: ?>
-    <a href="<?= SITE_URL ?>/register.php" style="color:var(--gold);font-weight:700">Commencer gratuitement →</a>
+    <a href="<?= SITE_URL ?>/login.php">Se connecter</a>
+    <a href="<?= SITE_URL ?>/register.php" style="color:var(--gold);font-weight:700">S'inscrire — Commencer gratuitement →</a>
   <?php endif; ?>
 </div>
 
