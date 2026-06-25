@@ -192,6 +192,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'marqu
         genererCertificat($userId, $seq['course_id']);
     }
 
+    // Vérifier les badges automatiques (complétion cours / module / XP)
+    checkAndAwardBadges($userId);
+
     // Redirection après complétion configurable
     $redirectCompletion = $seq['redirect_completion'] ?? null;
 

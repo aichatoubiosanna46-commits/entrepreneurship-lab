@@ -30,6 +30,7 @@ body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
 .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:28px}
 .team-card{background:#fff;border:1px solid #fde68a;border-radius:16px;overflow:hidden;text-align:center;padding-bottom:20px}
 .team-avatar{height:160px;background:linear-gradient(135deg,#D85A30,#085041);display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;color:#fff}
+.team-avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .team-name{font-size:16px;font-weight:700;color:#1A1A18;margin:14px 14px 4px}
 .team-role{font-size:12px;color:#D85A30;font-weight:600;margin-bottom:8px}
 .team-bio{font-size:12px;color:#6b7280;line-height:1.6;padding:0 14px}
@@ -91,19 +92,19 @@ body{background:#F5F0E8;font-family:'Plus Jakarta Sans',sans-serif}
     <h2>Notre équipe</h2>
     <div class="team-grid">
       <div class="team-card">
-        <div class="team-avatar">BS</div>
+        <div class="team-avatar"><img src="<?= SITE_URL ?>/assets/images/equipes/1.png" alt="Prof. Bertrand SOGBOSSI"></div>
         <div class="team-name">Prof. Bertrand SOGBOSSI</div>
         <div class="team-role">Président du Conseil d'administration</div>
         <div class="team-bio">Recteur de l'Université de Parakou, il apporte sa rigueur scientifique et son expérience académique au programme Ariziki.</div>
       </div>
       <div class="team-card">
-        <div class="team-avatar">CH</div>
+        <div class="team-avatar"><img src="<?= SITE_URL ?>/assets/images/equipes/2.png" alt="Céphas HOUNZANDJI"></div>
         <div class="team-name">Céphas HOUNZANDJI</div>
         <div class="team-role">Directeur — Gestionnaire de projet</div>
         <div class="team-bio">20 ans d'expérience en accompagnement entrepreneurial au Bénin. Directeur du centre d'incubation Ariziki.</div>
       </div>
       <div class="team-card">
-        <div class="team-avatar">AC</div>
+        <div class="team-avatar"><img src="<?= SITE_URL ?>/assets/images/equipes/3.png" alt="Annick Chaffa"></div>
         <div class="team-name">Annick Chaffa</div>
         <div class="team-role">Chargée des programmes</div>
         <div class="team-bio">Ingénieure agronome et experte en entrepreneuriat vert, elle supervise la qualité des programmes pédagogiques.</div>
