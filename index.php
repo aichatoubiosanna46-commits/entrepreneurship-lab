@@ -607,45 +607,47 @@ img { max-width: 100%; }
   <div class="sec-tag">Tarification</div>
   <div class="sec-title">Conçu pour ta bourse d'étudiant.</div>
   <div class="sec-sub">Paiement en Mobile Money. Pas besoin de carte bancaire. Commence gratuitement.</div>
-  <div class="tarifs-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;align-items:stretch">
-    <div style="background:#fff;border:1.5px solid rgba(0,0,0,.08);border-radius:var(--radius-lg);padding:26px;display:flex;flex-direction:column">
-      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Phase 0</h4>
-      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Découvre ton potentiel entrepreneurial sans aucun engagement.</p>
-      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--navy);margin-bottom:16px">0 FCFA</div>
-      <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:8px;flex:1">
-        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> 3 modules complets</li>
-        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Outils « Radar à Opportunités »</li>
-        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Badge « Explorateur Entrepreneurial »</li>
-        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Accès au forum communautaire</li>
-      </ul>
-      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing outline">Commencer maintenant →</a>
+  <div class="tarifs-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px;align-items:stretch">
+    <!-- Phase 0 — GRATUITE (fond #085041, badge vert menthe #7fffc4, texte blanc) -->
+    <div style="background:#085041;color:#fff;border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column">
+      <span style="display:inline-block;background:rgba(125,255,196,.25);color:#7fffc4;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px;align-self:flex-start">GRATUIT</span>
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Phase 0 — Le Déclic</h4>
+      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px;flex:1">Comprends pourquoi tu peux entreprendre maintenant. Pas après le diplôme, pas « quand tu seras prêt ». Maintenant.</p>
+      <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:10px">3 modules d'onboarding</p>
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#7fffc4;margin-bottom:16px">0 FCFA</div>
+      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing gold">Commencer maintenant →</a>
     </div>
-    <div style="background:var(--navy);color:#fff;border-radius:var(--radius-lg);padding:26px;display:flex;flex-direction:column;position:relative;box-shadow:0 12px 32px rgba(8,80,65,.25)">
-      <span style="position:absolute;top:-12px;left:26px;background:var(--gold);color:#fff;font-size:10px;font-weight:700;padding:5px 14px;border-radius:100px">🔥 Le plus choisi</span>
-      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;margin-top:8px">Séries 1 + 2</h4>
-      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">De la validation de ton idée jusqu'à tes premières ventes réelles.</p>
-      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;margin-bottom:16px">15 000 FCFA</div>
-      <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:8px;flex:1">
-        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> 18 modules (Séries 1 & 2)</li>
-        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> Tous les templates & outils</li>
-        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> Coaching mensuel en groupe</li>
-        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> Certification Université de Parakou</li>
-        <li style="font-size:11.5px;color:rgba(255,255,255,.8);display:flex;gap:7px"><i class="ti ti-check" style="color:#7fffc4;flex-shrink:0"></i> Paiement par tranches possible</li>
-      </ul>
-      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing gold">S'inscrire — Payer en Mobile Money →</a>
+    <!-- Série 1 — ESSENTIEL (fond blanc, badge vert clair #d0ece4) -->
+    <div style="background:#fff;border:1.5px solid rgba(0,0,0,.08);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column">
+      <span style="display:inline-block;background:#d0ece4;color:var(--navy);font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px;align-self:flex-start">ESSENTIEL</span>
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Série 1 — Valider ton idée</h4>
+      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px;flex:1">Radar à opportunités, étude de marché terrain, persona client, MVP et premier test réel. Méthode 100% béninoise.</p>
+      <p style="font-size:10.5px;color:var(--text-muted);margin-bottom:10px">9 modules de validation</p>
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--navy);margin-bottom:16px">1 000 – 5 000 FCFA</div>
+      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing outline">S'inscrire →</a>
     </div>
-    <div style="background:#fff;border:1.5px solid rgba(0,0,0,.08);border-radius:var(--radius-lg);padding:26px;display:flex;flex-direction:column">
-      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Parcours Complet</h4>
-      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px">Toutes les séries, du déclic jusqu'à la structuration de ton entreprise.</p>
-      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--navy);margin-bottom:16px">25 000 FCFA</div>
-      <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:8px;flex:1">
-        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> 30 modules complets</li>
-        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Coaching individuel mensuel</li>
-        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Accès réseau alumni</li>
-        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Certificat mention Excellente</li>
-        <li style="font-size:11.5px;color:var(--text-muted);display:flex;gap:7px"><i class="ti ti-check" style="color:var(--gold-dark);flex-shrink:0"></i> Mise en relation partenaires</li>
-      </ul>
-      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing">Accès complet →</a>
+    <!-- Série 2 — AVANCÉ (fond sable #f5f0e8, badge corail clair) -->
+    <div style="background:#F5F0E8;border:1px solid rgba(0,0,0,.06);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column">
+      <span style="display:inline-block;background:rgba(216,90,48,.18);color:var(--gold-dark);font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px;align-self:flex-start">AVANCÉ</span>
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Série 2 — Lancer et vendre</h4>
+      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-bottom:14px;flex:1">Business Model Canvas, pricing adapté, acquisition clients, réseaux sociaux, premier pitch et financement local.</p>
+      <p style="font-size:10.5px;color:var(--text-muted);margin-bottom:10px">9 modules de lancement</p>
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--navy);margin-bottom:16px">5 000 – 10 000 FCFA</div>
+      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing">S'inscrire →</a>
+    </div>
+    <!-- Série 3 — EXPERT (fond noir #1a1a18, badge blanc semi-transparent, pleine largeur) -->
+    <div style="background:#1A1A18;color:#fff;border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;grid-column:1 / -1">
+      <span style="display:inline-block;background:rgba(255,255,255,.18);color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px;align-self:flex-start">EXPERT</span>
+      <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Série 3 — Structurer et scaler</h4>
+      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">Statut juridique, comptabilité simplifiée, équipe, délégation, levée de fonds et développement vers d'autres marchés.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
+        <div>
+          <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:6px">9 modules de croissance</p>
+          <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff">10 000 – 15 000 FCFA</div>
+        </div>
+        <p style="font-size:11px;color:rgba(255,255,255,.65)">🎓 Certification UP &nbsp;|&nbsp; 👤 Coaching 1:1 &nbsp;|&nbsp; 🏆 Badge numérique &nbsp;|&nbsp; 🤝 Réseau Alumni</p>
+        <a href="<?= SITE_URL ?>/register.php" class="btn-pricing gold">S'inscrire →</a>
+      </div>
     </div>
   </div>
   <p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:22px">Paiement accepté via MTN Mobile Money · Moov Money · Wave — Paiement en 3 fois disponible sur demande.</p>
