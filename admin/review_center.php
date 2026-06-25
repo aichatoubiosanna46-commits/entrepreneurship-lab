@@ -7,12 +7,12 @@ require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/security.php';
 
 sendSecurityHeaders();
-// Accessible aux admins ET aux coachs
-if (!estAdmin() && !estCoach()) {
+// Réservé à l'admin — les coachs utilisent l'espace dédié /review-center.php
+if (!estAdmin()) {
+    if (estCoach()) { header('Location: ' . SITE_URL . '/review-center.php'); exit; }
     header('Location: ' . SITE_URL . '/dashboard.php?error=acces_refuse');
     exit;
 }
-// Note: les coachs peuvent aussi accéder via leur dashboard coach
 
 $pdo = getPDO();
 

@@ -1,16 +1,12 @@
 <?php
-// admin/review_submission.php — Corriger une soumission
-require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../includes/security.php';
+// review-submission.php — Espace coach : corriger un devoir
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/security.php';
 
 sendSecurityHeaders();
-// Réservé à l'admin — les coachs utilisent l'espace dédié /review-submission.php
-if (!estAdmin()) {
-    if (estCoach()) {
-        header('Location: ' . SITE_URL . '/review-submission.php?id=' . (int)($_GET['id'] ?? 0));
-        exit;
-    }
+reqConnecte();
+if (!estCoach()) {
     header('Location: ' . SITE_URL . '/dashboard.php?error=acces_refuse');
     exit;
 }
@@ -18,7 +14,7 @@ if (!estAdmin()) {
 $pdo = getPDO();
 $id  = (int)($_GET['id'] ?? 0);
 
-if (!$id) redirect(SITE_URL . '/admin/review_center.php');
+if (!$id) redirect(SITE_URL . '/review-center.php');
 
 $stmt = $pdo->prepare(
     'SELECT asub.*, a.titre AS assignment_titre, a.note_min, a.note_max, a.type,
@@ -36,21 +32,19 @@ $stmt = $pdo->prepare(
 $stmt->execute([$id]);
 $sub = $stmt->fetch();
 
-if (!$sub) redirect(SITE_URL . '/admin/review_center.php', 'Soumission introuvable.', 'error');
+if (!$sub) redirect(SITE_URL . '/review-center.php', 'Soumission introuvable.', 'error');
 
 if ($sub['statut'] === 'soumis') {
     $pdo->prepare('UPDATE assignment_submissions SET statut = "en_correction" WHERE id = ?')->execute([$id]);
     $sub['statut'] = 'en_correction';
 }
 
-// Charger historique soumissions
 try {
     $history = $pdo->prepare('SELECT * FROM submission_history WHERE user_id=? AND assignment_id=? ORDER BY version DESC');
     $history->execute([$sub['user_id'], $sub['assignment_id']]);
     $history = $history->fetchAll();
-} catch(Exception $e) { $history = []; }
+} catch (Exception $e) { $history = []; }
 
-// Rubrique d'évaluation associée à l'assignment
 $rubrique = null;
 try {
     $rStmt = $pdo->prepare('SELECT * FROM rubriques WHERE assignment_id = ? LIMIT 1');
@@ -75,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $statut   = in_array($_POST['statut'], ['accepte', 'refuse']) ? $_POST['statut'] : 'accepte';
     $audioFeedbackPath = trim($_POST['audio_feedback_path'] ?? '') ?: ($sub['audio_feedback_path'] ?? null);
 
-    // Si une rubrique existe, la note globale = somme des notes par critère
     $rubriqueNotesJson = null;
     if (!empty($rubriqueCriteres)) {
         $critNotes = [];
@@ -97,22 +90,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($note < 0 || $note > (float)$sub['note_max']) {
         $erreur = 'La note doit être comprise entre 0 et ' . $sub['note_max'] . '.';
     } else {
-        // Pièce jointe feedback
         $feedbackFichier = $sub['feedback_fichier'] ?? null;
         if (!empty($_FILES['feedback_fichier']['tmp_name']) && $_FILES['feedback_fichier']['error'] === 0) {
             $ext = strtolower(pathinfo($_FILES['feedback_fichier']['name'], PATHINFO_EXTENSION));
             if (in_array($ext, ['pdf', 'docx', 'jpg', 'jpeg', 'png'])) {
                 $fname = 'feedback_' . uniqid() . '.' . $ext;
-                $dest  = __DIR__ . '/../assets/uploads/' . $fname;
+                $dest  = __DIR__ . '/assets/uploads/' . $fname;
                 if (move_uploaded_file($_FILES['feedback_fichier']['tmp_name'], $dest)) {
                     $feedbackFichier = $fname;
                 }
             }
         }
 
-        $adminId = $_SESSION['admin_id'];
+        $correcteurId = $_SESSION['admin_id'] ?? $_SESSION['user_id'];
 
-        // Note minimale — refus automatique si en dessous
         $noteMin = (float)($sub['note_min'] ?? 0);
         if ($noteMin > 0 && $note < $noteMin && $statut === 'accepte') {
             $statut = 'refuse';
@@ -122,25 +113,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'UPDATE assignment_submissions
              SET statut=?, note=?, feedback=?, feedback_fichier=?, rubrique_notes=?, audio_feedback_path=?, correction_par=?, corrige_le=NOW(), updated_at=NOW()
              WHERE id=?'
-        )->execute([$statut, $note, $feedback, $feedbackFichier, $rubriqueNotesJson, $audioFeedbackPath, $adminId, $id]);
+        )->execute([$statut, $note, $feedback, $feedbackFichier, $rubriqueNotesJson, $audioFeedbackPath, $correcteurId, $id]);
 
-        // Sauvegarder dans l'historique
         try {
             $version = count($history) + 1;
             $pdo->prepare(
                 'INSERT INTO submission_history (user_id, assignment_id, contenu, fichier, note, feedback, version)
                  VALUES (?,?,?,?,?,?,?)'
             )->execute([$sub['user_id'], $sub['assignment_id'], $sub['contenu'], $sub['fichier'], $note, $feedback, $version]);
-        } catch(Exception $e) {}
+        } catch (Exception $e) {}
 
-        // Resoumission si refusé
         if ($statut === 'refuse') {
             try {
                 $pdo->prepare('UPDATE assignment_submissions SET peut_resoumettre=1 WHERE id=?')->execute([$id]);
-            } catch(Exception $e) {}
+            } catch (Exception $e) {}
         }
 
-        // Notification étudiant
         $notifMsg = $statut === 'accepte'
             ? 'Votre devoir « '.$sub['assignment_titre'].' » a été accepté — Note : '.$note.'/'.$sub['note_max'].'.'
             : 'Votre devoir « '.$sub['assignment_titre'].' » a été refusé — Note : '.$note.'/'.$sub['note_max'].'. Consultez le feedback et resoumettez.';
@@ -152,10 +140,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SITE_URL . '/assignment.php?id=' . $sub['assignment_id']
         );
 
-        redirect(SITE_URL . '/admin/review_center.php', 'Correction enregistrée.', 'success');
+        redirect(SITE_URL . '/review-center.php', 'Correction enregistrée.', 'success');
     }
 }
-$currentPage = 'review_submission.php';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -164,17 +151,28 @@ $currentPage = 'review_submission.php';
 <title>Corriger — <?= h($sub['assignment_titre']) ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="<?= SITE_URL ?>/admin/admin.css">
+<link rel="stylesheet" href="<?= SITE_URL ?>/assets/css/style.css?v=2">
+<style>
+.rs-wrap { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+.rs-card { background:#fff; border:1px solid #eee; border-radius:14px; padding:18px 20px; margin-bottom:20px; }
+.rs-grid { display:grid; grid-template-columns:1fr 360px; gap:20px; }
+.rs-table { width:100%; border-collapse:collapse; font-size:13px; }
+.rs-table th, .rs-table td { padding:8px; border-bottom:1px solid #f1f1f1; text-align:left; }
+.rs-form-group { margin-bottom:14px; }
+.rs-form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; }
+@media (max-width: 800px) { .rs-grid { grid-template-columns: 1fr; } }
+</style>
 </head>
-<body class="admin-layout">
-<?php include __DIR__ . '/partials/sidebar.php'; ?>
-<div class="admin-content">
-  <div class="admin-topbar">
+<body>
+<?php include __DIR__ . '/includes/header.php'; ?>
+
+<div class="rs-wrap">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div>
-      <h1 class="admin-page-title"><i class="ti ti-clipboard-check"></i> Correction de devoir</h1>
-      <p class="admin-page-sub"><?= h($sub['course_titre']) ?> · <?= h($sub['sequence_titre']) ?></p>
+      <h1 style="font-family:'Syne',sans-serif;font-size:24px;margin-bottom:4px"><i class="ti ti-clipboard-check"></i> Correction de devoir</h1>
+      <p style="color:var(--text-muted)"><?= h($sub['course_titre']) ?> · <?= h($sub['sequence_titre']) ?></p>
     </div>
-    <a href="review_center.php" class="btn-outline"><i class="ti ti-arrow-left"></i> Review Center</a>
+    <a href="review-center.php" class="btn-outline"><i class="ti ti-arrow-left"></i> Review Center</a>
   </div>
 
   <?= flash() ?>
@@ -182,34 +180,27 @@ $currentPage = 'review_submission.php';
   <div class="alert alert-error"><i class="ti ti-alert-circle"></i> <?= h($erreur) ?></div>
   <?php endif; ?>
 
-  <div style="display:grid;grid-template-columns:1fr 360px;gap:20px">
+  <div class="rs-grid">
     <div>
-      <!-- Info étudiant + devoir -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-        <div class="admin-card">
-          <div style="font-size:12px;font-weight:700;color:#9ca3af;margin-bottom:10px">ÉTUDIANT</div>
-          <div style="font-size:15px;font-weight:700;color:#1A1A18"><?= h($sub['prenom'].' '.$sub['nom']) ?></div>
+      <div class="rs-card" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#9ca3af;margin-bottom:6px">ÉTUDIANT</div>
+          <div style="font-weight:700"><?= h($sub['prenom'].' '.$sub['nom']) ?></div>
           <div style="font-size:12px;color:#6b7280"><?= h($sub['email']) ?></div>
         </div>
-        <div class="admin-card">
-          <div style="font-size:12px;font-weight:700;color:#9ca3af;margin-bottom:10px">DEVOIR</div>
-          <div style="font-size:15px;font-weight:700;color:#1A1A18"><?= h($sub['assignment_titre']) ?></div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#9ca3af;margin-bottom:6px">DEVOIR</div>
+          <div style="font-weight:700"><?= h($sub['assignment_titre']) ?></div>
           <div style="font-size:12px;color:#6b7280">
             Note max : <strong><?= $sub['note_max'] ?></strong>
-            <?php if ($sub['note_min'] ?? 0): ?>
-            · Note min : <strong style="color:#dc2626"><?= $sub['note_min'] ?></strong>
-            <?php endif; ?>
+            <?php if ($sub['note_min'] ?? 0): ?> · Note min : <strong style="color:#dc2626"><?= $sub['note_min'] ?></strong><?php endif; ?>
           </div>
         </div>
       </div>
 
-      <!-- Contenu soumis -->
-      <div class="admin-card" style="margin-bottom:20px">
-        <div class="admin-card-title">
-          Contenu soumis
-          <span style="font-size:11px;font-weight:400;color:#9ca3af;margin-left:8px">
-            le <?= date('d/m/Y à H:i', strtotime($sub['created_at'])) ?>
-          </span>
+      <div class="rs-card">
+        <div style="font-weight:700;margin-bottom:10px">Contenu soumis
+          <span style="font-size:11px;font-weight:400;color:#9ca3af;margin-left:8px">le <?= date('d/m/Y à H:i', strtotime($sub['created_at'])) ?></span>
         </div>
         <?php if ($sub['contenu']): ?>
         <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;font-size:14px;line-height:1.7;white-space:pre-wrap;max-height:400px;overflow-y:auto">
@@ -231,18 +222,17 @@ $currentPage = 'review_submission.php';
         <?php endif; ?>
       </div>
 
-      <!-- Historique soumissions -->
       <?php if (!empty($history)): ?>
-      <div class="admin-card" style="margin-bottom:20px">
-        <div class="admin-card-title"><i class="ti ti-history" style="color:var(--primary)"></i> Historique des soumissions</div>
-        <table class="admin-table">
+      <div class="rs-card">
+        <div style="font-weight:700;margin-bottom:10px"><i class="ti ti-history"></i> Historique des soumissions</div>
+        <table class="rs-table">
           <thead><tr><th>Version</th><th>Note</th><th>Feedback</th><th>Date</th></tr></thead>
           <tbody>
             <?php foreach ($history as $h2): ?>
             <tr>
               <td><span style="background:#FBE3DA;color:#C04A22;padding:2px 8px;border-radius:12px;font-size:12px;font-weight:700">v<?= $h2['version'] ?></span></td>
               <td><?= $h2['note'] !== null ? $h2['note'].'/'.$sub['note_max'] : '—' ?></td>
-              <td style="font-size:12px;color:#6b7280;max-width:200px"><?= h(mb_substr($h2['feedback']??'—',0,80)) ?></td>
+              <td style="color:#6b7280;max-width:200px"><?= h(mb_substr($h2['feedback']??'—',0,80)) ?></td>
               <td style="font-size:11px;color:#9ca3af"><?= date('d/m/Y H:i', strtotime($h2['created_at'])) ?></td>
             </tr>
             <?php endforeach; ?>
@@ -252,19 +242,17 @@ $currentPage = 'review_submission.php';
       <?php endif; ?>
     </div>
 
-    <!-- Formulaire correction -->
     <div>
-      <div class="admin-card" style="position:sticky;top:80px">
-        <div class="admin-card-title"><i class="ti ti-pencil-check" style="color:var(--primary)"></i> Correction</div>
+      <div class="rs-card" style="position:sticky;top:80px">
+        <div style="font-weight:700;margin-bottom:14px"><i class="ti ti-pencil-check"></i> Correction</div>
 
-        <!-- Templates rapides -->
         <div style="margin-bottom:14px">
           <div style="font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:6px">TEMPLATES RAPIDES</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button type="button" onclick="setTemplate('Excellent travail ! Votre analyse est pertinente et bien structurée. Continuez dans cette direction.')" class="btn-outline btn-sm">⭐ Excellent</button>
-            <button type="button" onclick="setTemplate('Bon travail de manière générale. Quelques points à améliorer pour la prochaine soumission.')" class="btn-outline btn-sm">👍 Bon travail</button>
-            <button type="button" onclick="setTemplate('Votre livrable nécessite des améliorations importantes. Veuillez revoir les points mentionnés et resoumettre.')" class="btn-outline btn-sm">⚠️ À améliorer</button>
-            <button type="button" onclick="setTemplate('Votre livrable est incomplet. Merci de soumettre à nouveau avec tous les éléments requis.')" class="btn-outline btn-sm">📋 Incomplet</button>
+            <button type="button" onclick="setTemplate('Excellent travail ! Votre analyse est pertinente et bien structurée. Continuez dans cette direction.')" class="btn-outline btn-sm">Excellent</button>
+            <button type="button" onclick="setTemplate('Bon travail de manière générale. Quelques points à améliorer pour la prochaine soumission.')" class="btn-outline btn-sm">Bon travail</button>
+            <button type="button" onclick="setTemplate('Votre livrable nécessite des améliorations importantes. Veuillez revoir les points mentionnés et resoumettre.')" class="btn-outline btn-sm">À améliorer</button>
+            <button type="button" onclick="setTemplate('Votre livrable est incomplet. Merci de soumettre à nouveau avec tous les éléments requis.')" class="btn-outline btn-sm">Incomplet</button>
           </div>
         </div>
 
@@ -272,13 +260,11 @@ $currentPage = 'review_submission.php';
           <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
 
           <?php if (!empty($rubriqueCriteres)): ?>
-          <div class="form-group">
-            <label><i class="ti ti-table" style="color:var(--primary)"></i> Grille de rubrique
-              <?php if ($sub['note_min'] ?? 0): ?>
-              <small style="color:#dc2626">· Min total : <?= $sub['note_min'] ?></small>
-              <?php endif; ?>
+          <div class="rs-form-group">
+            <label>Grille de rubrique
+              <?php if ($sub['note_min'] ?? 0): ?><small style="color:#dc2626">· Min total : <?= $sub['note_min'] ?></small><?php endif; ?>
             </label>
-            <table class="admin-table" style="font-size:13px">
+            <table class="rs-table">
               <thead><tr><th>Critère</th><th style="width:90px">Note</th><th style="width:50px">Max</th></tr></thead>
               <tbody>
                 <?php foreach ($rubriqueCriteres as $i => $crit): ?>
@@ -312,11 +298,9 @@ $currentPage = 'review_submission.php';
           })();
           </script>
           <?php else: ?>
-          <div class="form-group">
+          <div class="rs-form-group">
             <label>Note (sur <?= $sub['note_max'] ?>)
-              <?php if ($sub['note_min'] ?? 0): ?>
-              <small style="color:#dc2626">· Min : <?= $sub['note_min'] ?></small>
-              <?php endif; ?>
+              <?php if ($sub['note_min'] ?? 0): ?><small style="color:#dc2626">· Min : <?= $sub['note_min'] ?></small><?php endif; ?>
             </label>
             <input type="number" name="note" min="0" max="<?= $sub['note_max'] ?>" step="0.5"
                    value="<?= h($sub['note'] ?? '') ?>" required
@@ -324,7 +308,7 @@ $currentPage = 'review_submission.php';
           </div>
           <?php endif; ?>
 
-          <div class="form-group">
+          <div class="rs-form-group">
             <label>Décision</label>
             <select name="statut" style="width:100%;padding:10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;font-family:inherit">
               <option value="accepte" <?= ($sub['statut']==='accepte')?'selected':'' ?>>Accepter</option>
@@ -332,7 +316,7 @@ $currentPage = 'review_submission.php';
             </select>
           </div>
 
-          <div class="form-group">
+          <div class="rs-form-group">
             <label>Feedback à l'étudiant</label>
             <textarea name="feedback" id="feedbackArea" rows="6"
                       style="width:100%;padding:10px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box"
@@ -348,14 +332,14 @@ $currentPage = 'review_submission.php';
           </div>
           <?php endif; ?>
 
-          <div class="form-group">
+          <div class="rs-form-group">
             <label>Pièce jointe (PDF, DOCX, image)</label>
             <input type="file" name="feedback_fichier" accept=".pdf,.docx,.jpg,.jpeg,.png"
                    style="width:100%;padding:8px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:13px;box-sizing:border-box">
             <small style="color:#9ca3af;font-size:11px">Grille annotée, corrigé type, commentaires...</small>
           </div>
 
-          <div class="form-group">
+          <div class="rs-form-group">
             <label>Feedback audio (optionnel)</label>
             <?php if (!empty($sub['audio_feedback_path'])): ?>
             <div style="margin-bottom:8px">
@@ -389,7 +373,6 @@ function setTemplate(text) {
   document.getElementById('feedbackArea').focus();
 }
 
-// Enregistreur audio réutilisable (MediaRecorder) — feedback coach
 document.querySelectorAll('[id="audioRecorder"], .audioRecorder').forEach(function(box) {
   let mediaRecorder = null;
   let chunks = [];
@@ -454,5 +437,7 @@ document.querySelectorAll('[id="audioRecorder"], .audioRecorder').forEach(functi
   });
 });
 </script>
+
+<?php include __DIR__ . '/includes/footer.php'; ?>
 </body>
 </html>

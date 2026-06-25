@@ -39,6 +39,9 @@ $autresModules->execute([$_SESSION['user_id']]);
 $autresModules = $autresModules->fetchAll();
 
 $pageTitle = 'Mon espace';
+$userRole  = $user['role'] ?? 'etudiant';
+$estCoachReel       = in_array($userRole, ['coach', 'moderateur'], true);
+$estInstructeurReel = $userRole === 'instructeur';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -311,12 +314,12 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #C04A22 !important; }
   <div onclick="location='<?= SITE_URL ?>/profil.php'" class="user-nav-item" style="cursor:pointer;color:#6b7280">
     <i class="ti ti-user" style="color:#6b7280"></i> Mon profil
   </div>
-  <?php if (estCoach()): ?>
-  <div onclick="location='<?= SITE_URL ?>/admin/review_center.php'" class="user-nav-item" style="cursor:pointer;color:#C04A22">
+  <?php if ($estCoachReel): ?>
+  <div onclick="location='<?= SITE_URL ?>/review-center.php'" class="user-nav-item" style="cursor:pointer;color:#C04A22">
     <i class="ti ti-clipboard-check" style="color:#C04A22"></i> Review Center
   </div>
   <?php endif; ?>
-  <?php if (estInstructeur()): ?>
+  <?php if ($estInstructeurReel): ?>
   <div onclick="location='<?= SITE_URL ?>/mes-cours-instructeur.php'" class="user-nav-item" style="cursor:pointer;color:#C04A22">
     <i class="ti ti-school" style="color:#C04A22"></i> Mes cours assignés
   </div>
@@ -340,7 +343,7 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #C04A22 !important; }
       </div>
     </div>
 
-    <?php if (estCoach()): ?>
+    <?php if ($estCoachReel): ?>
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;background:#FBE3DA;border:1px solid #f3c5b0;border-radius:14px;margin-bottom:24px">
       <div style="display:flex;align-items:center;gap:12px">
         <i class="ti ti-clipboard-check" style="font-size:26px;color:#C04A22"></i>
@@ -349,10 +352,10 @@ aside.user-sidebar nav a.user-nav-item.active * { color: #C04A22 !important; }
           <div style="font-size:13px;color:#6b7280">Corrigez les livrables soumis par les étudiants depuis le Review Center.</div>
         </div>
       </div>
-      <a href="<?= SITE_URL ?>/admin/review_center.php" class="btn-primary btn-sm">Ouvrir le Review Center</a>
+      <a href="<?= SITE_URL ?>/review-center.php" class="btn-primary btn-sm">Ouvrir le Review Center</a>
     </div>
     <?php endif; ?>
-    <?php if (estInstructeur()): ?>
+    <?php if ($estInstructeurReel): ?>
     <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;background:#FBE3DA;border:1px solid #f3c5b0;border-radius:14px;margin-bottom:24px">
       <div style="display:flex;align-items:center;gap:12px">
         <i class="ti ti-school" style="font-size:26px;color:#C04A22"></i>

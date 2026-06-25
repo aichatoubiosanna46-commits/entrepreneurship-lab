@@ -31,12 +31,16 @@ if (!defined('SITE_NAME')) {
 
 // Nombre de notifications non lues
 $nbNotifs = 0;
+$headerUserRole = 'etudiant';
 if (estConnecte()) {
     try {
         $pdo = getPDO();
         $nStmt = $pdo->prepare('SELECT COUNT(*) FROM user_notifications WHERE user_id = ? AND lu = 0');
         $nStmt->execute([$_SESSION['user_id']]);
         $nbNotifs = (int)$nStmt->fetchColumn();
+        $rStmt = $pdo->prepare('SELECT role FROM users WHERE id = ?');
+        $rStmt->execute([$_SESSION['user_id']]);
+        $headerUserRole = $rStmt->fetchColumn() ?: 'etudiant';
     } catch (Exception $e) { $nbNotifs = 0; }
 }
 ?>
@@ -98,11 +102,11 @@ if (estConnecte()) {
           <a href="<?= SITE_URL ?>/favorites.php"><i class="ti ti-heart"></i> Mes favoris</a>
           <a href="<?= SITE_URL ?>/payment.php"><i class="ti ti-credit-card"></i> Abonnement</a>
           <a href="<?= SITE_URL ?>/profil.php"><i class="ti ti-user"></i> Mon profil</a>
-          <?php if (function_exists('estCoach') && estCoach()): ?>
+          <?php if (in_array($headerUserRole, ['coach', 'moderateur'], true)): ?>
           <div class="dropdown-divider"></div>
-          <a href="<?= SITE_URL ?>/admin/review_center.php"><i class="ti ti-checklist"></i> Review Center (Coach)</a>
+          <a href="<?= SITE_URL ?>/review-center.php"><i class="ti ti-checklist"></i> Review Center (Coach)</a>
           <?php endif; ?>
-          <?php if (function_exists('estInstructeur') && estInstructeur() && !estAdmin()): ?>
+          <?php if ($headerUserRole === 'instructeur'): ?>
           <div class="dropdown-divider"></div>
           <a href="<?= SITE_URL ?>/mes-cours-instructeur.php"><i class="ti ti-school"></i> Mes cours (Instructeur)</a>
           <?php endif; ?>
