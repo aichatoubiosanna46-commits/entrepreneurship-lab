@@ -90,7 +90,6 @@ try {
 .elab-hero { position: relative; overflow: hidden; background: linear-gradient(135deg, var(--navy), var(--navy-mid)); min-height: 480px; width: 100%; display: flex; align-items: center; justify-content: center; padding: 64px 24px; }
 .elab-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .elab-hero-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, rgba(8,80,65,.88) 20%, rgba(8,80,65,.55) 100%); }
-.elab-hero.no-img .elab-hero-overlay { background: none; }
 .elab-hero-content { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; text-align: center; }
 .cbtn-primary {
   background: var(--gold); color: #fff; border: none; border-radius: 8px;
@@ -201,8 +200,15 @@ try {
 .module-meta span { display: flex; align-items: center; gap: 3px; }
 .module-pct { font-size: 9px; font-weight: 700; color: var(--gold-dark); }
 
+/* PARTENAIRES MARQUEE */
+.partners-marquee { overflow: hidden; width: 100%; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.partners-track { display: flex; align-items: center; gap: 22px; width: max-content; animation: scroll-partners 28s linear infinite; }
+.partners-marquee:hover .partners-track { animation-play-state: paused; }
+.partner-pill { display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 14px; padding: 22px 34px; font-size: 14px; color: var(--navy); font-weight: 700; min-width: 220px; min-height: 70px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,.04); white-space: nowrap; }
+@keyframes scroll-partners { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
 /* FOOTER */
-.elab-footer { background: var(--navy); padding: 32px 32px 18px; }
+.elab-footer { background: #1A1A18; padding: 32px 32px 18px; }
 .foot-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
 .foot-bottom p { font-size: 9px; color: rgba(255,255,255,.35); }
 
@@ -232,6 +238,7 @@ try {
   .methode-band > div[style*="width:1px"] { display: none; }
   .trust-bar { gap: 12px; padding: 10px 16px; }
   .stats-bar { padding: 14px 16px; gap: 16px; }
+  .partner-pill { padding: 16px 22px; font-size: 12px; min-width: 160px; min-height: 56px; }
 }
 </style>
 </head>
@@ -280,10 +287,13 @@ try {
 
 <?php $heroSlide = $slides[0] ?? null; ?>
 <!-- HERO (image unique) -->
-<div class="elab-hero <?= (!$heroSlide || !$heroSlide['image']) ? 'no-img' : '' ?>">
+<div class="elab-hero">
   <?php if ($heroSlide && $heroSlide['image']): ?>
     <img src="<?= SITE_URL ?>/assets/uploads/<?= h($heroSlide['image']) ?>" alt="<?= h($heroSlide['titre'] ?? SITE_NAME) ?>"
-         loading="eager" class="elab-hero-img" onerror="this.style.display='none'">
+         loading="eager" class="elab-hero-img" onerror="this.src='https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=85&auto=format&fit=crop'">
+  <?php else: ?>
+    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=85&auto=format&fit=crop"
+         alt="Étudiant entrepreneur béninois" loading="eager" class="elab-hero-img">
   <?php endif; ?>
   <div class="elab-hero-overlay"></div>
   <div class="elab-hero-content">
@@ -535,14 +545,21 @@ try {
 </div>
 
 <!-- PARTENAIRES -->
-<div class="elab-section" style="background:var(--bg-light);padding:32px 32px;text-align:center">
-  <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">Soutenu et reconnu par</p>
-  <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
-    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">Université de Parakou</span>
-    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">CPID ONG</span>
-    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">ANPE Bénin</span>
-    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">RJEB (Réseau des Jeunes Entrepreneurs Béninois)</span>
-    <span style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:100px;padding:8px 18px;font-size:11.5px;color:var(--navy);font-weight:600">CePEPE Bénin</span>
+<div class="elab-section partners-section" style="background:var(--bg-light);padding:36px 0;text-align:center">
+  <p style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px">Soutenu et reconnu par</p>
+  <div class="partners-marquee">
+    <div class="partners-track">
+      <span class="partner-pill">Université de Parakou</span>
+      <span class="partner-pill">CPID ONG</span>
+      <span class="partner-pill">ANPE Bénin</span>
+      <span class="partner-pill">RJEB (Réseau des Jeunes Entrepreneurs Béninois)</span>
+      <span class="partner-pill">CePEPE Bénin</span>
+      <span class="partner-pill">Université de Parakou</span>
+      <span class="partner-pill">CPID ONG</span>
+      <span class="partner-pill">ANPE Bénin</span>
+      <span class="partner-pill">RJEB (Réseau des Jeunes Entrepreneurs Béninois)</span>
+      <span class="partner-pill">CePEPE Bénin</span>
+    </div>
   </div>
 </div>
 
