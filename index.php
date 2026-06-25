@@ -638,19 +638,14 @@ img { max-width: 100%; }
       <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--navy);margin-bottom:16px">5 000 – 10 000 FCFA</div>
       <a href="<?= SITE_URL ?>/register.php" class="btn-pricing">S'inscrire →</a>
     </div>
-    <!-- Série 3 — EXPERT (fond noir #1a1a18, badge blanc semi-transparent, pleine largeur) -->
-    <div style="background:#1A1A18;color:#fff;border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;grid-column:1 / -1">
+    <!-- Série 3 — EXPERT (fond noir #1a1a18, badge blanc semi-transparent) -->
+    <div style="background:#1A1A18;color:#fff;border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column">
       <span style="display:inline-block;background:rgba(255,255,255,.18);color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:12px;align-self:flex-start">EXPERT</span>
       <h4 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px">Série 3 — Structurer et scaler</h4>
-      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px">Statut juridique, comptabilité simplifiée, équipe, délégation, levée de fonds et développement vers d'autres marchés.</p>
-      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
-        <div>
-          <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:6px">9 modules de croissance</p>
-          <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff">10 000 – 15 000 FCFA</div>
-        </div>
-        <p style="font-size:11px;color:rgba(255,255,255,.65)">🎓 Certification UP &nbsp;|&nbsp; 👤 Coaching 1:1 &nbsp;|&nbsp; 🏆 Badge numérique &nbsp;|&nbsp; 🤝 Réseau Alumni</p>
-        <a href="<?= SITE_URL ?>/register.php" class="btn-pricing gold">S'inscrire →</a>
-      </div>
+      <p style="font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:14px;flex:1">Statut juridique, comptabilité simplifiée, équipe, délégation, levée de fonds et développement vers d'autres marchés.</p>
+      <p style="font-size:10.5px;color:rgba(255,255,255,.5);margin-bottom:10px">9 modules de croissance · 🎓 Certification UP · 👤 Coaching 1:1 · 🏆 Badge numérique · 🤝 Alumni</p>
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:16px">10 000 – 15 000 FCFA</div>
+      <a href="<?= SITE_URL ?>/register.php" class="btn-pricing gold">S'inscrire →</a>
     </div>
   </div>
   <p style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:22px">Paiement accepté via MTN Mobile Money · Moov Money · Wave — Paiement en 3 fois disponible sur demande.</p>
