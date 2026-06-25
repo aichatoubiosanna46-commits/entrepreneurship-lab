@@ -7,6 +7,7 @@ function navItem(string $href, string $icon, string $label, string $current): st
         SITE_URL . '/admin/' . $href, $active, $icon, $label
     );
 }
+$isAdminUser = estAdmin();
 ?>
 <button class="admin-sidebar-toggle" aria-label="Menu" onclick="document.querySelector('.admin-sidebar').classList.toggle('open');document.querySelector('.admin-sidebar-overlay').classList.toggle('open')">
   <i class="ti ti-menu-2"></i>
@@ -17,10 +18,33 @@ function navItem(string $href, string $icon, string $label, string $current): st
     <div class="logo-mark" style="width:36px;height:36px;font-size:15px;flex-shrink:0">E</div>
     <div>
       <div style="font-weight:500;font-size:14px;color:#D1FAE5"><?= SITE_NAME ?></div>
-      <div style="font-size:11px;color:#A7F3D0">Administration</div>
+      <div style="font-size:11px;color:#A7F3D0"><?= $isAdminUser ? 'Administration' : (estCoach() ? 'Espace coach' : 'Espace instructeur') ?></div>
     </div>
   </div>
 
+<?php if (!$isAdminUser): ?>
+  <nav class="sidebar-nav">
+    <?php if (estCoach()): ?>
+    <p class="sidebar-section-label">Coaching</p>
+    <?= navItem('review_center.php', 'ti-clipboard-check', 'Review Center', $currentPage) ?>
+    <?php endif; ?>
+    <?php if (estInstructeur()): ?>
+    <p class="sidebar-section-label">Mes cours</p>
+    <a href="<?= SITE_URL ?>/mes-cours-instructeur.php" class="sidebar-item">
+      <i class="ti ti-school" aria-hidden="true"></i><span>Mes cours assignés</span>
+    </a>
+    <?php endif; ?>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="<?= SITE_URL ?>" target="_blank" class="sidebar-item" style="font-size:12px">
+      <i class="ti ti-external-link"></i><span>Voir le site</span>
+    </a>
+    <a href="<?= SITE_URL ?>/logout.php" class="sidebar-item" style="color:#F0997B;font-size:12px">
+      <i class="ti ti-logout"></i><span>Déconnexion</span>
+    </a>
+  </div>
+</aside>
+<?php return; endif; ?>
   <nav class="sidebar-nav">
     <p class="sidebar-section-label">Général</p>
     <?= navItem('index.php',          'ti-layout-dashboard', 'Dashboard',          $currentPage) ?>
