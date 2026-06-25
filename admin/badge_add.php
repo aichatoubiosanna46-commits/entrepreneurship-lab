@@ -22,6 +22,7 @@ if ($editId) {
 }
 
 $courses = $pdo->query('SELECT id, titre FROM courses WHERE actif = 1 ORDER BY titre')->fetchAll();
+$modules = $pdo->query('SELECT m.id, m.titre, c.titre AS cours_titre FROM modules m JOIN courses c ON c.id = m.course_id WHERE m.actif = 1 ORDER BY c.titre, m.ordre')->fetchAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifierCSRF();
@@ -31,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conditionType = $_POST['condition_type'] ?? 'manuel';
     $conditionVal  = (int)($_POST['condition_valeur'] ?? 0) ?: null;
     $conditionCourse = (int)($_POST['condition_course_id'] ?? 0) ?: null;
+    $conditionModule = (int)($_POST['condition_module_id'] ?? 0) ?: null;
     $actif         = isset($_POST['actif']) ? 1 : 0;
     $image         = $badge['image'] ?? null;
 
@@ -49,13 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$erreur) {
             if ($editId) {
                 $pdo->prepare(
-                    'UPDATE badges SET nom = ?, description = ?, image = ?, condition_type = ?, condition_valeur = ?, condition_course_id = ?, actif = ? WHERE id = ?'
-                )->execute([$nom, $description, $image, $conditionType, $conditionVal, $conditionCourse, $actif, $editId]);
+                    'UPDATE badges SET nom = ?, description = ?, image = ?, condition_type = ?, condition_valeur = ?, condition_course_id = ?, condition_module_id = ?, actif = ? WHERE id = ?'
+                )->execute([$nom, $description, $image, $conditionType, $conditionVal, $conditionCourse, $conditionModule, $actif, $editId]);
                 redirect(SITE_URL . '/admin/badges.php', 'Badge modifié.', 'success');
             } else {
                 $pdo->prepare(
-                    'INSERT INTO badges (nom, description, image, condition_type, condition_valeur, condition_course_id, actif) VALUES (?, ?, ?, ?, ?, ?, ?)'
-                )->execute([$nom, $description, $image, $conditionType, $conditionVal, $conditionCourse, $actif]);
+                    'INSERT INTO badges (nom, description, image, condition_type, condition_valeur, condition_course_id, condition_module_id, actif) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+                )->execute([$nom, $description, $image, $conditionType, $conditionVal, $conditionCourse, $conditionModule, $actif]);
                 redirect(SITE_URL . '/admin/badges.php', 'Badge créé.', 'success');
             }
         }
@@ -115,7 +117,7 @@ $pageTitle = $editId ? 'Modifier le badge' : 'Nouveau badge';
             <label>Type de condition</label>
             <select name="condition_type" id="condType" onchange="updateCondFields()"
                     style="width:100%;padding:10px;border:1px solid var(--border,#e5e7eb);border-radius:8px;font-size:14px">
-              <?php foreach (['manuel' => 'Manuel (attribution manuelle)', 'completion_cours' => 'Complétion d\'un cours', 'score_quiz' => 'Score quiz (pts)', 'xp_total' => 'Total XP'] as $val => $lbl): ?>
+              <?php foreach (['manuel' => 'Manuel (attribution manuelle)', 'completion_cours' => 'Complétion d\'un cours', 'completion_module' => 'Complétion d\'un module', 'score_quiz' => 'Score quiz (pts)', 'xp_total' => 'Total XP'] as $val => $lbl): ?>
                 <option value="<?= $val ?>" <?= ($badge['condition_type'] ?? 'manuel') === $val ? 'selected' : '' ?>><?= $lbl ?></option>
               <?php endforeach; ?>
             </select>
@@ -138,6 +140,16 @@ $pageTitle = $editId ? 'Modifier le badge' : 'Nouveau badge';
           </select>
         </div>
 
+        <div class="form-group" id="fieldModule">
+          <label>Module associé (pour completion_module)</label>
+          <select name="condition_module_id" style="width:100%;padding:10px;border:1px solid var(--border,#e5e7eb);border-radius:8px;font-size:14px">
+            <option value="">-- Aucun --</option>
+            <?php foreach ($modules as $m): ?>
+              <option value="<?= $m['id'] ?>" <?= ($badge['condition_module_id'] ?? '') == $m['id'] ? 'selected' : '' ?>><?= h($m['cours_titre']) ?> — <?= h($m['titre']) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+
         <div class="form-group" style="display:flex;align-items:center;gap:8px">
           <input type="checkbox" id="actif" name="actif" value="1" <?= ($badge['actif'] ?? 1) ? 'checked' : '' ?>>
           <label for="actif" style="margin:0">Badge actif (visible aux étudiants)</label>
@@ -153,8 +165,9 @@ $pageTitle = $editId ? 'Modifier le badge' : 'Nouveau badge';
 <script>
 function updateCondFields() {
   const type = document.getElementById('condType').value;
-  document.getElementById('fieldValeur').style.display = (type === 'manuel' || type === 'completion_cours') ? 'none' : '';
+  document.getElementById('fieldValeur').style.display = (type === 'manuel' || type === 'completion_cours' || type === 'completion_module') ? 'none' : '';
   document.getElementById('fieldCours').style.display  = type === 'completion_cours' ? '' : 'none';
+  document.getElementById('fieldModule').style.display = type === 'completion_module' ? '' : 'none';
 }
 updateCondFields();
 </script>

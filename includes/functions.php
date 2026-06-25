@@ -437,6 +437,13 @@ function checkAndAwardBadges(int $userId): void {
                     }
                     break;
 
+                case 'completion_module':
+                    $moduleId = (int)($badge['condition_module_id'] ?? 0);
+                    if ($moduleId && progressionModule($userId, $moduleId) >= 100) {
+                        awardBadge($userId, $badge['id']);
+                    }
+                    break;
+
                 case 'score_quiz':
                     $minScore = (int)$badge['condition_valeur'];
                     $hasScore = $pdo->prepare(
