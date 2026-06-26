@@ -6,6 +6,17 @@ reqAdmin();
 
 $pdo = getPDO();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'toggle_coach') {
+    verifierCSRF();
+    $uid = (int)($_POST['user_id'] ?? 0);
+    $stmt = $pdo->prepare('SELECT role FROM users WHERE id = ?');
+    $stmt->execute([$uid]);
+    $currentRole = $stmt->fetchColumn();
+    $newRole = $currentRole === 'formateur' ? 'apprenant' : 'formateur';
+    $pdo->prepare('UPDATE users SET role = ? WHERE id = ?')->execute([$newRole, $uid]);
+    redirect(SITE_URL . '/admin/users.php', $newRole === 'formateur' ? 'Utilisateur promu coach.' : 'Rôle coach retiré.', 'success');
+}
+
 // Recherche
 $search = trim($_GET['q'] ?? '');
 $where  = "WHERE 1=1";
@@ -53,7 +64,7 @@ $users = $stmt->fetchAll();
   <div class="admin-card" style="padding:0;overflow:hidden">
     <table class="admin-table" style="margin:0">
       <thead>
-        <tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Cours</th><th>Statut</th><th>Inscrit le</th><th>Actions</th></tr>
+        <tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Cours</th><th>Rôle</th><th>Statut</th><th>Inscrit le</th><th>Actions</th></tr>
       </thead>
       <tbody>
         <?php foreach ($users as $u): ?>
@@ -71,6 +82,11 @@ $users = $stmt->fetchAll();
           <td style="font-size:13px"><?= h($u['telephone'] ?: '—') ?></td>
           <td><strong><?= $u['nb_cours'] ?></strong></td>
           <td>
+            <?= $u['role'] === 'formateur'
+              ? '<span class="badge badge-success">Coach</span>'
+              : '<span class="badge badge-neutral">' . h($u['role']) . '</span>' ?>
+          </td>
+          <td>
             <?= $u['actif']
               ? '<span class="badge badge-success">Actif</span>'
               : '<span class="badge badge-danger">Bloqué</span>' ?>
@@ -78,9 +94,14 @@ $users = $stmt->fetchAll();
           <td style="font-size:12px;color:var(--text-muted)"><?= date('d/m/Y', strtotime($u['created_at'])) ?></td>
           <td>
             <div style="display:flex;gap:6px">
-              <a href="<?= SITE_URL ?>/admin/user_edit.php?id=<?= $u['id'] ?>" class="btn-icon" title="Modifier">
-                <i class="ti ti-edit" aria-hidden="true"></i>
-              </a>
+              <form method="POST" style="display:inline">
+                <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
+                <input type="hidden" name="action" value="toggle_coach">
+                <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
+                <button type="submit" class="btn-icon" title="<?= $u['role'] === 'formateur' ? 'Retirer le rôle coach' : 'Promouvoir coach' ?>">
+                  <i class="ti ti-<?= $u['role'] === 'formateur' ? 'user-minus' : 'user-plus' ?>" aria-hidden="true"></i>
+                </button>
+              </form>
               <?php if ($u['actif']): ?>
                 <a href="<?= SITE_URL ?>/admin/user_delete.php?id=<?= $u['id'] ?>&action=block&csrf=<?= csrfToken() ?>"
                    class="btn-icon btn-icon-danger" title="Bloquer"
