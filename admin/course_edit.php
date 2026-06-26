@@ -15,6 +15,7 @@ if (!$course) redirect(SITE_URL . '/admin/courses.php', 'Cours introuvable.', 'e
 
 $categories  = $pdo->query('SELECT * FROM categories ORDER BY nom')->fetchAll();
 $badges      = $pdo->query('SELECT id, titre, icone FROM badges ORDER BY titre')->fetchAll();
+$coachs      = $pdo->query("SELECT id, nom, prenom, email FROM users WHERE role = 'formateur' ORDER BY nom")->fetchAll();
 $autresCours = $pdo->prepare('SELECT id, titre FROM courses WHERE id != ? ORDER BY titre');
 $autresCours->execute([$id]);
 $autresCours = $autresCours->fetchAll();
@@ -47,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $note_min       = (int)($_POST['note_min']     ?? 70);
     $badge_id       = (int)($_POST['badge_id']       ?? 0) ?: null;
     $next_course_id = (int)($_POST['next_course_id'] ?? 0) ?: null;
+    $formateur_id   = (int)($_POST['formateur_id']   ?? 0) ?: null;
 
     // ── Validation
     if (!$titre)       $erreurs[] = 'Le titre est requis.';
@@ -71,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 miniature = ?, video_intro = ?,
                 niveau = ?, langue = ?, type = ?, tarif = ?, prix = ?, duree_heures = ?,
                 certificat = ?, quiz_final = ?, note_min_certificat = ?,
-                badge_id = ?, next_course_id = ?,
+                badge_id = ?, next_course_id = ?, formateur_id = ?,
                 actif = ?, statut = ?, date_publication = ?
              WHERE id = ?'
         )->execute([
@@ -82,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $type === 'gratuit' ? 0 : $prix,
             $duree_heures ?: null,
             $certificat, $quiz_final, $note_min,
-            $badge_id, $next_course_id,
+            $badge_id, $next_course_id, $formateur_id,
             $actif, $statut,
             $date_publication ?: null,
             $id
@@ -333,6 +335,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <?php endforeach; ?>
             </select>
             <small style="color:var(--text-muted);font-size:11px">L'apprenant sera automatiquement inscrit à ce cours une fois celui-ci terminé à 100%.</small>
+          </div>
+          <div class="form-group">
+            <label for="formateur_id">Coach assigné</label>
+            <select id="formateur_id" name="formateur_id">
+              <option value="">— Aucun —</option>
+              <?php foreach ($coachs as $cch): ?>
+                <option value="<?= $cch['id'] ?>" <?= (($data['formateur_id'] ?? '') == $cch['id']) ? 'selected' : '' ?>>
+                  <?= h($cch['prenom'].' '.$cch['nom'].' ('.$cch['email'].')') ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+            <small style="color:var(--text-muted);font-size:11px">Ce coach verra les soumissions d'activités de ce cours dans son Review Center.</small>
           </div>
         </div>
 
