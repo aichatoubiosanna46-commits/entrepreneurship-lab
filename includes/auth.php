@@ -129,6 +129,16 @@ function estCoach(): bool {
 }
 
 /**
+ * Redirige si ni admin ni coach (formateur)
+ */
+function reqInstructeurOuAdmin(): void {
+    if (!estCoach()) {
+        header('Location: ' . SITE_URL . '/admin/login.php?error=acces_refuse');
+        exit;
+    }
+}
+
+/**
  * Déconnecte l'utilisateur (ne touche pas aux clés admin_*)
  */
 function deconnecter(): void {
