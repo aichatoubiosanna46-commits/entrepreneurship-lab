@@ -125,7 +125,7 @@ function estCoach(): bool {
         $stmt->execute([$_SESSION['user_id']]);
         $role = $stmt->fetchColumn() ?: '';
     }
-    return $role === 'formateur';
+    return in_array($role, ['formateur', 'coach'], true);
 }
 
 /**
