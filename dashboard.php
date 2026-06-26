@@ -89,6 +89,11 @@ $pageTitle = 'Mon espace';
       <a href="<?= SITE_URL ?>/payment.php" class="user-nav-item">
         <i class="ti ti-credit-card"></i> Abonnement
       </a>
+      <?php if (estCoach()): ?>
+      <a href="<?= SITE_URL ?>/review-center.php" class="user-nav-item">
+        <i class="ti ti-clipboard-check"></i> Review Center
+      </a>
+      <?php endif; ?>
       <a href="<?= SITE_URL ?>/notifications.php" class="user-nav-item">
         <i class="ti ti-bell"></i> Notifications
       </a>

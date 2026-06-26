@@ -113,6 +113,22 @@ function reqConnecte(string $redirect = '/login.php'): void {
 }
 
 /**
+ * Vérifie si l'utilisateur connecté a le rôle formateur (coach), ou est admin
+ */
+function estCoach(): bool {
+    if (estAdmin()) return true;
+    if (!estConnecte()) return false;
+    static $role = null;
+    if ($role === null) {
+        $pdo  = getPDO();
+        $stmt = $pdo->prepare('SELECT role FROM users WHERE id = ?');
+        $stmt->execute([$_SESSION['user_id']]);
+        $role = $stmt->fetchColumn() ?: '';
+    }
+    return $role === 'formateur';
+}
+
+/**
  * Déconnecte l'utilisateur (ne touche pas aux clés admin_*)
  */
 function deconnecter(): void {

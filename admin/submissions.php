@@ -2,19 +2,33 @@
 // admin/submissions.php — Corriger les soumissions d'une activité
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
-reqAdmin();
+if (!estAdmin()) {
+    reqConnecte();
+    if (!estCoach()) {
+        header('Location: ' . SITE_URL . '/dashboard.php?error=acces_refuse');
+        exit;
+    }
+}
 
 $pdo = getPDO();
 $activityId = (int)($_GET['activity_id'] ?? $_POST['activity_id'] ?? 0);
 if (!$activityId) { header('Location: '.SITE_URL.'/admin/courses.php'); exit; }
 
 $activity = $pdo->prepare(
-    'SELECT a.*, s.titre as sequence_titre, s.id as sequence_id
-     FROM activities a JOIN sequences s ON s.id = a.sequence_id WHERE a.id = ?'
+    'SELECT a.*, s.titre as sequence_titre, s.id as sequence_id, co.formateur_id
+     FROM activities a
+     JOIN sequences s ON s.id = a.sequence_id
+     JOIN modules mo ON mo.id = s.module_id
+     JOIN courses co ON co.id = mo.course_id
+     WHERE a.id = ?'
 );
 $activity->execute([$activityId]);
 $activity = $activity->fetch();
 if (!$activity) { http_response_code(404); die('Activité introuvable.'); }
+if (!estAdmin() && (int)$activity['formateur_id'] !== (int)$_SESSION['user_id']) {
+    header('Location: ' . SITE_URL . '/dashboard.php?error=acces_refuse');
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'corriger') {
     verifierCSRF();
