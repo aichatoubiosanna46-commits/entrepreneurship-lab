@@ -834,6 +834,68 @@ $pageTitle = 'Accueil';
   </div>
 </div>
 
+<!-- ============================================================
+     TÉMOIGNAGES
+     ============================================================ -->
+<div class="elab-section alt" id="temoignages">
+  <div class="sec-tag">💬 Témoignages</div>
+  <div class="sec-title">Ils ont transformé leurs idées en projets</div>
+  <div class="sec-sub">Des entrepreneurs formés grâce à Entrepreneurship Lab</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:32px;max-width:900px;margin-left:auto;margin-right:auto">
+
+    <!-- Témoignage 1 — KATANGA Moucharaf -->
+    <div style="background:#fff;border-radius:var(--radius-lg);padding:26px;border:1px solid rgba(0,0,0,.06);display:flex;flex-direction:column;gap:18px;box-shadow:0 2px 12px rgba(0,0,0,.04)">
+      <p style="font-size:13px;color:var(--dark,#1A1A18);line-height:1.75;font-style:italic;margin:0">
+        « Sociologue de formation, je me suis lancé dans la cordonnerie avec la fabrication de chaussures à partir de matières locales. Mon parcours montre qu'avec une idée et de la détermination, il est possible de créer son activité. Grâce à Entrepreneurship Lab, vous pouvez vous aussi transformer vos idées en projets concrets. »
+      </p>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:auto">
+        <?php
+          $t1jpg = __DIR__ . '/assets/images/temoignages/1.jpg';
+          $t1png = __DIR__ . '/assets/images/temoignages/1.png';
+          if (file_exists($t1jpg) || file_exists($t1png)):
+            $t1file = file_exists($t1jpg) ? '1.jpg' : '1.png';
+        ?>
+          <img src="<?= SITE_URL ?>/assets/images/temoignages/<?= $t1file ?>"
+               alt="KATANGA Moucharaf"
+               style="width:52px;height:52px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(8,80,65,.15)">
+        <?php else: ?>
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(8,80,65,.14);color:var(--navy);font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">K</div>
+        <?php endif; ?>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy)">KATANGA Moucharaf</div>
+          <div style="font-size:11px;color:var(--text-muted)">Cordonnier — fabrication de chaussures</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Témoignage 2 — Ivette BIOKOU -->
+    <div style="background:#fff;border-radius:var(--radius-lg);padding:26px;border:1px solid rgba(0,0,0,.06);display:flex;flex-direction:column;gap:18px;box-shadow:0 2px 12px rgba(0,0,0,.04)">
+      <p style="font-size:13px;color:var(--dark,#1A1A18);line-height:1.75;font-style:italic;margin:0">
+        « Tout est parti d'un cours d'entrepreneuriat où j'ai appris à observer les problèmes autour de moi. J'ai constaté la difficulté de conservation des fruits, ce qui m'a conduite à créer Ewatomi Market, spécialisée dans les fruits séchés. Grâce à Entrepreneurship Lab, vous pouvez apprendre à transformer une simple observation en projet concret et structuré. »
+      </p>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:auto">
+        <?php
+          $t2jpg = __DIR__ . '/assets/images/temoignages/2.jpg';
+          $t2png = __DIR__ . '/assets/images/temoignages/2.png';
+          if (file_exists($t2jpg) || file_exists($t2png)):
+            $t2file = file_exists($t2jpg) ? '2.jpg' : '2.png';
+        ?>
+          <img src="<?= SITE_URL ?>/assets/images/temoignages/<?= $t2file ?>"
+               alt="Ivette BIOKOU"
+               style="width:52px;height:52px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(216,90,48,.2)">
+        <?php else: ?>
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(216,90,48,.14);color:var(--gold-dark,#C04A22);font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">I</div>
+        <?php endif; ?>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy)">Ivette BIOKOU</div>
+          <div style="font-size:11px;color:var(--text-muted)">CEO — Ewatomi Market</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ── CTA ── -->
 <div class="cta-section">
   <h2>Prêt(e) à lancer ton entreprise ?</h2>
