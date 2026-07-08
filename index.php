@@ -732,7 +732,7 @@ $pageTitle = 'Accueil';
         <span class="pricing-badge">Gratuit</span>
       </div>
       <div class="pricing-body">
-        <h4>Trouver son idée de business</h4>
+        <h4>Phase 0 — ONBOARDING</h4>
         <p class="pricing-desc">Valide ton projet en 4h avec notre méthode simple et adaptée au contexte béninois.</p>
         <div class="pricing-price">
           <span class="amount free">Gratuit</span>
@@ -756,7 +756,7 @@ $pageTitle = 'Accueil';
         <span class="pricing-badge pop">⭐ Populaire</span>
       </div>
       <div class="pricing-body">
-        <h4>Business Plan simplifié</h4>
+        <h4>Série 1 — IDEATION</h4>
         <p class="pricing-desc">De l'idée au plan d'action concret. Tout ce qu'il faut pour convaincre un investisseur ou lancer seul.</p>
         <div class="pricing-price">
           <span class="amount">5 000</span>
