@@ -308,6 +308,21 @@ img { max-width: 100%; }
 
 <?= flash() ?>
 
+<!-- MODAL VIDÉO -->
+<div id="video-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this){this.style.display='none';document.getElementById('video-frame').src=document.getElementById('video-frame').src}">
+  <div style="position:relative;width:100%;max-width:860px;background:#000;border-radius:14px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.6)">
+    <button onclick="document.getElementById('video-modal').style.display='none';document.getElementById('video-frame').src=document.getElementById('video-frame').src" style="position:absolute;top:12px;right:12px;z-index:10;background:rgba(0,0,0,.6);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
+    <div style="position:relative;padding-top:56.25%">
+      <iframe id="video-frame"
+        src="https://drive.google.com/file/d/1iDexJ2b5XNr4ImtBrkHjuVJW2iWrQzxD/preview"
+        style="position:absolute;inset:0;width:100%;height:100%;border:none"
+        allow="autoplay"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</div>
+
 <?php $heroSlide = $slides[0] ?? null; ?>
 <!-- HERO -->
 <div class="elab-hero">
@@ -334,7 +349,7 @@ img { max-width: 100%; }
       <?php else: ?>
         <a href="<?= SITE_URL ?>/register.php" class="cbtn-primary" style="font-size:13px;padding:13px 28px">Démarrer gratuitement</a>
       <?php endif; ?>
-      <a href="#methode" class="cbtn-outline" style="font-size:13px;padding:12px 28px">▶ Voir la vidéo </a>
+      <button onclick="document.getElementById('video-modal').style.display='flex'" class="cbtn-outline" style="font-size:13px;padding:12px 28px;cursor:pointer">▶ Voir la vidéo</button>
     </div>
     <div style="display:flex;justify-content:center;gap:40px;flex-wrap:wrap">
       <div style="text-align:center">
